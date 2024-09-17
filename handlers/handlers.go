@@ -1,0 +1,29 @@
+package handlers
+
+import (
+	"database/sql"
+
+	db "orchid.admin.service/db/sqlc"
+
+	"orchid.admin.service/conf"
+	"orchid.admin.service/utils/secure"
+
+	"github.com/go-playground/validator/v10"
+)
+
+type Handlers struct {
+	c     *conf.Config
+	pgsql *sql.DB
+	kp    *secure.RsaKey
+}
+
+var validate = validator.New()
+
+func NewHandlers(c *conf.Config, pgsql *sql.DB, kp *secure.RsaKey) *Handlers {
+	return &Handlers{c: c, pgsql: pgsql, kp: kp}
+}
+
+func (hd *Handlers) queries() (*db.Queries, *sql.DB, error) {
+	queries := db.New(hd.pgsql)
+	return queries, hd.pgsql, nil
+}
