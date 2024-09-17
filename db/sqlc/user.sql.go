@@ -195,6 +195,35 @@ func (q *Queries) FindBySuperAdminAdmin(ctx context.Context) ([]User, error) {
 	return items, nil
 }
 
+const findByUser = `-- name: FindByUser :one
+SELECT
+    "ID", "LastName", "FirstName", "UserName", "Email", "IsHashedPassword", "IsAdmin", "IsUser", "IsSuperAdmin", "IsActive", "Created_At"
+FROM
+    "User"
+WHERE
+    "UserName" = $1 :: VARCHAR(100)
+LIMIT 1
+`
+
+func (q *Queries) FindByUser(ctx context.Context, username string) (User, error) {
+	row := q.db.QueryRowContext(ctx, findByUser, username)
+	var i User
+	err := row.Scan(
+		&i.ID,
+		&i.LastName,
+		&i.FirstName,
+		&i.UserName,
+		&i.Email,
+		&i.IsHashedPassword,
+		&i.IsAdmin,
+		&i.IsUser,
+		&i.IsSuperAdmin,
+		&i.IsActive,
+		&i.CreatedAt,
+	)
+	return i, err
+}
+
 const findByUserName = `-- name: FindByUserName :one
 SELECT
     "ID", "LastName", "FirstName", "UserName", "Email", "IsHashedPassword", "IsAdmin", "IsUser", "IsSuperAdmin", "IsActive", "Created_At",

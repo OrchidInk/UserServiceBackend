@@ -37,8 +37,18 @@ type UserRegister struct {
 	Password  string `json:"password" validate:"required,min=6"`
 }
 
+type SuperAdminLogin struct {
+	UserName string `json:"username" validate:"required"`
+	Password string `json:"password" validate:"required"`
+}
+
+type AdminLogin struct {
+	UserName string `json:"username" validate:"required"`
+	Password string `json:"password" validate:"required"`
+}
+
 type UserLogin struct {
-	Email    string `json:"email" validate:"required,email"`
+	UserName string `json:"username" validate:"required"`
 	Password string `json:"password" validate:"required"`
 }
 
