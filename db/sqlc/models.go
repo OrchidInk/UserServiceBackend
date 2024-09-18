@@ -8,6 +8,34 @@ import (
 	"time"
 )
 
+type Customer struct {
+	CustomerId   int32
+	CustomerName string
+	ContractDate int32
+	IsActive     bool
+	CreatedAt    time.Time
+}
+
+type CustomerOrderDetial struct {
+	CustomerOrderId int32
+}
+
+type DetailEn struct {
+	DetialEn int32
+}
+
+type DetailMn struct {
+	DetialMnId int32
+}
+
+type ProductEn struct {
+	ProductEn int32
+}
+
+type ProductMN struct {
+	ProductMNID int32
+}
+
 type User struct {
 	ID               int32
 	LastName         string
@@ -20,4 +48,9 @@ type User struct {
 	IsSuperAdmin     bool
 	IsActive         bool
 	CreatedAt        time.Time
+}
+
+type UserInfo struct {
+	UserInfoId int32
+	ID         int32
 }
