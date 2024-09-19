@@ -9,6 +9,16 @@ import (
 	"time"
 )
 
+type CategoryEn struct {
+	CategoryEnID   int32
+	CategoryNameEn string
+}
+
+type CategoryMn struct {
+	CategoryMnID   int32
+	CategoryNameMn string
+}
+
 type Customer struct {
 	CustomerId   int32
 	CustomerName string
@@ -66,9 +76,11 @@ type ProductEn struct {
 }
 
 type ProductImage struct {
-	ImageID   int32
-	ProductID sql.NullInt32
-	ImageURL  string
+	ImageID     int32
+	ProductMnID sql.NullInt32
+	ProductEnID sql.NullInt32
+	ImageURLEn  string
+	ImageURLMn  string
 }
 
 type ProductMn struct {
