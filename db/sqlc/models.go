@@ -5,6 +5,7 @@
 package db
 
 import (
+	"database/sql"
 	"time"
 )
 
@@ -14,26 +15,95 @@ type Customer struct {
 	ContractDate int32
 	IsActive     bool
 	CreatedAt    time.Time
+	UpdatedAt    time.Time
 }
 
-type CustomerOrderDetial struct {
+type CustomerOrderDetail struct {
 	CustomerOrderId int32
+	CustomerId      int32
+	OrderDate       sql.NullTime
+	OrderStatus     sql.NullString
+	TotalAmount     string
+	PaymentStatus   sql.NullString
+}
+
+type Delivery struct {
+	DeliverId   int32
+	DeliverName string
+	OrderId     int32
 }
 
 type DetailEn struct {
-	DetialEn int32
+	DetailEnId  int32
+	ProductEnID int32
+	ChoiceName  string
+	ChoiceValue string
 }
 
 type DetailMn struct {
-	DetialMnId int32
+	DetailMnId  int32
+	ProductMnID int32
+	ChoiceName  string
+	ChoiceValue string
+}
+
+type OrderItem struct {
+	OrderItemId     int32
+	CustomerOrderId int32
+	ProductMnID     int32
+	ProductEnID     int32
+	Quantity        int32
+	PriceAtOrder    string
 }
 
 type ProductEn struct {
-	ProductEn int32
+	ProductEnID   int32
+	CategoryEnID  int32
+	PriceEn       string
+	StockQuantity int32
+	CreatedAt     sql.NullTime
+	UpdatedAt     sql.NullTime
 }
 
-type ProductMN struct {
-	ProductMNID int32
+type ProductImage struct {
+	ImageID   int32
+	ProductID sql.NullInt32
+	ImageURL  string
+}
+
+type ProductMn struct {
+	ProductMnID   int32
+	CategoryMnID  int32
+	PriceMn       string
+	StockQuantity int32
+	CreatedAt     sql.NullTime
+	UpdatedAt     sql.NullTime
+}
+
+type ProductReview struct {
+	ReviewID    int32
+	ProductMnID sql.NullInt32
+	ProductEnID sql.NullInt32
+	UserID      sql.NullInt32
+	Rating      sql.NullInt32
+	ReviewText  sql.NullString
+	CreatedAt   sql.NullTime
+}
+
+type ProductTranslationsEn struct {
+	ProductTranslationEnID int32
+	ProductEnID            sql.NullInt32
+	LanguageCode           string
+	ProductEnName          string
+	ProductDescription     sql.NullString
+}
+
+type ProductTranslationsMn struct {
+	ProductTranslationMnID int32
+	ProductMnID            sql.NullInt32
+	LanguageCode           string
+	ProductMnName          string
+	ProductDescription     sql.NullString
 }
 
 type User struct {
@@ -51,6 +121,13 @@ type User struct {
 }
 
 type UserInfo struct {
-	UserInfoId int32
-	ID         int32
+	UserInfoId   int32
+	UserId       int32
+	LastName     string
+	FirstName    string
+	Email        string
+	BirthDate    time.Time
+	PhoneNumber1 string
+	PhoneNumber2 string
+	Address1     string
 }

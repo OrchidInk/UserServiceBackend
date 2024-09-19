@@ -52,29 +52,6 @@ type UserLogin struct {
 	Password string `json:"password" validate:"required"`
 }
 
-type UserInfo struct {
-	UserId    int32     `json:"userId"`
-	LastName  string    `json:"lastName"`
-	FirstName string    `json:"firstName"`
-	RegNo     string    `json:"regNo"`
-	Email     string    `json:"email"`
-	Phone1    string    `json:"phone1"`
-	Address   string    `json:"address"`
-	BirthDate time.Time `json:"birthDate"`
-	CreatedAt time.Time `json:"createdAt"`
-}
-
-type UserInfoRegister struct {
-	UserId    int32  `json:"userId"`
-	LastName  string `json:"lastName"`
-	FirstName string `json:"firstName"`
-	RegNo     string `json:"regNo"`
-	Email     string `json:"email"`
-	Phone1    string `json:"phone1"`
-	Address   string `json:"address"`
-	BirthDate string `json:"birthDate"`
-}
-
 type ForgetPasswordRequest struct {
 	Email string `json:"email"`
 }

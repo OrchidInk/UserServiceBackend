@@ -224,6 +224,58 @@ func (q *Queries) FindByUser(ctx context.Context, username string) (User, error)
 	return i, err
 }
 
+const findByUserID = `-- name: FindByUserID :one
+SELECT
+    "ID", "LastName", "FirstName", "UserName", "Email", "IsHashedPassword", "IsAdmin", "IsUser", "IsSuperAdmin", "IsActive", "Created_At",
+    "IsAdmin",
+    "IsUser",
+    "IsSuperAdmin"
+FROM
+    "User"
+WHERE 
+    "ID" = $1
+LIMIT 1
+`
+
+type FindByUserIDRow struct {
+	ID               int32
+	LastName         string
+	FirstName        string
+	UserName         string
+	Email            string
+	IsHashedPassword string
+	IsAdmin          bool
+	IsUser           bool
+	IsSuperAdmin     bool
+	IsActive         bool
+	CreatedAt        time.Time
+	IsAdmin_2        bool
+	IsUser_2         bool
+	IsSuperAdmin_2   bool
+}
+
+func (q *Queries) FindByUserID(ctx context.Context, id int32) (FindByUserIDRow, error) {
+	row := q.db.QueryRowContext(ctx, findByUserID, id)
+	var i FindByUserIDRow
+	err := row.Scan(
+		&i.ID,
+		&i.LastName,
+		&i.FirstName,
+		&i.UserName,
+		&i.Email,
+		&i.IsHashedPassword,
+		&i.IsAdmin,
+		&i.IsUser,
+		&i.IsSuperAdmin,
+		&i.IsActive,
+		&i.CreatedAt,
+		&i.IsAdmin_2,
+		&i.IsUser_2,
+		&i.IsSuperAdmin_2,
+	)
+	return i, err
+}
+
 const findByUserName = `-- name: FindByUserName :one
 SELECT
     "ID", "LastName", "FirstName", "UserName", "Email", "IsHashedPassword", "IsAdmin", "IsUser", "IsSuperAdmin", "IsActive", "Created_At",

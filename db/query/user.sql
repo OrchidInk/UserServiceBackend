@@ -33,6 +33,18 @@ WHERE
     "ID" = sqlc.arg('ID')
     AND "IsAdmin" = TRUE;
 
+-- name: FindByUserID :one
+SELECT
+    *,
+    "IsAdmin",
+    "IsUser",
+    "IsSuperAdmin"
+FROM
+    "User"
+WHERE 
+    "ID" = sqlc.arg('ID')
+LIMIT 1;
+
 -- name: FindByUser :one
 SELECT
     *

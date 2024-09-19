@@ -2,7 +2,12 @@
 BEGIN;
 
 CREATE TABLE "productEn" (
-    "productEn" serial not NULL
+    "ProductEnID" serial PRIMARY KEY NOT NULL,
+    "CategoryEnID" INT NOT NULL,
+    "PriceEn" DECIMAL(10,2) NOT NULL, 
+    "StockQuantity" INT NOT NULL DEFAULT 0,
+    "Created_At" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    "Updated_At" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 ) TABLESPACE pg_default;
 
 COMMIT;
