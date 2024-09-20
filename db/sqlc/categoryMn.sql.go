@@ -10,15 +10,12 @@ import (
 )
 
 const createCategoryMn = `-- name: CreateCategoryMn :one
-INSERT INTO 
-    "categoryMn" (
-        "CategoryNameMn"
-    )
-VALUES 
+INSERT INTO
+    "categoryMn" ("CategoryNameMn")
+VALUES
     (
         "CategoryNameMn" = $1 :: VARCHAR(100)
-    )
-RETURNING "CategoryMnID", "CategoryNameMn"
+    ) RETURNING "CategoryMnID", "CategoryNameMn"
 `
 
 func (q *Queries) CreateCategoryMn(ctx context.Context, categorynamemn string) (CategoryMn, error) {
@@ -29,7 +26,7 @@ func (q *Queries) CreateCategoryMn(ctx context.Context, categorynamemn string) (
 }
 
 const deleteFromCategoryMn = `-- name: DeleteFromCategoryMn :exec
-DELETE FROM 
+DELETE FROM
     "categoryMn"
 WHERE
     "CategoryMnID" = $1
@@ -40,14 +37,33 @@ func (q *Queries) DeleteFromCategoryMn(ctx context.Context, categorymnid int32) 
 	return err
 }
 
+const findByIdCategoryMn = `-- name: FindByIdCategoryMn :one
+SELECT
+    "CategoryMnID", "CategoryNameMn"
+FROM
+    "categoryMn"
+WHERE
+    "CategoryMnID" - $1
+LIMIT
+    1
+`
+
+func (q *Queries) FindByIdCategoryMn(ctx context.Context, categorymnid int32) (CategoryMn, error) {
+	row := q.db.QueryRowContext(ctx, findByIdCategoryMn, categorymnid)
+	var i CategoryMn
+	err := row.Scan(&i.CategoryMnID, &i.CategoryNameMn)
+	return i, err
+}
+
 const findByNameCategoryMn = `-- name: FindByNameCategoryMn :one
 SELECT
     "CategoryMnID", "CategoryNameMn"
 FROM
     "categoryMn"
 WHERE
-    "CategoryNameMn" = $1 
-LIMIT 1
+    "CategoryNameMn" = $1
+LIMIT
+    1
 `
 
 func (q *Queries) FindByNameCategoryMn(ctx context.Context, categorynamemn string) (CategoryMn, error) {
@@ -64,7 +80,8 @@ FROM
     "categoryMn"
 WHERE
     "CategoryMnID" = $1
-LIMIT 1
+LIMIT
+    1
 `
 
 func (q *Queries) GetByIdCategoryMn(ctx context.Context, categorymnid int32) (CategoryMn, error) {

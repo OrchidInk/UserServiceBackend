@@ -11,12 +11,11 @@ import (
 
 const createCategoryEn = `-- name: CreateCategoryEn :one
 INSERT INTO
-    "categoryEn" (
-        "CategoryNameEn"
-    )
-VALUES (
-    $1 :: VARCHAR(100) 
-) RETURNING "CategoryEnID", "CategoryNameEn"
+    "categoryEn" ("CategoryNameEn")
+VALUES
+    (
+        $1 :: VARCHAR(100)
+    ) RETURNING "CategoryEnID", "CategoryNameEn"
 `
 
 func (q *Queries) CreateCategoryEn(ctx context.Context, categorynameen string) (CategoryEn, error) {
@@ -27,7 +26,7 @@ func (q *Queries) CreateCategoryEn(ctx context.Context, categorynameen string) (
 }
 
 const deleteByIdCategoryEn = `-- name: DeleteByIdCategoryEn :exec
-DELETE FROM 
+DELETE FROM
     "categoryEn"
 WHERE
     "CategoryEnID" = $1
@@ -45,7 +44,8 @@ FROM
     "categoryEn"
 WHERE
     "CategoryEnID" = $1
-LIMIT 1
+LIMIT
+    1
 `
 
 func (q *Queries) FindByCategoryEnId(ctx context.Context, categoryenid int32) (CategoryEn, error) {
@@ -55,13 +55,33 @@ func (q *Queries) FindByCategoryEnId(ctx context.Context, categoryenid int32) (C
 	return i, err
 }
 
+const findByIdCategoryEn = `-- name: FindByIdCategoryEn :one
+SELECT
+    "CategoryEnID", "CategoryNameEn"
+FROM
+    "categoryEn"
+WHERE
+    "CategoryEnID" = $1
+LIMIT
+    1
+`
+
+func (q *Queries) FindByIdCategoryEn(ctx context.Context, categoryenid int32) (CategoryEn, error) {
+	row := q.db.QueryRowContext(ctx, findByIdCategoryEn, categoryenid)
+	var i CategoryEn
+	err := row.Scan(&i.CategoryEnID, &i.CategoryNameEn)
+	return i, err
+}
+
 const findByNameCategoryEn = `-- name: FindByNameCategoryEn :one
-SELECT 
+SELECT
     "CategoryEnID", "CategoryNameEn"
 FROM
     "categoryEn"
 WHERE
     "CategoryNameEn" = $1 :: VARCHAR(100)
+LIMIT
+    1
 `
 
 func (q *Queries) FindByNameCategoryEn(ctx context.Context, categorynameen string) (CategoryEn, error) {
@@ -72,7 +92,7 @@ func (q *Queries) FindByNameCategoryEn(ctx context.Context, categorynameen strin
 }
 
 const getListByAllCategoryEn = `-- name: GetListByAllCategoryEn :many
-SELECT 
+SELECT
     "CategoryEnID", "CategoryNameEn"
 FROM
     "categoryEn"
@@ -101,13 +121,13 @@ func (q *Queries) GetListByAllCategoryEn(ctx context.Context) ([]CategoryEn, err
 	return items, nil
 }
 
-const updateCategoryEn = `-- name: UpdateCategoryEn :exec
+const updateCategoryEn = `-- name: UpdateCategoryEn :one
 UPDATE
-  "categoryEn"
+    "categoryEn"
 SET
-  "CategoryNameEn" = $1 :: VARCHAR(100) 
+    "CategoryNameEn" = $1 :: VARCHAR(100)
 WHERE
-  "CategoryEnID" = $2
+    "CategoryEnID" = $2 RETURNING "CategoryEnID", "CategoryNameEn"
 `
 
 type UpdateCategoryEnParams struct {
@@ -115,7 +135,9 @@ type UpdateCategoryEnParams struct {
 	CategoryEnID   int32
 }
 
-func (q *Queries) UpdateCategoryEn(ctx context.Context, arg UpdateCategoryEnParams) error {
-	_, err := q.db.ExecContext(ctx, updateCategoryEn, arg.CategoryNameEn, arg.CategoryEnID)
-	return err
+func (q *Queries) UpdateCategoryEn(ctx context.Context, arg UpdateCategoryEnParams) (CategoryEn, error) {
+	row := q.db.QueryRowContext(ctx, updateCategoryEn, arg.CategoryNameEn, arg.CategoryEnID)
+	var i CategoryEn
+	err := row.Scan(&i.CategoryEnID, &i.CategoryNameEn)
+	return i, err
 }

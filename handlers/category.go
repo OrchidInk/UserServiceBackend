@@ -4,6 +4,7 @@ import (
 	"log/slog"
 
 	"github.com/gofiber/fiber/v2"
+	db "orchid.admin.service/db/sqlc"
 	"orchid.admin.service/models"
 )
 
@@ -62,8 +63,29 @@ func (hd *Handlers) CreateCategoryMn(ctx *fiber.Ctx) error {
 }
 
 func (hd *Handlers) UpdateCategoryEn(ctx *fiber.Ctx) error {
+	queries, _, _ := hd.queries()
 
-	return nil
+	var updateRequestEn models.UpdateCategoryEn
+	if err := ctx.BodyParser(&updateRequestEn); err != nil {
+		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"err": "invalid this request"})
+	}
+
+	if err := validate.Struct(updateRequestEn); err != nil {
+		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"err": "cannot sent nil body"})
+	}
+
+	categoryEN, err := queries.FindByNameCategoryEn(ctx.Context(), updateRequestEn.CategoryNameEn)
+	if err != nil {
+		slog.Error("unable to find category en", slog.Any("Err", err))
+		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"err": err})
+	}
+
+	updateCategoryEn, err := queries.UpdateCategoryEn(ctx.Context(), db.UpdateCategoryEnParams{
+		CategoryNameEn: updateRequestEn.CategoryNameEn,
+		CategoryEnID:   categoryEN.CategoryEnID,
+	})
+
+	return ctx.Status(fiber.StatusOK).JSON(fiber.Map{"message": "successfully", "categoryEnId": updateCategoryEn.CategoryEnID})
 }
 
 func (hd *Handlers) UpdateCategoryMn(ctx *fiber.Ctx) error {
@@ -82,13 +104,27 @@ func (hd *Handlers) DeleteCategoryMn(ctx *fiber.Ctx) error {
 }
 
 func (hd *Handlers) GetListCategoryEn(ctx *fiber.Ctx) error {
+	queries, _, _ := hd.queries()
 
-	return nil
+	CategoryEn, err := queries.GetListByAllCategoryEn(ctx.Context())
+	if err != nil {
+		slog.Error("unable to get list", slog.Any("Err", err))
+		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"err": err})
+	}
+
+	return ctx.JSON(CategoryEn)
 }
 
 func (hd *Handlers) GetListCategoryMn(ctx *fiber.Ctx) error {
+	queries, _, _ := hd.queries()
 
-	return nil
+	CategoryMn, err := queries.GetListAllCategoryMn(ctx.Context())
+	if err != nil {
+		slog.Error("unable to get list", slog.Any("err", err))
+		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"message": "err"})
+	}
+
+	return ctx.JSON(CategoryMn)
 }
 
 func (hd *Handlers) FindByIdCategoryEn(ctx *fiber.Ctx) error {

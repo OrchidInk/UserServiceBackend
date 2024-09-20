@@ -1,28 +1,27 @@
 -- name: CreateCategoryEn :one
 INSERT INTO
-    "categoryEn" (
-        "CategoryNameEn"
-    )
-VALUES (
-    sqlc.arg('CategoryNameEn') :: VARCHAR(100) 
-) RETURNING *;
+    "categoryEn" ("CategoryNameEn")
+VALUES
+    (
+        sqlc.arg('CategoryNameEn') :: VARCHAR(100)
+    ) RETURNING *;
 
 -- name: GetListByAllCategoryEn :many
-SELECT 
+SELECT
     *
 FROM
     "categoryEn";
 
--- name: UpdateCategoryEn :exec
+-- name: UpdateCategoryEn :one
 UPDATE
-  "categoryEn"
+    "categoryEn"
 SET
-  "CategoryNameEn" = sqlc.arg('CategoryNameEn') :: VARCHAR(100) 
+    "CategoryNameEn" = sqlc.arg('CategoryNameEn') :: VARCHAR(100)
 WHERE
-  "CategoryEnID" = sqlc.arg('CategoryEnID');
+    "CategoryEnID" = sqlc.arg('CategoryEnID') RETURNING *;
 
 -- name: DeleteByIdCategoryEn :exec
-DELETE FROM 
+DELETE FROM
     "categoryEn"
 WHERE
     "CategoryEnID" = sqlc.arg('CategoryEnID');
@@ -34,12 +33,25 @@ FROM
     "categoryEn"
 WHERE
     "CategoryEnID" = sqlc.arg('CategoryEnID')
-LIMIT 1;
+LIMIT
+    1;
 
 -- name: FindByNameCategoryEn :one
-SELECT 
+SELECT
     *
 FROM
     "categoryEn"
 WHERE
-    "CategoryNameEn" = sqlc.arg('CategoryNameEn') :: VARCHAR(100);
+    "CategoryNameEn" = sqlc.arg('CategoryNameEn') :: VARCHAR(100)
+LIMIT
+    1;
+
+-- name: FindByIdCategoryEn :one
+SELECT
+    *
+FROM
+    "categoryEn"
+WHERE
+    "CategoryEnID" = sqlc.arg('CategoryEnID')
+LIMIT
+    1;

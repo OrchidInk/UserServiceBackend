@@ -1,13 +1,10 @@
 -- name: CreateCategoryMn :one
-INSERT INTO 
-    "categoryMn" (
-        "CategoryNameMn"
-    )
-VALUES 
+INSERT INTO
+    "categoryMn" ("CategoryNameMn")
+VALUES
     (
         "CategoryNameMn" = sqlc.arg('CategoryNameMn') :: VARCHAR(100)
-    )
-RETURNING *;
+    ) RETURNING *;
 
 -- name: GetListAllCategoryMn :many
 SELECT
@@ -24,7 +21,7 @@ WHERE
     "CategoryMnID" = sqlc.arg('CategoryMnID');
 
 -- name: DeleteFromCategoryMn :exec
-DELETE FROM 
+DELETE FROM
     "categoryMn"
 WHERE
     "CategoryMnID" = sqlc.arg('CategoryMnID');
@@ -36,7 +33,8 @@ FROM
     "categoryMn"
 WHERE
     "CategoryMnID" = sqlc.arg('CategoryMnID')
-LIMIT 1;
+LIMIT
+    1;
 
 -- name: FindByNameCategoryMn :one
 SELECT
@@ -44,5 +42,16 @@ SELECT
 FROM
     "categoryMn"
 WHERE
-    "CategoryNameMn" = sqlc.arg('CategoryNameMn') 
-LIMIT 1;
+    "CategoryNameMn" = sqlc.arg('CategoryNameMn')
+LIMIT
+    1;
+
+-- name: FindByIdCategoryMn :one
+SELECT
+    *
+FROM
+    "categoryMn"
+WHERE
+    "CategoryMnID" - sqlc.arg('CategoryMnID')
+LIMIT
+    1;
