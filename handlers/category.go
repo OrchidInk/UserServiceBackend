@@ -89,17 +89,38 @@ func (hd *Handlers) UpdateCategoryEn(ctx *fiber.Ctx) error {
 }
 
 func (hd *Handlers) UpdateCategoryMn(ctx *fiber.Ctx) error {
-
 	return nil
 }
 
 func (hd *Handlers) DeleteCategoryEn(ctx *fiber.Ctx) error {
+	queries, _, _ := hd.queries()
 
-	return nil
+	var updateRequestMn models.UpdateCategoryMn
+	if err := ctx.BodyParser(&updateRequestMn); err != nil {
+		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"message": "invalid request"})
+	}
+
+	if err := validate.Struct(updateRequestMn); err != nil {
+		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"message": "err"})
+	}
+
+	categoryMn, err := queries.FindByNameCategoryMn(ctx.Context(), updateRequestMn.CategoryNameMn)
+	if err != nil {
+		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"message": "err"})
+	}
+
+	err = queries.UpdateByCategoryMn(ctx.Context(), db.UpdateByCategoryMnParams{
+		CategoryNameMn: updateRequestMn.CategoryNameMn,
+		CategoryMnID:   categoryMn.CategoryMnID,
+	})
+	if err != nil {
+		slog.Error("unable to update categoryMN", slog.Any("Err", err))
+	}
+
+	return ctx.Status(fiber.StatusOK).JSON(fiber.Map{"message": "successfully", "categoryMnId": categoryMn.CategoryMnID})
 }
 
 func (hd *Handlers) DeleteCategoryMn(ctx *fiber.Ctx) error {
-
 	return nil
 }
 
