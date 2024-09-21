@@ -13,9 +13,12 @@ func superAdminRoutes(app *fiber.App, hd *handlers.Handlers) {
 	api.Post("/login", hd.SuperAdminLogin)
 
 	// Routes for registering admins and users
-	user := api.Group("/register", hd.Authorize, hd.SuperAdminOnly)
-	user.Post("/admin", hd.RegisterAdmin, hd.SuperAdminOnly, hd.Authorize)
-	user.Post("/user", hd.RegisterUser, hd.SuperAdminOnly, hd.Authorize)
+	user := api.Group("/user", hd.Authorize, hd.SuperAdminOnly)
+	user.Post("/register/admin", hd.RegisterAdmin)
+	user.Post("/register/user", hd.RegisterUser)
+
+	user.Get("/list/admin", hd.GetListAdmin)
+	user.Get("/list/user", hd.GetListUser)
 
 	// category request
 	category := api.Group("/categoryEn", hd.Authorize, hd.SuperAdminLogin)

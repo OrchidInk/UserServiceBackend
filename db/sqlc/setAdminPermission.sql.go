@@ -7,7 +7,40 @@ package db
 
 import (
 	"context"
+	"database/sql"
 )
+
+const getPermissionsByAdminID = `-- name: GetPermissionsByAdminID :one
+SELECT
+    "CanCreate",
+    "CanRead",
+    "CanUpdate",
+    "CanDelete"
+FROM
+    "adminPermission"
+WHERE
+    "AdminID" = $1 :: INT
+LIMIT 1
+`
+
+type GetPermissionsByAdminIDRow struct {
+	CanCreate sql.NullBool
+	CanRead   sql.NullBool
+	CanUpdate sql.NullBool
+	CanDelete sql.NullBool
+}
+
+func (q *Queries) GetPermissionsByAdminID(ctx context.Context, adminid int32) (GetPermissionsByAdminIDRow, error) {
+	row := q.db.QueryRowContext(ctx, getPermissionsByAdminID, adminid)
+	var i GetPermissionsByAdminIDRow
+	err := row.Scan(
+		&i.CanCreate,
+		&i.CanRead,
+		&i.CanUpdate,
+		&i.CanDelete,
+	)
+	return i, err
+}
 
 const setPermissions = `-- name: SetPermissions :exec
 INSERT INTO "adminPermission" (

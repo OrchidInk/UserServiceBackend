@@ -16,3 +16,15 @@ INSERT INTO "adminPermission" (
     "CanRead" = EXCLUDED."CanRead",
     "CanUpdate" = EXCLUDED."CanUpdate",
     "CanDelete" = EXCLUDED."CanDelete";
+
+-- name: GetPermissionsByAdminID :one
+SELECT
+    "CanCreate",
+    "CanRead",
+    "CanUpdate",
+    "CanDelete"
+FROM
+    "adminPermission"
+WHERE
+    "AdminID" = sqlc.arg('AdminID') :: INT
+LIMIT 1;

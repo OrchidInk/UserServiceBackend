@@ -245,3 +245,27 @@ func (hd *Handlers) UserLogin(ctx *fiber.Ctx) error {
 		"username": userLogin.UserName,
 	})
 }
+
+func (hd *Handlers) GetListAdmin(ctx *fiber.Ctx) error {
+	queries, _, _ := hd.queries()
+
+	admins, err := queries.GetListAdmin(ctx.Context())
+	if err != nil {
+		slog.Error("unable to get admin users", slog.Any("err", err))
+		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"err": err.Error()})
+	}
+
+	return ctx.JSON(admins)
+}
+
+func (hd *Handlers) GetListUser(ctx *fiber.Ctx) error {
+	queries, _, _ := hd.queries()
+
+	users, err := queries.GetListUser(ctx.Context())
+	if err != nil {
+		slog.Error("unable to get admin users", slog.Any("err", err))
+		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"err": err.Error()})
+	}
+
+	return ctx.JSON(users)
+}

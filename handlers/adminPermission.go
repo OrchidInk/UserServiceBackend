@@ -41,3 +41,34 @@ func (hd *Handlers) SetAdminPermissions(ctx *fiber.Ctx) error {
 
 	return ctx.Status(fiber.StatusOK).JSON(fiber.Map{"message": "Permissions set successfully"})
 }
+
+func (hd *Handlers) CheckAdminPermission(ctx *fiber.Ctx, action string) error {
+	adminID := ctx.Locals("adminId").(int32)
+
+	queries, _, _ := hd.queries()
+	permissions, err := queries.GetPermissionsByAdminID(ctx.Context(), adminID)
+	if err != nil {
+		return ctx.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"message": "Permissions not found"})
+	}
+
+	switch action {
+	case "create":
+		if !permissions.CanCreate.Valid || !permissions.CanCreate.Bool {
+			return ctx.Status(fiber.StatusForbidden).JSON(fiber.Map{"message": "Not allowed to create resources"})
+		}
+	case "read":
+		if !permissions.CanRead.Valid || !permissions.CanRead.Bool {
+			return ctx.Status(fiber.StatusForbidden).JSON(fiber.Map{"message": "Not allowed to read resources"})
+		}
+	case "update":
+		if !permissions.CanUpdate.Valid || !permissions.CanUpdate.Bool {
+			return ctx.Status(fiber.StatusForbidden).JSON(fiber.Map{"message": "Not allowed to update resources"})
+		}
+	case "delete":
+		if !permissions.CanDelete.Valid || !permissions.CanDelete.Bool {
+			return ctx.Status(fiber.StatusForbidden).JSON(fiber.Map{"message": "Not allowed to delete resources"})
+		}
+	}
+
+	return ctx.Next()
+}

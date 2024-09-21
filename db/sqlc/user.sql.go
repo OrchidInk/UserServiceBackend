@@ -78,50 +78,6 @@ func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, e
 	return i, err
 }
 
-const findByAdminAdmin = `-- name: FindByAdminAdmin :many
-SELECT
-    "ID", "LastName", "FirstName", "UserName", "Email", "IsHashedPassword", "IsAdmin", "IsUser", "IsSuperAdmin", "IsActive", "Created_At"
-FROM
-    "User"
-WHERE
-    "IsAdmin" = TRUE
-`
-
-func (q *Queries) FindByAdminAdmin(ctx context.Context) ([]User, error) {
-	rows, err := q.db.QueryContext(ctx, findByAdminAdmin)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-	var items []User
-	for rows.Next() {
-		var i User
-		if err := rows.Scan(
-			&i.ID,
-			&i.LastName,
-			&i.FirstName,
-			&i.UserName,
-			&i.Email,
-			&i.IsHashedPassword,
-			&i.IsAdmin,
-			&i.IsUser,
-			&i.IsSuperAdmin,
-			&i.IsActive,
-			&i.CreatedAt,
-		); err != nil {
-			return nil, err
-		}
-		items = append(items, i)
-	}
-	if err := rows.Close(); err != nil {
-		return nil, err
-	}
-	if err := rows.Err(); err != nil {
-		return nil, err
-	}
-	return items, nil
-}
-
 const findByAdminId = `-- name: FindByAdminId :one
 SELECT
     "ID", "LastName", "FirstName", "UserName", "Email", "IsHashedPassword", "IsAdmin", "IsUser", "IsSuperAdmin", "IsActive", "Created_At"
@@ -326,4 +282,92 @@ func (q *Queries) FindByUserName(ctx context.Context, username string) (FindByUs
 		&i.IsUser_2,
 	)
 	return i, err
+}
+
+const getListAdmin = `-- name: GetListAdmin :many
+SELECT
+    "ID", "LastName", "FirstName", "UserName", "Email", "IsHashedPassword", "IsAdmin", "IsUser", "IsSuperAdmin", "IsActive", "Created_At"
+FROM
+    "User"
+WHERE
+    "IsAdmin" = TRUE
+`
+
+func (q *Queries) GetListAdmin(ctx context.Context) ([]User, error) {
+	rows, err := q.db.QueryContext(ctx, getListAdmin)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []User
+	for rows.Next() {
+		var i User
+		if err := rows.Scan(
+			&i.ID,
+			&i.LastName,
+			&i.FirstName,
+			&i.UserName,
+			&i.Email,
+			&i.IsHashedPassword,
+			&i.IsAdmin,
+			&i.IsUser,
+			&i.IsSuperAdmin,
+			&i.IsActive,
+			&i.CreatedAt,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const getListUser = `-- name: GetListUser :many
+SELECT  
+    "ID", "LastName", "FirstName", "UserName", "Email", "IsHashedPassword", "IsAdmin", "IsUser", "IsSuperAdmin", "IsActive", "Created_At"
+FROM
+    "User"
+WHERE
+    "IsUser" = TRUE
+`
+
+func (q *Queries) GetListUser(ctx context.Context) ([]User, error) {
+	rows, err := q.db.QueryContext(ctx, getListUser)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []User
+	for rows.Next() {
+		var i User
+		if err := rows.Scan(
+			&i.ID,
+			&i.LastName,
+			&i.FirstName,
+			&i.UserName,
+			&i.Email,
+			&i.IsHashedPassword,
+			&i.IsAdmin,
+			&i.IsUser,
+			&i.IsSuperAdmin,
+			&i.IsActive,
+			&i.CreatedAt,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
 }

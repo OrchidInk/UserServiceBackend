@@ -81,16 +81,15 @@ type ProductEn struct {
 	CategoryEnID  int32
 	PriceEn       string
 	StockQuantity int32
+	ImagesID      int32
 	CreatedAt     sql.NullTime
 	UpdatedAt     sql.NullTime
 }
 
 type ProductImage struct {
 	ImageID     int32
-	ProductMnID sql.NullInt32
-	ProductEnID sql.NullInt32
-	ImageURLEn  string
-	ImageURLMn  string
+	ImagePathEn string
+	ImagePathMn string
 }
 
 type ProductMn struct {
