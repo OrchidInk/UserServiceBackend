@@ -9,6 +9,16 @@ import (
 	"time"
 )
 
+type AdminPermission struct {
+	PermissionID int32
+	AdminID      sql.NullInt32
+	CanCreate    sql.NullBool
+	CanRead      sql.NullBool
+	CanUpdate    sql.NullBool
+	CanDelete    sql.NullBool
+	AssignedAt   sql.NullTime
+}
+
 type CategoryEn struct {
 	CategoryEnID   int32
 	CategoryNameEn string

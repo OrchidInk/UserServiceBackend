@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"log/slog"
+	"strconv"
 
 	"github.com/gofiber/fiber/v2"
 	db "orchid.admin.service/db/sqlc"
@@ -84,15 +85,15 @@ func (hd *Handlers) UpdateCategoryEn(ctx *fiber.Ctx) error {
 		CategoryNameEn: updateRequestEn.CategoryNameEn,
 		CategoryEnID:   categoryEN.CategoryEnID,
 	})
+	if err != nil {
+		slog.Error("unable to update category", slog.Any("Err", err))
+		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"err": err})
+	}
 
 	return ctx.Status(fiber.StatusOK).JSON(fiber.Map{"message": "successfully", "categoryEnId": updateCategoryEn.CategoryEnID})
 }
 
 func (hd *Handlers) UpdateCategoryMn(ctx *fiber.Ctx) error {
-	return nil
-}
-
-func (hd *Handlers) DeleteCategoryEn(ctx *fiber.Ctx) error {
 	queries, _, _ := hd.queries()
 
 	var updateRequestMn models.UpdateCategoryMn
@@ -120,8 +121,40 @@ func (hd *Handlers) DeleteCategoryEn(ctx *fiber.Ctx) error {
 	return ctx.Status(fiber.StatusOK).JSON(fiber.Map{"message": "successfully", "categoryMnId": categoryMn.CategoryMnID})
 }
 
+func (hd *Handlers) DeleteCategoryEn(ctx *fiber.Ctx) error {
+	queries, _, _ := hd.queries()
+	CategoryIDStr := ctx.Params("id")
+
+	categoryID, err := strconv.Atoi(CategoryIDStr)
+	if err != nil {
+		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"err": err.Error()})
+	}
+
+	err = queries.DeleteByIdCategoryEn(ctx.Context(), int32(categoryID))
+	if err != nil {
+		slog.Error("unable to delete category en", slog.Any("Err", "Err"))
+		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"err": "err"})
+	}
+
+	return ctx.Status(fiber.StatusOK).JSON(fiber.Map{"categoryEnId": categoryID, "message": "successfully deleted"})
+}
+
 func (hd *Handlers) DeleteCategoryMn(ctx *fiber.Ctx) error {
-	return nil
+	queries, _, _ := hd.queries()
+	CategoryIDStr := ctx.Params("id")
+
+	categoryID, err := strconv.Atoi(CategoryIDStr)
+	if err != nil {
+		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"err": err.Error()})
+	}
+
+	err = queries.DeleteFromCategoryMn(ctx.Context(), int32(categoryID))
+	if err != nil {
+		slog.Error("unable to delete category mn id", slog.Any("err", err))
+		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"err": err.Error()})
+	}
+
+	return ctx.Status(fiber.StatusOK).JSON(fiber.Map{"categoryMNID": categoryID, "message": "successfully deleted"})
 }
 
 func (hd *Handlers) GetListCategoryEn(ctx *fiber.Ctx) error {

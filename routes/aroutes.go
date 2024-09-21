@@ -16,6 +16,24 @@ func superAdminRoutes(app *fiber.App, hd *handlers.Handlers) {
 	user := api.Group("/register", hd.Authorize, hd.SuperAdminOnly)
 	user.Post("/admin", hd.RegisterAdmin, hd.SuperAdminOnly, hd.Authorize)
 	user.Post("/user", hd.RegisterUser, hd.SuperAdminOnly, hd.Authorize)
+
+	// category request
+	category := api.Group("/categoryEn", hd.Authorize, hd.SuperAdminLogin)
+	// create category request
+	category.Post("/create/mn", hd.CreateCategoryMn)
+	category.Post("/create/en", hd.CreateCategoryEn)
+
+	// update category request
+	category.Put("/en/:id", hd.UpdateCategoryEn)
+	category.Put("/mn/:id", hd.CreateCategoryMn)
+
+	// delete category request
+	category.Delete("/en/:id", hd.DeleteCategoryEn)
+	category.Delete("/mn/:id", hd.DeleteCategoryMn)
+
+	// Get category
+	category.Get("/list/en", hd.GetListCategoryEn)
+	category.Get("/list/mn", hd.GetListCategoryMn)
 }
 
 func adminRoutes(app *fiber.App, hd *handlers.Handlers) {
@@ -41,4 +59,9 @@ func userRoutes(app *fiber.App, hd *handlers.Handlers) {
 	userRegistery := api.Group("/registery", hd.Authorize)
 	userRegistery.Post("/info", hd.CreateUserInfo)
 	userRegistery.Put("/info/:user_id", hd.UpdateUserInfo)
+
+	// Category
+	category := api.Group("/category", hd.Authorize)
+	category.Get("/list/mn", hd.GetListCategoryMn)
+	category.Get("/list/en", hd.GetListCategoryEn)
 }
