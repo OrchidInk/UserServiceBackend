@@ -38,14 +38,15 @@ func (hd *Handlers) CreateAdminInfo(ctx *fiber.Ctx) error {
 	}
 
 	_, err = queries.CreateUserInfo(ctx.Context(), db.CreateUserInfoParams{
-		UserId:       adminID.ID,
-		LastName:     adminID.LastName,
-		FirstName:    adminID.FirstName,
-		Email:        adminID.Email,
-		BirthDate:    adminInfo.BirthDate,
-		PhoneNumber1: adminInfo.PhoneNumber1,
-		PhoneNumber2: adminInfo.PhoneNumber2,
-		Address1:     adminInfo.Address1,
+		UserId:        adminID.ID,
+		UserImagePath: adminInfo.UserImagePath,
+		LastName:      adminID.LastName,
+		FirstName:     adminID.FirstName,
+		Email:         adminID.Email,
+		BirthDate:     adminInfo.BirthDate,
+		PhoneNumber1:  adminInfo.PhoneNumber1,
+		PhoneNumber2:  adminInfo.PhoneNumber2,
+		Address1:      adminInfo.Address1,
 	})
 	if err != nil {
 		slog.Error("unable to create admin info", slog.Any("err", err))
@@ -178,3 +179,4 @@ func (hd *Handlers) UpdateUserInfo(ctx *fiber.Ctx) error {
 		"message": "User info updated successfully",
 	})
 }
+

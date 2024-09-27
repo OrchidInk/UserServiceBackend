@@ -14,6 +14,7 @@ const createUserInfo = `-- name: CreateUserInfo :one
 INSERT INTO
     "UserInfo" (
         "UserId",
+        "UserImagePath",
         "LastName",
         "FirstName",
         "Email",
@@ -24,31 +25,34 @@ INSERT INTO
     )
 VALUES
     (
-        $1 :: INT,
-        $2 :: VARCHAR(100),
-        $3 :: VARCHAR(100),
-        $4 :: VARCHAR(100),
-        $5 :: DATE,
-        $6 :: VARCHAR(12),
-        $7 :: VARCHAR(12),
-        $8 :: VARCHAR(150)
-    ) RETURNING "UserInfoId", "UserId", "LastName", "FirstName", "Email", "BirthDate", "PhoneNumber1", "PhoneNumber2", "Address1"
+        $1,
+        $2,
+        $3,
+        $4,
+        $5,
+        $6,
+        $7,
+        $8,
+        $9
+    ) RETURNING "UserInfoId", "UserId", "UserImagePath", "LastName", "FirstName", "Email", "BirthDate", "PhoneNumber1", "PhoneNumber2", "Address1"
 `
 
 type CreateUserInfoParams struct {
-	UserId       int32
-	LastName     string
-	FirstName    string
-	Email        string
-	BirthDate    time.Time
-	PhoneNumber1 string
-	PhoneNumber2 string
-	Address1     string
+	UserId        int32
+	UserImagePath string
+	LastName      string
+	FirstName     string
+	Email         string
+	BirthDate     time.Time
+	PhoneNumber1  string
+	PhoneNumber2  string
+	Address1      string
 }
 
 func (q *Queries) CreateUserInfo(ctx context.Context, arg CreateUserInfoParams) (UserInfo, error) {
 	row := q.db.QueryRowContext(ctx, createUserInfo,
 		arg.UserId,
+		arg.UserImagePath,
 		arg.LastName,
 		arg.FirstName,
 		arg.Email,
@@ -61,6 +65,7 @@ func (q *Queries) CreateUserInfo(ctx context.Context, arg CreateUserInfoParams) 
 	err := row.Scan(
 		&i.UserInfoId,
 		&i.UserId,
+		&i.UserImagePath,
 		&i.LastName,
 		&i.FirstName,
 		&i.Email,
@@ -73,10 +78,9 @@ func (q *Queries) CreateUserInfo(ctx context.Context, arg CreateUserInfoParams) 
 }
 
 const deleteUserInfo = `-- name: DeleteUserInfo :exec
-DELETE FROM
-    "UserInfo"
+DELETE FROM "UserInfo"
 WHERE
-    "UserId" = $1 :: INT
+    "UserId" = $1
 `
 
 func (q *Queries) DeleteUserInfo(ctx context.Context, userid int32) error {
@@ -86,12 +90,13 @@ func (q *Queries) DeleteUserInfo(ctx context.Context, userid int32) error {
 
 const findUserInfoByEmail = `-- name: FindUserInfoByEmail :one
 SELECT
-    "UserInfoId", "UserId", "LastName", "FirstName", "Email", "BirthDate", "PhoneNumber1", "PhoneNumber2", "Address1"
+    "UserInfoId", "UserId", "UserImagePath", "LastName", "FirstName", "Email", "BirthDate", "PhoneNumber1", "PhoneNumber2", "Address1"
 FROM
     "UserInfo"
 WHERE
-    "Email" = $1 :: VARCHAR(100)
-LIMIT 1
+    "Email" = $1
+LIMIT
+    1
 `
 
 func (q *Queries) FindUserInfoByEmail(ctx context.Context, email string) (UserInfo, error) {
@@ -100,6 +105,7 @@ func (q *Queries) FindUserInfoByEmail(ctx context.Context, email string) (UserIn
 	err := row.Scan(
 		&i.UserInfoId,
 		&i.UserId,
+		&i.UserImagePath,
 		&i.LastName,
 		&i.FirstName,
 		&i.Email,
@@ -113,12 +119,13 @@ func (q *Queries) FindUserInfoByEmail(ctx context.Context, email string) (UserIn
 
 const findUserInfoByUserId = `-- name: FindUserInfoByUserId :one
 SELECT
-    "UserInfoId", "UserId", "LastName", "FirstName", "Email", "BirthDate", "PhoneNumber1", "PhoneNumber2", "Address1"
+    "UserInfoId", "UserId", "UserImagePath", "LastName", "FirstName", "Email", "BirthDate", "PhoneNumber1", "PhoneNumber2", "Address1"
 FROM
     "UserInfo"
 WHERE
-    "UserId" = $1 :: INT
-LIMIT 1
+    "UserId" = $1
+LIMIT
+    1
 `
 
 func (q *Queries) FindUserInfoByUserId(ctx context.Context, userid int32) (UserInfo, error) {
@@ -127,6 +134,38 @@ func (q *Queries) FindUserInfoByUserId(ctx context.Context, userid int32) (UserI
 	err := row.Scan(
 		&i.UserInfoId,
 		&i.UserId,
+		&i.UserImagePath,
+		&i.LastName,
+		&i.FirstName,
+		&i.Email,
+		&i.BirthDate,
+		&i.PhoneNumber1,
+		&i.PhoneNumber2,
+		&i.Address1,
+	)
+	return i, err
+}
+
+const updateByUserImagePath = `-- name: UpdateByUserImagePath :one
+UPDATE "UserInfo"
+SET
+    "UserImagePath" = $1
+WHERE
+    "UserId" = $2 RETURNING "UserInfoId", "UserId", "UserImagePath", "LastName", "FirstName", "Email", "BirthDate", "PhoneNumber1", "PhoneNumber2", "Address1"
+`
+
+type UpdateByUserImagePathParams struct {
+	UserImagePath string
+	UserId        int32
+}
+
+func (q *Queries) UpdateByUserImagePath(ctx context.Context, arg UpdateByUserImagePathParams) (UserInfo, error) {
+	row := q.db.QueryRowContext(ctx, updateByUserImagePath, arg.UserImagePath, arg.UserId)
+	var i UserInfo
+	err := row.Scan(
+		&i.UserInfoId,
+		&i.UserId,
+		&i.UserImagePath,
 		&i.LastName,
 		&i.FirstName,
 		&i.Email,
@@ -139,18 +178,17 @@ func (q *Queries) FindUserInfoByUserId(ctx context.Context, userid int32) (UserI
 }
 
 const updateUserInfo = `-- name: UpdateUserInfo :exec
-UPDATE
-    "UserInfo"
+UPDATE "UserInfo"
 SET
-    "LastName" = $1 :: VARCHAR(100),
-    "FirstName" = $2 :: VARCHAR(100),
-    "Email" = $3 :: VARCHAR(100),
-    "BirthDate" = $4 :: DATE,
-    "PhoneNumber1" = $5 :: VARCHAR(12),
-    "PhoneNumber2" = $6 :: VARCHAR(12),
-    "Address1" = $7 :: VARCHAR(150)
+    "LastName" = $1,
+    "FirstName" = $2,
+    "Email" = $3,
+    "BirthDate" = $4,
+    "PhoneNumber1" = $5,
+    "PhoneNumber2" = $6,
+    "Address1" = $7
 WHERE
-    "UserId" = $8 :: INT
+    "UserId" = $8
 `
 
 type UpdateUserInfoParams struct {

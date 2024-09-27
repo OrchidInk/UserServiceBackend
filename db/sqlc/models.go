@@ -76,14 +76,26 @@ type OrderItem struct {
 	PriceAtOrder    string
 }
 
-type ProductEn struct {
-	ProductEnID   int32
-	CategoryEnID  int32
-	PriceEn       string
-	StockQuantity int32
-	ImagesID      int32
+type Payment struct {
+	PaymentID     int32
+	OrderID       int32
+	UserID        int32
+	PaymentMethod string
+	PaymentStatus string
+	Amount        string
 	CreatedAt     sql.NullTime
 	UpdatedAt     sql.NullTime
+}
+
+type ProductEn struct {
+	ProductEnID     int32
+	ImageID         int32
+	SubCategoryIDEn int32
+	PriceEn         string
+	StockQuantity   int32
+	ImagesPathEn    string
+	CreatedAt       sql.NullTime
+	UpdatedAt       sql.NullTime
 }
 
 type ProductImage struct {
@@ -93,12 +105,14 @@ type ProductImage struct {
 }
 
 type ProductMn struct {
-	ProductMnID   int32
-	CategoryMnID  int32
-	PriceMn       string
-	StockQuantity int32
-	CreatedAt     sql.NullTime
-	UpdatedAt     sql.NullTime
+	ProductMnID     int32
+	ImageID         int32
+	SubCategoryIDMn int32
+	PriceMn         string
+	StockQuantity   int32
+	ImagesPathMn    string
+	CreatedAt       sql.NullTime
+	UpdatedAt       sql.NullTime
 }
 
 type ProductReview struct {
@@ -127,6 +141,18 @@ type ProductTranslationsMn struct {
 	ProductDescription     sql.NullString
 }
 
+type SubCategoryEn struct {
+	SubCategoryIDEn   int32
+	SubCategoryNameEn string
+	CategoryEnID      int32
+}
+
+type SubCategoryMn struct {
+	SubCategoryIDMn   int32
+	SubCategoryNameMn string
+	CategoryMnID      int32
+}
+
 type User struct {
 	ID               int32
 	LastName         string
@@ -142,13 +168,14 @@ type User struct {
 }
 
 type UserInfo struct {
-	UserInfoId   int32
-	UserId       int32
-	LastName     string
-	FirstName    string
-	Email        string
-	BirthDate    time.Time
-	PhoneNumber1 string
-	PhoneNumber2 string
-	Address1     string
+	UserInfoId    int32
+	UserId        int32
+	UserImagePath string
+	LastName      string
+	FirstName     string
+	Email         string
+	BirthDate     time.Time
+	PhoneNumber1  string
+	PhoneNumber2  string
+	Address1      string
 }

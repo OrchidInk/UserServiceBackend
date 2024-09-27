@@ -2,9 +2,7 @@
 INSERT INTO
     "categoryEn" ("CategoryNameEn")
 VALUES
-    (
-        sqlc.arg('CategoryNameEn') :: VARCHAR(100)
-    ) RETURNING *;
+    (sqlc.arg ('CategoryNameEn')) RETURNING *;
 
 -- name: GetListByAllCategoryEn :many
 SELECT
@@ -18,13 +16,13 @@ UPDATE
 SET
     "CategoryNameEn" = sqlc.arg('CategoryNameEn') :: VARCHAR(100)
 WHERE
-    "CategoryEnID" = sqlc.arg('CategoryEnID') RETURNING *;
+    "CategoryEnID" = sqlc.arg('CategoryEnID') :: INT RETURNING *;
 
--- name: DeleteByIdCategoryEn :exec
+-- name: DeleteCategoryById :exec
 DELETE FROM
     "categoryEn"
 WHERE
-    "CategoryEnID" = sqlc.arg('CategoryEnID');
+    "CategoryEnID" = sqlc.arg('CategoryEnID') :: INT;
 
 -- name: FindByCategoryEnId :one
 SELECT
@@ -32,7 +30,7 @@ SELECT
 FROM
     "categoryEn"
 WHERE
-    "CategoryEnID" = sqlc.arg('CategoryEnID')
+    "CategoryEnID" = sqlc.arg ('CategoryEnID')
 LIMIT
     1;
 
@@ -42,7 +40,7 @@ SELECT
 FROM
     "categoryEn"
 WHERE
-    "CategoryNameEn" = sqlc.arg('CategoryNameEn') :: VARCHAR(100)
+    "CategoryNameEn" = sqlc.arg ('CategoryNameEn')
 LIMIT
     1;
 
@@ -52,6 +50,6 @@ SELECT
 FROM
     "categoryEn"
 WHERE
-    "CategoryEnID" = sqlc.arg('CategoryEnID')
+    "CategoryEnID" = sqlc.arg ('CategoryEnID')
 LIMIT
     1;

@@ -2,6 +2,7 @@
 INSERT INTO
     "UserInfo" (
         "UserId",
+        "UserImagePath",
         "LastName",
         "FirstName",
         "Email",
@@ -12,14 +13,15 @@ INSERT INTO
     )
 VALUES
     (
-        sqlc.arg('UserId') :: INT,
-        sqlc.arg('LastName') :: VARCHAR(100),
-        sqlc.arg('FirstName') :: VARCHAR(100),
-        sqlc.arg('Email') :: VARCHAR(100),
-        sqlc.arg('BirthDate') :: DATE,
-        sqlc.arg('PhoneNumber1') :: VARCHAR(12),
-        sqlc.arg('PhoneNumber2') :: VARCHAR(12),
-        sqlc.arg('Address1') :: VARCHAR(150)
+        sqlc.arg ('UserId'),
+        sqlc.arg ('UserImagePath'),
+        sqlc.arg ('LastName'),
+        sqlc.arg ('FirstName'),
+        sqlc.arg ('Email'),
+        sqlc.arg ('BirthDate'),
+        sqlc.arg ('PhoneNumber1'),
+        sqlc.arg ('PhoneNumber2'),
+        sqlc.arg ('Address1')
     ) RETURNING *;
 
 -- name: FindUserInfoByUserId :one
@@ -28,9 +30,9 @@ SELECT
 FROM
     "UserInfo"
 WHERE
-    "UserId" = sqlc.arg('UserId') :: INT
-LIMIT 1;
-
+    "UserId" = sqlc.arg ('UserId')
+LIMIT
+    1;
 
 -- name: FindUserInfoByEmail :one
 SELECT
@@ -38,26 +40,31 @@ SELECT
 FROM
     "UserInfo"
 WHERE
-    "Email" = sqlc.arg('Email') :: VARCHAR(100)
-LIMIT 1;
-
+    "Email" = sqlc.arg ('Email')
+LIMIT
+    1;
 
 -- name: UpdateUserInfo :exec
-UPDATE
-    "UserInfo"
+UPDATE "UserInfo"
 SET
-    "LastName" = sqlc.arg('LastName') :: VARCHAR(100),
-    "FirstName" = sqlc.arg('FirstName') :: VARCHAR(100),
-    "Email" = sqlc.arg('Email') :: VARCHAR(100),
-    "BirthDate" = sqlc.arg('BirthDate') :: DATE,
-    "PhoneNumber1" = sqlc.arg('PhoneNumber1') :: VARCHAR(12),
-    "PhoneNumber2" = sqlc.arg('PhoneNumber2') :: VARCHAR(12),
-    "Address1" = sqlc.arg('Address1') :: VARCHAR(150)
+    "LastName" = sqlc.arg ('LastName'),
+    "FirstName" = sqlc.arg ('FirstName'),
+    "Email" = sqlc.arg ('Email'),
+    "BirthDate" = sqlc.arg ('BirthDate'),
+    "PhoneNumber1" = sqlc.arg ('PhoneNumber1'),
+    "PhoneNumber2" = sqlc.arg ('PhoneNumber2'),
+    "Address1" = sqlc.arg ('Address1')
 WHERE
-    "UserId" = sqlc.arg('UserId') :: INT;
+    "UserId" = sqlc.arg ('UserId');
 
 -- name: DeleteUserInfo :exec
-DELETE FROM
-    "UserInfo"
+DELETE FROM "UserInfo"
 WHERE
-    "UserId" = sqlc.arg('UserId') :: INT;
+    "UserId" = sqlc.arg ('UserId');
+
+-- name: UpdateByUserImagePath :one
+UPDATE "UserInfo"
+SET
+    "UserImagePath" = sqlc.arg ('UserImagePath')
+WHERE
+    "UserId" = sqlc.arg ('UserId') RETURNING *;

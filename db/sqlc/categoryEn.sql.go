@@ -13,9 +13,7 @@ const createCategoryEn = `-- name: CreateCategoryEn :one
 INSERT INTO
     "categoryEn" ("CategoryNameEn")
 VALUES
-    (
-        $1 :: VARCHAR(100)
-    ) RETURNING "CategoryEnID", "CategoryNameEn"
+    ($1) RETURNING "CategoryEnID", "CategoryNameEn"
 `
 
 func (q *Queries) CreateCategoryEn(ctx context.Context, categorynameen string) (CategoryEn, error) {
@@ -25,15 +23,15 @@ func (q *Queries) CreateCategoryEn(ctx context.Context, categorynameen string) (
 	return i, err
 }
 
-const deleteByIdCategoryEn = `-- name: DeleteByIdCategoryEn :exec
+const deleteCategoryById = `-- name: DeleteCategoryById :exec
 DELETE FROM
     "categoryEn"
 WHERE
-    "CategoryEnID" = $1
+    "CategoryEnID" = $1 :: INT
 `
 
-func (q *Queries) DeleteByIdCategoryEn(ctx context.Context, categoryenid int32) error {
-	_, err := q.db.ExecContext(ctx, deleteByIdCategoryEn, categoryenid)
+func (q *Queries) DeleteCategoryById(ctx context.Context, categoryenid int32) error {
+	_, err := q.db.ExecContext(ctx, deleteCategoryById, categoryenid)
 	return err
 }
 
@@ -79,7 +77,7 @@ SELECT
 FROM
     "categoryEn"
 WHERE
-    "CategoryNameEn" = $1 :: VARCHAR(100)
+    "CategoryNameEn" = $1
 LIMIT
     1
 `
@@ -127,7 +125,7 @@ UPDATE
 SET
     "CategoryNameEn" = $1 :: VARCHAR(100)
 WHERE
-    "CategoryEnID" = $2 RETURNING "CategoryEnID", "CategoryNameEn"
+    "CategoryEnID" = $2 :: INT RETURNING "CategoryEnID", "CategoryNameEn"
 `
 
 type UpdateCategoryEnParams struct {

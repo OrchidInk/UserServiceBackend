@@ -3,30 +3,30 @@ INSERT INTO
     "categoryMn" ("CategoryNameMn")
 VALUES
     (
-        "CategoryNameMn" = sqlc.arg('CategoryNameMn') :: VARCHAR(100)
+        sqlc.arg('CategoryNameMn') :: VARCHAR(100)
     ) RETURNING *;
 
--- name: GetListAllCategoryMn :many
-SELECT
-    *
-FROM
-    "categoryMn";
-
--- name: UpdateByCategoryMn :exec
+-- name: UpdateCategoryMn :one
 UPDATE
     "categoryMn"
 SET
     "CategoryNameMn" = sqlc.arg('CategoryNameMn') :: VARCHAR(100)
 WHERE
-    "CategoryMnID" = sqlc.arg('CategoryMnID');
+    "CategoryMnID" = sqlc.arg('CategoryMnID') :: INT RETURNING *;
 
--- name: DeleteFromCategoryMn :exec
+-- name: GetListByAllCategoryMn :many
+SELECT
+    *
+FROM
+    "categoryMn";
+
+-- name: DeleteCategoryByMnId :exec
 DELETE FROM
     "categoryMn"
 WHERE
-    "CategoryMnID" = sqlc.arg('CategoryMnID');
+    "CategoryMnID" = sqlc.arg('CategoryMnID') :: INT;
 
--- name: GetByIdCategoryMn :one
+-- name: FindByCategoryMnId :one
 SELECT
     *
 FROM
@@ -36,22 +36,22 @@ WHERE
 LIMIT
     1;
 
--- name: FindByNameCategoryMn :one
+-- name: FindByNameMnCategoryMn :one
 SELECT
     *
 FROM
     "categoryMn"
 WHERE
-    "CategoryNameMn" = sqlc.arg('CategoryNameMn')
+    "CategoryNameMn" = sqlc.arg('CategoryNameMn') :: VARCHAR(100)
 LIMIT
     1;
 
--- name: FindByIdCategoryMn :one
+-- name: FindByCategoryMn :one 
 SELECT
     *
 FROM
     "categoryMn"
 WHERE
-    "CategoryMnID" - sqlc.arg('CategoryMnID')
+    "CategoryMnID" = sqlc.arg('CategoryMnID')
 LIMIT
     1;

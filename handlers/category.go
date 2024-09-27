@@ -1,190 +1,188 @@
 package handlers
 
-import (
-	"log/slog"
-	"strconv"
+// import (
+// 	"log/slog"
+// 	"strconv"
 
-	"github.com/gofiber/fiber/v2"
-	db "orchid.admin.service/db/sqlc"
-	"orchid.admin.service/models"
-)
+// 	"github.com/gofiber/fiber/v2"
+// 	db "orchid.admin.service/db/sqlc"
+// 	"orchid.admin.service/models"
+// )
 
-func (hd *Handlers) CreateCategoryEn(ctx *fiber.Ctx) error {
-	queries, _, _ := hd.queries()
+// func (hd *Handlers) CreateCategoryEn(ctx *fiber.Ctx) error {
+// 	queries, _, _ := hd.queries()
 
-	var createCategoryEn models.CreateCategoryEn
-	if err := ctx.BodyParser(&createCategoryEn); err != nil {
-		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"message": "invalid this request"})
-	}
+// 	var createCategoryEn models.CreateCategoryEn
+// 	if err := ctx.BodyParser(&createCategoryEn); err != nil {
+// 		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"message": "invalid request"})
+// 	}
 
-	if err := validate.Struct(createCategoryEn); err != nil {
-		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"message": "cannot be sent null"})
-	}
+// 	if err := validate.Struct(createCategoryEn); err != nil {
+// 		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"message": "validation failed"})
+// 	}
 
-	_, err := queries.FindByNameCategoryEn(ctx.Context(), createCategoryEn.CategoryNameEn)
-	if err != nil {
-		slog.Error("already created category name ", slog.Any("err", err))
-		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"message": "already created this category"})
-	}
+// 	_, err := queries.FindByNameCategoryEn(ctx.Context(), createCategoryEn.CategoryNameEn)
+// 	if err == nil {
+// 		return ctx.Status(fiber.StatusConflict).JSON(fiber.Map{"message": "category already exists"})
+// 	}
 
-	CreateCategoryEn, err := queries.CreateCategoryEn(ctx.Context(), createCategoryEn.CategoryNameEn)
-	if err != nil {
-		slog.Error("unable to create category en", slog.Any("err", err))
-		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"message": "unable to create"})
-	}
+// 	category, err := queries.CreateCategoryEn(ctx.Context(), db.CreateCategoryEnParams{
+// 		CategoryNameEn:   createCategoryEn.CategoryNameEn,
+// 		ParentCategoryID: createCategoryEn.ParentCategoryID,
+// 	})
+// 	if err != nil {
+// 		slog.Error("unable to create category en", slog.Any("err", err))
+// 		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"message": "unable to create category"})
+// 	}
 
-	return ctx.Status(fiber.StatusOK).JSON(fiber.Map{"message": "categoryEn created", "CategoryId": CreateCategoryEn.CategoryEnID})
-}
+// 	return ctx.Status(fiber.StatusOK).JSON(fiber.Map{"message": "category created", "CategoryId": category.CategoryEnID})
+// }
 
-func (hd *Handlers) CreateCategoryMn(ctx *fiber.Ctx) error {
-	queries, _, _ := hd.queries()
+// func (hd *Handlers) CreateCategoryMn(ctx *fiber.Ctx) error {
+// 	queries, _, _ := hd.queries()
 
-	var createCategoryMn models.CreateCategoryMn
-	if err := ctx.BodyParser(&createCategoryMn); err != nil {
-		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"message": "invalid request"})
-	}
+// 	var createCategoryMn models.CreateCategoryMn
+// 	if err := ctx.BodyParser(&createCategoryMn); err != nil {
+// 		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"message": "invalid request"})
+// 	}
 
-	if err := validate.Struct(createCategoryMn); err != nil {
-		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"message": "cannot be null data sent"})
-	}
+// 	if err := validate.Struct(createCategoryMn); err != nil {
+// 		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"message": "validation failed"})
+// 	}
 
-	_, err := queries.FindByNameCategoryMn(ctx.Context(), createCategoryMn.CategoryNameMn)
-	if err != nil {
-		slog.Error("already created this category Mn", slog.Any("Err", err))
-		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"message": "Already created category"})
-	}
+// 	_, err := queries.FindByNameMnCategoryMn(ctx.Context(), createCategoryMn.CategoryNameMn)
+// 	if err == nil {
+// 		return ctx.Status(fiber.StatusConflict).JSON(fiber.Map{"message": "category already exists"})
+// 	}
 
-	CreateCategoryMn, err := queries.CreateCategoryMn(ctx.Context(), createCategoryMn.CategoryNameMn)
-	if err != nil {
-		slog.Error("unable to create this category", slog.Any("err", err))
-		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"message": "Err"})
-	}
+// 	category, err := queries.CreateCategoryMn(ctx.Context(), db.CreateCategoryMnParams{
+// 		CategoryNameMn:   createCategoryMn.CategoryNameMn,
+// 		ParentCategoryID: createCategoryMn.ParentCategoryID,
+// 	})
+// 	if err != nil {
+// 		slog.Error("unable to create category mn", slog.Any("err", err))
+// 		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"message": "unable to create category"})
+// 	}
 
-	return ctx.Status(fiber.StatusOK).JSON(fiber.Map{"message": "created categoryMn", "categoryMNId": CreateCategoryMn.CategoryMnID})
-}
+// 	return ctx.Status(fiber.StatusOK).JSON(fiber.Map{"message": "category created", "CategoryId": category.CategoryMnID})
+// }
 
-func (hd *Handlers) UpdateCategoryEn(ctx *fiber.Ctx) error {
-	queries, _, _ := hd.queries()
+// func (hd *Handlers) UpdateCategoryEn(ctx *fiber.Ctx) error {
+// 	queries, _, _ := hd.queries()
 
-	var updateRequestEn models.UpdateCategoryEn
-	if err := ctx.BodyParser(&updateRequestEn); err != nil {
-		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"err": "invalid this request"})
-	}
+// 	var updateRequestEn models.UpdateCategoryEn
+// 	if err := ctx.BodyParser(&updateRequestEn); err != nil {
+// 		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"message": "invalid request"})
+// 	}
 
-	if err := validate.Struct(updateRequestEn); err != nil {
-		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"err": "cannot sent nil body"})
-	}
+// 	if err := validate.Struct(updateRequestEn); err != nil {
+// 		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"message": "validation failed"})
+// 	}
 
-	categoryEN, err := queries.FindByNameCategoryEn(ctx.Context(), updateRequestEn.CategoryNameEn)
-	if err != nil {
-		slog.Error("unable to find category en", slog.Any("Err", err))
-		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"err": err})
-	}
+// 	categoryEn, err := queries.FindByCategoryEnId(ctx.Context(), updateRequestEn.CategoryEnID)
+// 	if err != nil {
+// 		return ctx.Status(fiber.StatusNotFound).JSON(fiber.Map{"message": "category not found"})
+// 	}
 
-	updateCategoryEn, err := queries.UpdateCategoryEn(ctx.Context(), db.UpdateCategoryEnParams{
-		CategoryNameEn: updateRequestEn.CategoryNameEn,
-		CategoryEnID:   categoryEN.CategoryEnID,
-	})
-	if err != nil {
-		slog.Error("unable to update category", slog.Any("Err", err))
-		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"err": err})
-	}
+// 	updatedCategory, err := queries.UpdateCategoryEn(ctx.Context(), db.UpdateCategoryEnParams{
+// 		CategoryNameEn:   updateRequestEn.CategoryNameEn,
+// 		ParentCategoryID: updateRequestEn.ParentCategoryID,
+// 		CategoryEnID:     categoryEn.CategoryEnID,
+// 	})
+// 	if err != nil {
+// 		slog.Error("unable to update category en", slog.Any("err", err))
+// 		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"message": "unable to update category"})
+// 	}
 
-	return ctx.Status(fiber.StatusOK).JSON(fiber.Map{"message": "successfully", "categoryEnId": updateCategoryEn.CategoryEnID})
-}
+// 	return ctx.Status(fiber.StatusOK).JSON(fiber.Map{"message": "category updated", "CategoryId": updatedCategory.CategoryEnID})
+// }
 
-func (hd *Handlers) UpdateCategoryMn(ctx *fiber.Ctx) error {
-	queries, _, _ := hd.queries()
+// func (hd *Handlers) UpdateCategoryMn(ctx *fiber.Ctx) error {
+// 	queries, _, _ := hd.queries()
 
-	var updateRequestMn models.UpdateCategoryMn
-	if err := ctx.BodyParser(&updateRequestMn); err != nil {
-		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"message": "invalid request"})
-	}
+// 	var updateRequestMn models.UpdateCategoryMn
+// 	if err := ctx.BodyParser(&updateRequestMn); err != nil {
+// 		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"message": "invalid request"})
+// 	}
 
-	if err := validate.Struct(updateRequestMn); err != nil {
-		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"message": "err"})
-	}
+// 	if err := validate.Struct(updateRequestMn); err != nil {
+// 		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"message": "validation failed"})
+// 	}
 
-	categoryMn, err := queries.FindByNameCategoryMn(ctx.Context(), updateRequestMn.CategoryNameMn)
-	if err != nil {
-		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"message": "err"})
-	}
+// 	categoryMn, err := queries.FindByCategoryMnId(ctx.Context(), updateRequestMn.CategoryMnID)
+// 	if err != nil {
+// 		return ctx.Status(fiber.StatusNotFound).JSON(fiber.Map{"message": "category not found"})
+// 	}
 
-	err = queries.UpdateByCategoryMn(ctx.Context(), db.UpdateByCategoryMnParams{
-		CategoryNameMn: updateRequestMn.CategoryNameMn,
-		CategoryMnID:   categoryMn.CategoryMnID,
-	})
-	if err != nil {
-		slog.Error("unable to update categoryMN", slog.Any("Err", err))
-	}
+// 	updatedCategory, err := queries.UpdateCategoryMn(ctx.Context(), db.UpdateCategoryMnParams{
+// 		CategoryNameMn:   updateRequestMn.CategoryNameMn,
+// 		ParentCategoryID: updateRequestMn.ParentCategoryID,
+// 		CategoryMnID:     categoryMn.CategoryMnID,
+// 	})
+// 	if err != nil {
+// 		slog.Error("unable to update category mn", slog.Any("err", err))
+// 		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"message": "unable to update category"})
+// 	}
 
-	return ctx.Status(fiber.StatusOK).JSON(fiber.Map{"message": "successfully", "categoryMnId": categoryMn.CategoryMnID})
-}
+// 	return ctx.Status(fiber.StatusOK).JSON(fiber.Map{"message": "category updated", "CategoryId": updatedCategory.CategoryMnID})
+// }
 
-func (hd *Handlers) DeleteCategoryEn(ctx *fiber.Ctx) error {
-	queries, _, _ := hd.queries()
-	CategoryIDStr := ctx.Params("id")
+// func (hd *Handlers) DeleteCategoryEn(ctx *fiber.Ctx) error {
+// 	queries, _, _ := hd.queries()
+// 	categoryIDStr := ctx.Params("id")
 
-	categoryID, err := strconv.Atoi(CategoryIDStr)
-	if err != nil {
-		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"err": err.Error()})
-	}
+// 	categoryID, err := strconv.Atoi(categoryIDStr)
+// 	if err != nil {
+// 		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"message": "invalid category ID"})
+// 	}
 
-	err = queries.DeleteByIdCategoryEn(ctx.Context(), int32(categoryID))
-	if err != nil {
-		slog.Error("unable to delete category en", slog.Any("Err", "Err"))
-		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"err": "err"})
-	}
+// 	err = queries.DeleteCategoryById(ctx.Context(), int32(categoryID))
+// 	if err != nil {
+// 		slog.Error("unable to delete category en", slog.Any("err", err))
+// 		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"message": "unable to delete category"})
+// 	}
 
-	return ctx.Status(fiber.StatusOK).JSON(fiber.Map{"categoryEnId": categoryID, "message": "successfully deleted"})
-}
+// 	return ctx.Status(fiber.StatusOK).JSON(fiber.Map{"CategoryId": categoryID, "message": "category deleted"})
+// }
 
-func (hd *Handlers) DeleteCategoryMn(ctx *fiber.Ctx) error {
-	queries, _, _ := hd.queries()
-	CategoryIDStr := ctx.Params("id")
+// func (hd *Handlers) DeleteCategoryMn(ctx *fiber.Ctx) error {
+// 	queries, _, _ := hd.queries()
+// 	categoryIDStr := ctx.Params("id")
 
-	categoryID, err := strconv.Atoi(CategoryIDStr)
-	if err != nil {
-		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"err": err.Error()})
-	}
+// 	categoryID, err := strconv.Atoi(categoryIDStr)
+// 	if err != nil {
+// 		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"message": "invalid category ID"})
+// 	}
 
-	err = queries.DeleteFromCategoryMn(ctx.Context(), int32(categoryID))
-	if err != nil {
-		slog.Error("unable to delete category mn id", slog.Any("err", err))
-		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"err": err.Error()})
-	}
+// 	err = queries.DeleteCategoryByMnId(ctx.Context(), int32(categoryID))
+// 	if err != nil {
+// 		slog.Error("unable to delete category mn", slog.Any("err", err))
+// 		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"message": "unable to delete category"})
+// 	}
 
-	return ctx.Status(fiber.StatusOK).JSON(fiber.Map{"categoryMNID": categoryID, "message": "successfully deleted"})
-}
+// 	return ctx.Status(fiber.StatusOK).JSON(fiber.Map{"CategoryId": categoryID, "message": "category deleted"})
+// }
 
-func (hd *Handlers) GetListCategoryEn(ctx *fiber.Ctx) error {
-	queries, _, _ := hd.queries()
+// func (hd *Handlers) GetListCategoryEn(ctx *fiber.Ctx) error {
+// 	queries, _, _ := hd.queries()
 
-	CategoryEn, err := queries.GetListByAllCategoryEn(ctx.Context())
-	if err != nil {
-		slog.Error("unable to get list", slog.Any("Err", err))
-		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"err": err})
-	}
+// 	categories, err := queries.GetListByAllCategoryEn(ctx.Context())
+// 	if err != nil {
+// 		slog.Error("unable to get categories en", slog.Any("err", err))
+// 		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"message": "unable to fetch categories"})
+// 	}
 
-	return ctx.JSON(CategoryEn)
-}
+// 	return ctx.Status(fiber.StatusOK).JSON(categories)
+// }
 
-func (hd *Handlers) GetListCategoryMn(ctx *fiber.Ctx) error {
-	queries, _, _ := hd.queries()
+// func (hd *Handlers) GetListCategoryMn(ctx *fiber.Ctx) error {
+// 	queries, _, _ := hd.queries()
 
-	CategoryMn, err := queries.GetListAllCategoryMn(ctx.Context())
-	if err != nil {
-		slog.Error("unable to get list", slog.Any("err", err))
-		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"message": "err"})
-	}
+// 	categories, err := queries.GetListByAllCategoryMn(ctx.Context())
+// 	if err != nil {
+// 		slog.Error("unable to get categories mn", slog.Any("err", err))
+// 		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"message": "unable to fetch categories"})
+// 	}
 
-	return ctx.JSON(CategoryMn)
-}
-
-func (hd *Handlers) FindByIdCategoryEn(ctx *fiber.Ctx) error {
-	return nil
-}
-
-func (hd *Handlers) FindByIdCategoryMn(ctx *fiber.Ctx) error {
-	return nil
-}
+// 	return ctx.Status(fiber.StatusOK).JSON(categories)
+// }

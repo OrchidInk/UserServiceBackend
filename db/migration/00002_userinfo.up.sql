@@ -5,6 +5,7 @@ CREATE TABLE
     "UserInfo" (
         "UserInfoId" SERIAL NOT NULL,
         "UserId" int DEFAULT (0) NOT NULL,
+        "UserImagePath" TEXT NOT NULL DEFAULT '',
         "LastName" VARCHAR(100) NOT NULL,
         "FirstName" VARCHAR(100) NOT NULL,
         "Email" VARCHAR(100) NOT NULL,
