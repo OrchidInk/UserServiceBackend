@@ -55,3 +55,17 @@ WHERE
     "CategoryMnID" = sqlc.arg('CategoryMnID')
 LIMIT
     1;
+
+
+-- name: GetCategoriesWithSubCategoriesMn :many
+SELECT
+    c."CategoryMnID",
+    c."CategoryNameMn",
+    sc."subCategoryIDMn",
+    sc."subCategoryNameMn"
+FROM
+    "categoryMn" c
+LEFT JOIN
+    "subCategoryMn" sc ON c."CategoryMnID" = sc."CategoryMnID"
+ORDER BY
+    c."CategoryMnID";

@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"log/slog"
+	"strconv"
 
 	"github.com/gofiber/fiber/v2"
 	db "orchid.admin.service/db/sqlc"
@@ -106,4 +107,47 @@ func (hd *Handlers) UpdateSubCategoryMn(ctx *fiber.Ctx) error {
 	}
 
 	return ctx.Status(fiber.StatusOK).JSON(fiber.Map{"message": "successfully", "subCategoryName": updateSubCategory.SubCategoryNameMn, "subCategoryId": updateSubCategory.SubCategoryIDMn})
+}
+
+func (hd *Handlers) DeleteSubCategoryEn(ctx *fiber.Ctx) error {
+	queries, _, _ := hd.queries()
+	SubCategoryIDStr := ctx.Params("id")
+	SubCategoryId, err := strconv.Atoi(SubCategoryIDStr)
+	if err != nil {
+		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"err": "invalid category ID"})
+	}
+
+	_, err = queries.FindBySubCategoryIDEn(ctx.Context(), int32(SubCategoryId))
+	if err != nil {
+		return ctx.Status(fiber.StatusNotFound).JSON(fiber.Map{"message": "Category not found"})
+	}
+
+	err = queries.DeleteSubCategoryEn(ctx.Context(), int32(SubCategoryId))
+	if err != nil {
+		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"err": err})
+	}
+
+	return ctx.Status(fiber.StatusOK).JSON(fiber.Map{"message": "successfully deleted subcategory"})
+}
+
+func (hd *Handlers) DeleteSubCategoryMn(ctx *fiber.Ctx) error {
+	queries, _, _ := hd.queries()
+
+	SubCategoryIDStr := ctx.Params("id")
+	SubCategoryID, err := strconv.Atoi(SubCategoryIDStr)
+	if err != nil {
+		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"err": "Category not found"})
+	}
+
+	_, err = queries.FindBySubCategoryID(ctx.Context(), int32(SubCategoryID))
+	if err != nil {
+		return ctx.Status(fiber.StatusNotFound).JSON(fiber.Map{"err": err})
+	}
+
+	err = queries.DeleteBySubCategoryMn(ctx.Context(), int32(SubCategoryID))
+	if err != nil {
+		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"err": "invalid delete subcategory"})
+	}
+
+	return ctx.Status(fiber.StatusOK).JSON(fiber.Map{"message": "deleted successfully"})
 }

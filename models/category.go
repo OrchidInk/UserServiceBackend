@@ -1,13 +1,15 @@
 package models
 
 type CategoryEn struct {
-	CategoryEnID   int32  `json:"category_en_id"`
-	CategoryNameEn string `json:"category_name_en"`
+	CategoryEnID   int32           `json:"category_en_id"`
+	CategoryNameEn string          `json:"category_name_en"`
+	SubCategories  []SubCategoryEn `json:"subcategories"`
 }
 
 type CategoryMn struct {
-	CategoryMnID   int32  `json:"category_mn_id"`
-	CategoryNameMn string `json:"category_name_mn"`
+	CategoryMnID   int32           `json:"category_mn_id"`
+	CategoryNameMn string          `json:"category_name_mn"`
+	SubCategories  []SubCategoryMn `json:"subcategories"`
 }
 
 type UpdateCategoryEn struct {

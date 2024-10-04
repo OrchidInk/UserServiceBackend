@@ -7,6 +7,7 @@ package db
 
 import (
 	"context"
+	"database/sql"
 )
 
 const createCategoryMn = `-- name: CreateCategoryMn :one
@@ -89,6 +90,55 @@ func (q *Queries) FindByNameMnCategoryMn(ctx context.Context, categorynamemn str
 	var i CategoryMn
 	err := row.Scan(&i.CategoryMnID, &i.CategoryNameMn)
 	return i, err
+}
+
+const getCategoriesWithSubCategoriesMn = `-- name: GetCategoriesWithSubCategoriesMn :many
+SELECT
+    c."CategoryMnID",
+    c."CategoryNameMn",
+    sc."subCategoryIDMn",
+    sc."subCategoryNameMn"
+FROM
+    "categoryMn" c
+LEFT JOIN
+    "subCategoryMn" sc ON c."CategoryMnID" = sc."CategoryMnID"
+ORDER BY
+    c."CategoryMnID"
+`
+
+type GetCategoriesWithSubCategoriesMnRow struct {
+	CategoryMnID      int32
+	CategoryNameMn    string
+	SubCategoryIDMn   sql.NullInt32
+	SubCategoryNameMn sql.NullString
+}
+
+func (q *Queries) GetCategoriesWithSubCategoriesMn(ctx context.Context) ([]GetCategoriesWithSubCategoriesMnRow, error) {
+	rows, err := q.db.QueryContext(ctx, getCategoriesWithSubCategoriesMn)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []GetCategoriesWithSubCategoriesMnRow
+	for rows.Next() {
+		var i GetCategoriesWithSubCategoriesMnRow
+		if err := rows.Scan(
+			&i.CategoryMnID,
+			&i.CategoryNameMn,
+			&i.SubCategoryIDMn,
+			&i.SubCategoryNameMn,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
 }
 
 const getListByAllCategoryMn = `-- name: GetListByAllCategoryMn :many

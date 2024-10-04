@@ -181,3 +181,101 @@ func (hd *Handlers) GetListCategoryMn(ctx *fiber.Ctx) error {
 
 	return ctx.JSON(category)
 }
+
+func (hd *Handlers) GetCategoriesWithSubCategoriesEn(ctx *fiber.Ctx) error {
+	queries, _, _ := hd.queries()
+
+	rows, err := queries.GetCategoriesWithSubCategories(ctx.Context())
+	if err != nil {
+		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"err": "Failed to fetch categories"})
+	}
+
+	categoryMap := make(map[int32]models.CategoryEn)
+
+	for _, row := range rows {
+		if _, exists := categoryMap[row.CategoryEnID]; !exists {
+			categoryMap[row.CategoryEnID] = models.CategoryEn{
+				CategoryEnID:   row.CategoryEnID,
+				CategoryNameEn: row.CategoryNameEn,
+			}
+		}
+
+		if row.SubCategoryIDEn.Valid {
+			subCategory := models.SubCategoryEn{
+				SubCategoryIdEN:   row.SubCategoryIDEn.Int32,
+				SubCategoryNameEN: row.SubCategoryNameEn.String,
+				CategoryEnID:      row.CategoryEnID,
+			}
+
+			categoryMap[row.CategoryEnID] = appendToSubCategoriesEn(categoryMap[row.CategoryEnID], subCategory)
+		}
+	}
+
+	var categoryList []fiber.Map
+	for _, category := range categoryMap {
+		categoryList = append(categoryList, fiber.Map{
+			"category_en_id":   category.CategoryEnID,
+			"category_name_en": category.CategoryNameEn,
+			"subcategories":    category.SubCategories,
+		})
+	}
+
+	return ctx.Status(fiber.StatusOK).JSON(categoryList)
+}
+
+func (hd *Handlers) GetCategoriesWithSubCategoriesMn(ctx *fiber.Ctx) error {
+	queries, _, _ := hd.queries()
+
+	rows, err := queries.GetCategoriesWithSubCategoriesMn(ctx.Context())
+	if err != nil {
+		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"err": "Failed to fetch categories"})
+	}
+
+	categoryMap := make(map[int32]models.CategoryMn)
+
+	for _, row := range rows {
+		if _, exists := categoryMap[row.CategoryMnID]; !exists {
+			categoryMap[row.CategoryMnID] = models.CategoryMn{
+				CategoryMnID:   row.CategoryMnID,
+				CategoryNameMn: row.CategoryNameMn,
+			}
+		}
+
+		if row.SubCategoryIDMn.Valid {
+			subCategory := models.SubCategoryMn{
+				SubCategoryIdMn:   row.SubCategoryIDMn.Int32,
+				SubCategoryNameMn: row.SubCategoryNameMn.String,
+				CategoryMnID:      row.CategoryMnID,
+			}
+
+			categoryMap[row.CategoryMnID] = appendToSubCategoriesMn(categoryMap[row.CategoryMnID], subCategory)
+		}
+	}
+
+	var categoryList []fiber.Map
+	for _, category := range categoryMap {
+		categoryList = append(categoryList, fiber.Map{
+			"category_mn_id":   category.CategoryMnID,
+			"category_name_mn": category.CategoryNameMn,
+			"subcategories":    category.SubCategories,
+		})
+	}
+
+	return ctx.Status(fiber.StatusOK).JSON(categoryList)
+}
+
+func appendToSubCategoriesEn(category models.CategoryEn, subCategory models.SubCategoryEn) models.CategoryEn {
+	if category.SubCategories == nil {
+		category.SubCategories = []models.SubCategoryEn{}
+	}
+	category.SubCategories = append(category.SubCategories, subCategory)
+	return category
+}
+
+func appendToSubCategoriesMn(category models.CategoryMn, subcategory models.SubCategoryMn) models.CategoryMn {
+	if category.SubCategories == nil {
+		category.SubCategories = []models.SubCategoryMn{}
+	}
+	category.SubCategories = append(category.SubCategories, subcategory)
+	return category
+}
