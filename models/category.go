@@ -27,3 +27,20 @@ type CreateCategoryEn struct {
 type CreateCategoryMn struct {
 	CategoryNameMn string `json:"category_name_mn" validate:"required"`
 }
+
+type SubCategoryEn struct {
+	SubCategoryIdEN   int32  `json:"subcategoryIDEN"`
+	SubCategoryNameEN string `json:"SubCategoryNameEN"`
+	CategoryEnID      int32  `json:"category_en_id"`
+}
+
+type SubCategoryMn struct {
+	SubCategoryIdMn   int32  `json:"sub_category_ID_mn"`
+	SubCategoryNameMn string `json:"sub_category_name_mN"`
+	CategoryMnID      int32  `json:"category_mn_id"`
+}
+
+type UpdateSubCategoryEn struct {
+	SubCategoryNameEn string `json:"Sub_Category_NameEn"`
+	SubCategoryMnId   int32  `json:"Sub_Category_MN_ID"`
+}
