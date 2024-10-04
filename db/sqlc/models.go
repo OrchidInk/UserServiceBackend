@@ -19,6 +19,12 @@ type AdminPermission struct {
 	AssignedAt   sql.NullTime
 }
 
+type BannerInfo struct {
+	BannerId        int32
+	BannerImagePath string
+	BannerImageUrl  string
+}
+
 type CategoryEn struct {
 	CategoryEnID   int32
 	CategoryNameEn string
@@ -178,4 +184,10 @@ type UserInfo struct {
 	PhoneNumber1  string
 	PhoneNumber2  string
 	Address1      string
+}
+
+type UserPicture struct {
+	UserPicId     int32
+	UserImagePath string
+	UserImageUrl  string
 }
