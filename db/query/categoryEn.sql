@@ -66,3 +66,25 @@ LEFT JOIN
     "subCategoryEn" sc ON c."CategoryEnID" = sc."CategoryEnID"
 ORDER BY
     c."CategoryEnID";
+
+
+-- name: GetCategoriesWithSubCategoriesWithProductEn :many
+SELECT 
+    c."CategoryEnID", 
+    c."CategoryNameEn",
+    sc."subCategoryIDEn", 
+    sc."subCategoryNameEn",
+    p."ProductEnID", 
+    p."PriceEn", 
+    p."StockQuantity", 
+    p."ImagesPathEn", 
+    p."Created_At"
+FROM 
+    "categoryEn" c
+LEFT JOIN 
+    "subCategoryEn" sc ON c."CategoryEnID" = sc."CategoryEnID"
+LEFT JOIN 
+    "productEn" p ON sc."subCategoryIDEn" = p."subCategoryIDEn"
+ORDER BY 
+    c."CategoryEnID", 
+    sc."subCategoryIDEn";

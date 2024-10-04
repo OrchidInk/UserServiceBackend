@@ -139,6 +139,73 @@ func (q *Queries) GetCategoriesWithSubCategories(ctx context.Context) ([]GetCate
 	return items, nil
 }
 
+const getCategoriesWithSubCategoriesWithProductEn = `-- name: GetCategoriesWithSubCategoriesWithProductEn :many
+SELECT 
+    c."CategoryEnID", 
+    c."CategoryNameEn",
+    sc."subCategoryIDEn", 
+    sc."subCategoryNameEn",
+    p."ProductEnID", 
+    p."PriceEn", 
+    p."StockQuantity", 
+    p."ImagesPathEn", 
+    p."Created_At"
+FROM 
+    "categoryEn" c
+LEFT JOIN 
+    "subCategoryEn" sc ON c."CategoryEnID" = sc."CategoryEnID"
+LEFT JOIN 
+    "productEn" p ON sc."subCategoryIDEn" = p."subCategoryIDEn"
+ORDER BY 
+    c."CategoryEnID", 
+    sc."subCategoryIDEn"
+`
+
+type GetCategoriesWithSubCategoriesWithProductEnRow struct {
+	CategoryEnID      int32
+	CategoryNameEn    string
+	SubCategoryIDEn   sql.NullInt32
+	SubCategoryNameEn sql.NullString
+	ProductEnID       sql.NullInt32
+	PriceEn           sql.NullString
+	StockQuantity     sql.NullInt32
+	ImagesPathEn      sql.NullString
+	CreatedAt         sql.NullTime
+}
+
+func (q *Queries) GetCategoriesWithSubCategoriesWithProductEn(ctx context.Context) ([]GetCategoriesWithSubCategoriesWithProductEnRow, error) {
+	rows, err := q.db.QueryContext(ctx, getCategoriesWithSubCategoriesWithProductEn)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []GetCategoriesWithSubCategoriesWithProductEnRow
+	for rows.Next() {
+		var i GetCategoriesWithSubCategoriesWithProductEnRow
+		if err := rows.Scan(
+			&i.CategoryEnID,
+			&i.CategoryNameEn,
+			&i.SubCategoryIDEn,
+			&i.SubCategoryNameEn,
+			&i.ProductEnID,
+			&i.PriceEn,
+			&i.StockQuantity,
+			&i.ImagesPathEn,
+			&i.CreatedAt,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const getListByAllCategoryEn = `-- name: GetListByAllCategoryEn :many
 SELECT
     "CategoryEnID", "CategoryNameEn"

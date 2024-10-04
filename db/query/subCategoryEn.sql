@@ -39,3 +39,17 @@ WHERE
     "subCategoryIDEn" = sqlc.arg('subCategoryIDEn')
 LIMIT
     1;
+
+-- name: GetProductsBySubCategoryEn :many
+SELECT 
+    p."ProductEnID",
+    p."ProductNameEn",
+    p."PriceEn",
+    p."StockQuantity",
+    p."ImagesPathEn"
+FROM
+    "subCategoryEn"  sc
+JOIN 
+    "productEn"  p ON sc."subCategoryIDEn" = p."subCategoryIDEn"
+WHERE 
+    sc."subCategoryIDEn" = $1;

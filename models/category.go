@@ -1,9 +1,9 @@
 package models
 
 type CategoryEn struct {
-	CategoryEnID   int32           `json:"category_en_id"`
-	CategoryNameEn string          `json:"category_name_en"`
-	SubCategories  []SubCategoryEn `json:"subcategories"`
+	CategoryEnID   int32                       `json:"category_en_id"`
+	CategoryNameEn string                      `json:"category_name_en"`
+	SubCategories  []SubCategoryEnWithProducts `json:"subcategories"`
 }
 
 type CategoryMn struct {
@@ -58,4 +58,18 @@ type DeleteSubCategoryEn struct {
 
 type DeleteSubCategoryMn struct {
 	SubCategoryMnID int32 `json:"Sub_Category_MN_ID"`
+}
+
+type SubCategoryEnWithProducts struct {
+	SubCategoryIDEn   int32       `json:"sub_category_en_id"`
+	SubCategoryNameEn string      `json:"sub_category_name_en"`
+	Products          []ProductEn `json:"products"`
+}
+
+type ProductEn struct {
+	ProductEnID   int32   `json:"product_en_id"`
+	PriceEn       float64 `json:"price_en"`
+	StockQuantity int32   `json:"stock_quantity"`
+	ImagesPathEn  string  `json:"images_path_en"`
+	CreatedAt     string  `json:"created_at"`
 }

@@ -95,6 +95,7 @@ type Payment struct {
 
 type ProductEn struct {
 	ProductEnID     int32
+	ProductNameEn   string
 	ImageID         int32
 	SubCategoryIDEn int32
 	PriceEn         string
@@ -112,6 +113,7 @@ type ProductImage struct {
 
 type ProductMn struct {
 	ProductMnID     int32
+	ProductNameMn   string
 	ImageID         int32
 	SubCategoryIDMn int32
 	PriceMn         string

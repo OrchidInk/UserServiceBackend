@@ -3,6 +3,7 @@ BEGIN;
 
 CREATE TABLE "productMn" (
     "ProductMnID" SERIAL PRIMARY KEY,
+    "ProductNameMn" TEXT NOT NULL,
     "ImageID" INT NOT NULL,
     "subCategoryIDMn" INT NOT NULL,
     "PriceMn" DECIMAL(10, 2) NOT NULL,

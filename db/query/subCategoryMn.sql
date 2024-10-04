@@ -45,3 +45,17 @@ UPDATE
     "subCategoryMn"
 SET
     "CategoryMnID" = sqlc.arg('CategoryMnID') RETURNING *;
+
+-- name: GetProductsBySubCategoryMn :many
+SELECT 
+    p."ProductMnID",
+    p."ProductNameMn",
+    p."PriceMn",
+    p."StockQuantity",
+    p."ImagesPathMn"
+FROM
+    "subCategoryMn"  sc
+JOIN 
+    "productMn"  p ON sc."subCategoryIDMn" = p."subCategoryIDMn"
+WHERE 
+    sc."subCategoryIDMn" = $1;

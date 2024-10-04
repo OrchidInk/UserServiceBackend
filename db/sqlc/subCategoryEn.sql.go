@@ -94,6 +94,58 @@ func (q *Queries) GetListAllSubCategoriesEn(ctx context.Context) ([]SubCategoryE
 	return items, nil
 }
 
+const getProductsBySubCategoryEn = `-- name: GetProductsBySubCategoryEn :many
+SELECT 
+    p."ProductEnID",
+    p."ProductNameEn",
+    p."PriceEn",
+    p."StockQuantity",
+    p."ImagesPathEn"
+FROM
+    "subCategoryEn"  sc
+JOIN 
+    "productEn"  p ON sc."subCategoryIDEn" = p."subCategoryIDEn"
+WHERE 
+    sc."subCategoryIDEn" = $1
+`
+
+type GetProductsBySubCategoryEnRow struct {
+	ProductEnID   int32
+	ProductNameEn string
+	PriceEn       string
+	StockQuantity int32
+	ImagesPathEn  string
+}
+
+func (q *Queries) GetProductsBySubCategoryEn(ctx context.Context, subcategoryiden int32) ([]GetProductsBySubCategoryEnRow, error) {
+	rows, err := q.db.QueryContext(ctx, getProductsBySubCategoryEn, subcategoryiden)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []GetProductsBySubCategoryEnRow
+	for rows.Next() {
+		var i GetProductsBySubCategoryEnRow
+		if err := rows.Scan(
+			&i.ProductEnID,
+			&i.ProductNameEn,
+			&i.PriceEn,
+			&i.StockQuantity,
+			&i.ImagesPathEn,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const updateSubCategoryNameEn = `-- name: UpdateSubCategoryNameEn :one
 UPDATE
     "subCategoryEn"
