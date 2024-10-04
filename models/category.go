@@ -11,10 +11,12 @@ type CategoryMn struct {
 }
 
 type UpdateCategoryEn struct {
+	CategoryEnId   int32  `json:"category_en_id"`
 	CategoryNameEn string `json:"category_name_en" validate:"required"`
 }
 
 type UpdateCategoryMn struct {
+	CategoryMnId   int32  `json:"category_mn_id"`
 	CategoryNameMn string `json:"category_name_mn" validate:"required"`
 }
 
