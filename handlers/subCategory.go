@@ -55,9 +55,55 @@ func (hd *Handlers) CreateSubCategoryMn(ctx *fiber.Ctx) error {
 	}
 
 	return ctx.Status(fiber.StatusOK).JSON(fiber.Map{"message": "successfully", "subCategoryId": createdSubCategory.SubCategoryIDMn, "subCategoryName": createdSubCategory.SubCategoryNameMn})
-
 }
 
 func (hd *Handlers) UpdateSubCategoryEn(ctx *fiber.Ctx) error {
-	return nil
+	queries, _, _ := hd.queries()
+
+	var request models.UpdateSubCategoryEn
+	if err := ctx.BodyParser(&request); err != nil {
+		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"err": "invalid message request"})
+	}
+
+	subCategoryID, err := queries.FindBySubCategoryIDEn(ctx.Context(), request.SubCategoryEnId)
+	if err != nil {
+		slog.Error("unable to find sub category ID", slog.Any("err", err))
+		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"err": err})
+	}
+
+	updateSubCategory, err := queries.UpdateSubCategoryNameEn(ctx.Context(), db.UpdateSubCategoryNameEnParams{
+		SubCategoryNameEn: request.SubCategoryNameEn,
+		SubCategoryIDEn:   subCategoryID.SubCategoryIDEn,
+	})
+	if err != nil {
+		slog.Error("unable to update request", slog.Any("Err", err))
+		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"err": err})
+	}
+
+	return ctx.Status(fiber.StatusOK).JSON(fiber.Map{"message": "successfully", "subCategoryName": updateSubCategory.SubCategoryNameEn, "subCategoryID": updateSubCategory.SubCategoryIDEn})
+}
+
+func (hd *Handlers) UpdateSubCategoryMn(ctx *fiber.Ctx) error {
+	queries, _, _ := hd.queries()
+
+	var request models.UpdateSubCategoryMn
+	if err := ctx.BodyParser(&request); err != nil {
+		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"err": err})
+	}
+
+	subCategory, err := queries.FindBySubCategoryID(ctx.Context(), request.SubCategoryMnID)
+	if err != nil {
+		return ctx.Status(fiber.StatusNotFound).JSON(fiber.Map{"err": "unable to find id"})
+	}
+
+	updateSubCategory, err := queries.UpdateBySubCategoryNameMn(ctx.Context(), db.UpdateBySubCategoryNameMnParams{
+		SubCategoryNameMn: request.SubCategoryNameMn,
+		SubCategoryIDMn:   subCategory.SubCategoryIDMn,
+	})
+	if err != nil {
+		slog.Error("unable to update subCategory", slog.Any("err", err))
+		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"err": err})
+	}
+
+	return ctx.Status(fiber.StatusOK).JSON(fiber.Map{"message": "successfully", "subCategoryName": updateSubCategory.SubCategoryNameMn, "subCategoryId": updateSubCategory.SubCategoryIDMn})
 }

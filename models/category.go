@@ -42,5 +42,18 @@ type SubCategoryMn struct {
 
 type UpdateSubCategoryEn struct {
 	SubCategoryNameEn string `json:"Sub_Category_NameEn"`
-	SubCategoryMnId   int32  `json:"Sub_Category_MN_ID"`
+	SubCategoryEnId   int32  `json:"Sub_Category_EN_ID"`
+}
+
+type UpdateSubCategoryMn struct {
+	SubCategoryNameMn string `json:"Sub_Category_NameMn"`
+	SubCategoryMnID   int32  `json:"Sub_Category_MN_ID"`
+}
+
+type DeleteSubCategoryEn struct {
+	SubCategoryEnID int32 `json:"Sub_Category_EN_ID"`
+}
+
+type DeleteSubCategoryMn struct {
+	SubCategoryMnID int32 `json:"Sub_Category_MN_ID"`
 }
