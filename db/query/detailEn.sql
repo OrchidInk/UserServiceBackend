@@ -38,7 +38,7 @@ DELETE FROM
 WHERE
     "detailEnId" = sqlc.arg('detailEnId');
 
--- name: GetAllDetails :many
+-- name: GetAllDetailsEn :many
 SELECT
     "detailEnId",
     "ProductEnID",

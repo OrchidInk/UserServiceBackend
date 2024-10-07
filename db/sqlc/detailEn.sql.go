@@ -54,7 +54,7 @@ func (q *Queries) DeleteDetailEn(ctx context.Context, detailenid int32) error {
 	return err
 }
 
-const getAllDetails = `-- name: GetAllDetails :many
+const getAllDetailsEn = `-- name: GetAllDetailsEn :many
 SELECT
     "detailEnId",
     "ProductEnID",
@@ -66,8 +66,8 @@ ORDER BY
     "ProductEnID"
 `
 
-func (q *Queries) GetAllDetails(ctx context.Context) ([]DetailEn, error) {
-	rows, err := q.db.QueryContext(ctx, getAllDetails)
+func (q *Queries) GetAllDetailsEn(ctx context.Context) ([]DetailEn, error) {
+	rows, err := q.db.QueryContext(ctx, getAllDetailsEn)
 	if err != nil {
 		return nil, err
 	}

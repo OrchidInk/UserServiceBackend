@@ -1,6 +1,8 @@
 package handlers
 
 import (
+	"log/slog"
+
 	"github.com/gofiber/fiber/v2"
 	db "orchid.admin.service/db/sqlc"
 	"orchid.admin.service/models"
@@ -21,6 +23,27 @@ func (hd *Handlers) CreateDetailEn(ctx *fiber.Ctx) error {
 	})
 	if err != nil {
 		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"err": "failed to create detail"})
+	}
+
+	return ctx.Status(fiber.StatusOK).JSON(detail)
+}
+
+func (hd *Handlers) CreateDetailMn(ctx *fiber.Ctx) error {
+	queries, _, _ := hd.queries()
+
+	var request models.CreateDetailMnRequest
+	if err := ctx.BodyParser(&request); err != nil {
+		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"err": err})
+	}
+
+	detail, err := queries.CreateDetailMn(ctx.Context(), db.CreateDetailMnParams{
+		ProductMnId: request.ProductMnID,
+		ChoiceName:  request.ChoiceName,
+		ChoiceValue: request.ChoiceValue,
+	})
+	if err != nil {
+		slog.Error("unable to create detail mn", slog.Any("err", err))
+		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"err": err})
 	}
 
 	return ctx.Status(fiber.StatusOK).JSON(detail)
