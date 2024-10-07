@@ -13,6 +13,12 @@ type CreateDetailEnRequest struct {
 	ChoiceValue string `json:"choiceValue" validate:"required"`
 }
 
+type CreateDetailMnRequest struct {
+	ProductMnID int32  `json:"productMnId" validte:"required"`
+	ChoiceName  string `json:"choiceName" validate:"required"`
+	ChoiceValue string `json:"choiceValue" validate:"required"`
+}
+
 type UpdateDetailEnRequest struct {
 	DetailEnID  int32  `json:"detailEnId" validate:"required"`
 	ChoiceName  string `json:"choiceName" validate:"required"`
