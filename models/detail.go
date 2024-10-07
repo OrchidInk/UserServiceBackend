@@ -1,27 +1,27 @@
 package models
 
 type DetailEn struct {
-	DetailEnID  int32  `json:"detail_en_id"`
-	ProductEnID int32  `json:"product_en_id"`
+	DetailEnID  int32  `json:"detailEnId"`
+	ProductEnID int32  `json:"productEnId"`
 	ChoiceName  string `json:"choice_name"`
 	ChoiceValue string `json:"choice_value"`
 }
 
 type CreateDetailEnRequest struct {
-	ProductEnID int32  `json:"product_en_id" validate:"required"`
-	ChoiceName  string `json:"choice_name" validate:"required"`
-	ChoiceValue string `json:"choice_value" validate:"required"`
+	ProductEnID int32  `json:"productEnId" validate:"required"`
+	ChoiceName  string `json:"choiceName" validate:"required"`
+	ChoiceValue string `json:"choiceValue" validate:"required"`
 }
 
 type UpdateDetailEnRequest struct {
-	DetailEnID  int32  `json:"detail_en_id" validate:"required"`
-	ChoiceName  string `json:"choice_name" validate:"required"`
-	ChoiceValue string `json:"choice_value" validate:"required"`
+	DetailEnID  int32  `json:"detailEnId" validate:"required"`
+	ChoiceName  string `json:"choiceName" validate:"required"`
+	ChoiceValue string `json:"choiceValue" validate:"required"`
 }
 
 type DetailEnResponse struct {
-	DetailEnID  int32  `json:"detail_en_id"`
-	ProductEnID int32  `json:"product_en_id"`
-	ChoiceName  string `json:"choice_name"`
-	ChoiceValue string `json:"choice_value"`
+	DetailEnID  int32  `json:"detailEnId"`
+	ProductEnID int32  `json:"productEnId"`
+	ChoiceName  string `json:"choiceName"`
+	ChoiceValue string `json:"choiceValue"`
 }
