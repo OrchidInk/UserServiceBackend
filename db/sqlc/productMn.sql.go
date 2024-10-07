@@ -114,6 +114,33 @@ func (q *Queries) FilterByProductMnName(ctx context.Context, productmnname sql.N
 	return items, nil
 }
 
+const findByProductIdMn = `-- name: FindByProductIdMn :one
+SELECT
+    "ProductMnID", "ProductNameMn", "subCategoryIDMn", "PriceMn", "StockQuantity", "ImagesPathMn", "Created_At", "Updated_At"
+FROM
+    "productMn"
+WHERE
+    "ProductMnID" = $1
+LIMIT
+    1
+`
+
+func (q *Queries) FindByProductIdMn(ctx context.Context, productmnid int32) (ProductMn, error) {
+	row := q.db.QueryRowContext(ctx, findByProductIdMn, productmnid)
+	var i ProductMn
+	err := row.Scan(
+		&i.ProductMnID,
+		&i.ProductNameMn,
+		&i.SubCategoryIDMn,
+		&i.PriceMn,
+		&i.StockQuantity,
+		&i.ImagesPathMn,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+	)
+	return i, err
+}
+
 const getListProductMn = `-- name: GetListProductMn :many
 SELECT
     "ProductMnID", "ProductNameMn", "subCategoryIDMn", "PriceMn", "StockQuantity", "ImagesPathMn", "Created_At", "Updated_At"

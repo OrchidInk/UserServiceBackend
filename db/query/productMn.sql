@@ -63,3 +63,13 @@ WHERE
     "ProductMnName" ILIKE '%' || sqlc.arg ('ProductMnName') || '%' -- Case-insensitive search for partial match
 ORDER BY
     "Created_At" DESC;
+
+-- name: FindByProductIdMn :one
+SELECT
+    *
+FROM
+    "productMn"
+WHERE
+    "ProductMnID" = sqlc.arg('ProductMnID')
+LIMIT
+    1;

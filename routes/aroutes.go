@@ -38,6 +38,9 @@ func superAdminRoutes(app *fiber.App, hd *handlers.Handlers) {
 	product := api.Group("/product")
 	product.Post("/createEn", hd.CreateProductEn)
 	product.Post("/createMn", hd.CreateProductMn)
+
+	product.Delete("/deleteEn/:id", hd.DeleteCategoryEn)
+	product.Delete("/deleteMn/:id", hd.DeleteProductMn)
 }
 
 func adminRoutes(app *fiber.App, hd *handlers.Handlers) {
@@ -64,8 +67,8 @@ func userRoutes(app *fiber.App, hd *handlers.Handlers) {
 	userRegistery.Post("/info", hd.CreateUserInfo)
 	userRegistery.Put("/info/:user_id", hd.UpdateUserInfo)
 
-	// // Category
-	// category := api.Group("/category", hd.Authorize)
-	// category.Get("/list/mn", hd.GetListCategoryMn)
-	// category.Get("/list/en", hd.GetListCategoryEn)
+	// Category
+	category := api.Group("/category", hd.Authorize)
+	category.Get("/listEn", hd.GetCategoriesWithSubCategoriesEn)
+	category.Get("/listMn", hd.GetCategoriesWithSubCategoriesMn)
 }

@@ -22,11 +22,11 @@ type UpdateProductEnPriceRequest struct {
 }
 
 type UpdateProductEnStockRequest struct {
-	ProductEnID   int32 `json:"product_en_id" validate:"required"`
-	StockQuantity int32 `json:"stock_quantity" validate:"required"`
+	ProductEnID   int32 `json:"productEnId" validate:"required"`
+	StockQuantity int32 `json:"stockQuantity" validate:"required"`
 }
 
 type UpdateProductEnImagePathRequest struct {
-	ProductEnID  int32  `json:"product_en_id" validate:"required"`
-	ImagesPathEn string `json:"images_path_en"`
+	ProductEnID  int32  `json:"productEnId" validate:"required"`
+	ImagesPathEn string `json:"imagesPathEn"`
 }
