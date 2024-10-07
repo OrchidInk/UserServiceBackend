@@ -14,7 +14,6 @@ const createProductMn = `-- name: CreateProductMn :one
 INSERT INTO
     "productMn" (
         "ProductNameMn",
-        "ImageID",
         "subCategoryIDMn",
         "PriceMn",
         "StockQuantity",
@@ -22,18 +21,16 @@ INSERT INTO
     )
 VALUES
     (
-        "ProductNameMn" = $1,
-        "ImageID" = $2,
-        "subCategoryIDMn" = $3,
-        "PriceMn" = $4,
-        "StockQuantity" = $5,
-        "ImagesPathMn" = $6
-    ) RETURNING "ProductMnID", "ProductNameMn", "ImageID", "subCategoryIDMn", "PriceMn", "StockQuantity", "ImagesPathMn", "Created_At", "Updated_At"
+        $1,
+        $2,
+        $3,
+        $4,
+        $5
+    ) RETURNING "ProductMnID", "ProductNameMn", "subCategoryIDMn", "PriceMn", "StockQuantity", "ImagesPathMn", "Created_At", "Updated_At"
 `
 
 type CreateProductMnParams struct {
 	ProductNameMn   string
-	ImageID         int32
 	SubCategoryIDMn int32
 	PriceMn         string
 	StockQuantity   int32
@@ -43,7 +40,6 @@ type CreateProductMnParams struct {
 func (q *Queries) CreateProductMn(ctx context.Context, arg CreateProductMnParams) (ProductMn, error) {
 	row := q.db.QueryRowContext(ctx, createProductMn,
 		arg.ProductNameMn,
-		arg.ImageID,
 		arg.SubCategoryIDMn,
 		arg.PriceMn,
 		arg.StockQuantity,
@@ -53,7 +49,6 @@ func (q *Queries) CreateProductMn(ctx context.Context, arg CreateProductMnParams
 	err := row.Scan(
 		&i.ProductMnID,
 		&i.ProductNameMn,
-		&i.ImageID,
 		&i.SubCategoryIDMn,
 		&i.PriceMn,
 		&i.StockQuantity,
@@ -65,9 +60,9 @@ func (q *Queries) CreateProductMn(ctx context.Context, arg CreateProductMnParams
 }
 
 const deleteByProductMnId = `-- name: DeleteByProductMnId :exec
-DELETE FROM "productMn"
+DELETE FROM
+    "productMn"
 WHERE
-
     "ProductMnID" = $1
 `
 
@@ -78,7 +73,7 @@ func (q *Queries) DeleteByProductMnId(ctx context.Context, productmnid int32) er
 
 const filterByProductMnName = `-- name: FilterByProductMnName :many
 SELECT
-    "ProductMnID", "ProductNameMn", "ImageID", "subCategoryIDMn", "PriceMn", "StockQuantity", "ImagesPathMn", "Created_At", "Updated_At"
+    "ProductMnID", "ProductNameMn", "subCategoryIDMn", "PriceMn", "StockQuantity", "ImagesPathMn", "Created_At", "Updated_At"
 FROM
     "productMn"
 WHERE
@@ -99,7 +94,6 @@ func (q *Queries) FilterByProductMnName(ctx context.Context, productmnname sql.N
 		if err := rows.Scan(
 			&i.ProductMnID,
 			&i.ProductNameMn,
-			&i.ImageID,
 			&i.SubCategoryIDMn,
 			&i.PriceMn,
 			&i.StockQuantity,
@@ -122,7 +116,7 @@ func (q *Queries) FilterByProductMnName(ctx context.Context, productmnname sql.N
 
 const getListProductMn = `-- name: GetListProductMn :many
 SELECT
-    "ProductMnID", "ProductNameMn", "ImageID", "subCategoryIDMn", "PriceMn", "StockQuantity", "ImagesPathMn", "Created_At", "Updated_At"
+    "ProductMnID", "ProductNameMn", "subCategoryIDMn", "PriceMn", "StockQuantity", "ImagesPathMn", "Created_At", "Updated_At"
 FROM
     "productMn"
 ORDER BY
@@ -141,7 +135,6 @@ func (q *Queries) GetListProductMn(ctx context.Context) ([]ProductMn, error) {
 		if err := rows.Scan(
 			&i.ProductMnID,
 			&i.ProductNameMn,
-			&i.ImageID,
 			&i.SubCategoryIDMn,
 			&i.PriceMn,
 			&i.StockQuantity,
@@ -163,11 +156,12 @@ func (q *Queries) GetListProductMn(ctx context.Context) ([]ProductMn, error) {
 }
 
 const updateByMnImagePath = `-- name: UpdateByMnImagePath :one
-UPDATE "productMn"
+UPDATE
+    "productMn"
 SET
     "ImagesPathMn" = $1
 WHERE
-    "ProductMnID" = $2 RETURNING "ProductMnID", "ProductNameMn", "ImageID", "subCategoryIDMn", "PriceMn", "StockQuantity", "ImagesPathMn", "Created_At", "Updated_At"
+    "ProductMnID" = $2 RETURNING "ProductMnID", "ProductNameMn", "subCategoryIDMn", "PriceMn", "StockQuantity", "ImagesPathMn", "Created_At", "Updated_At"
 `
 
 type UpdateByMnImagePathParams struct {
@@ -181,7 +175,6 @@ func (q *Queries) UpdateByMnImagePath(ctx context.Context, arg UpdateByMnImagePa
 	err := row.Scan(
 		&i.ProductMnID,
 		&i.ProductNameMn,
-		&i.ImageID,
 		&i.SubCategoryIDMn,
 		&i.PriceMn,
 		&i.StockQuantity,
@@ -193,11 +186,12 @@ func (q *Queries) UpdateByMnImagePath(ctx context.Context, arg UpdateByMnImagePa
 }
 
 const updateByProductMnPrice = `-- name: UpdateByProductMnPrice :one
-UPDATE "productMn"
+UPDATE
+    "productMn"
 SET
     "PriceMn" = $1
 WHERE
-    "ProductMnID" = $2 RETURNING "ProductMnID", "ProductNameMn", "ImageID", "subCategoryIDMn", "PriceMn", "StockQuantity", "ImagesPathMn", "Created_At", "Updated_At"
+    "ProductMnID" = $2 RETURNING "ProductMnID", "ProductNameMn", "subCategoryIDMn", "PriceMn", "StockQuantity", "ImagesPathMn", "Created_At", "Updated_At"
 `
 
 type UpdateByProductMnPriceParams struct {
@@ -211,7 +205,6 @@ func (q *Queries) UpdateByProductMnPrice(ctx context.Context, arg UpdateByProduc
 	err := row.Scan(
 		&i.ProductMnID,
 		&i.ProductNameMn,
-		&i.ImageID,
 		&i.SubCategoryIDMn,
 		&i.PriceMn,
 		&i.StockQuantity,
@@ -223,11 +216,12 @@ func (q *Queries) UpdateByProductMnPrice(ctx context.Context, arg UpdateByProduc
 }
 
 const updateByProductMnStockQuantity = `-- name: UpdateByProductMnStockQuantity :one
-UPDATE "productMn"
+UPDATE
+    "productMn"
 SET
     "StockQuantity" = $1
 WHERE
-    "ProductMnID" = $2 RETURNING "ProductMnID", "ProductNameMn", "ImageID", "subCategoryIDMn", "PriceMn", "StockQuantity", "ImagesPathMn", "Created_At", "Updated_At"
+    "ProductMnID" = $2 RETURNING "ProductMnID", "ProductNameMn", "subCategoryIDMn", "PriceMn", "StockQuantity", "ImagesPathMn", "Created_At", "Updated_At"
 `
 
 type UpdateByProductMnStockQuantityParams struct {
@@ -241,7 +235,6 @@ func (q *Queries) UpdateByProductMnStockQuantity(ctx context.Context, arg Update
 	err := row.Scan(
 		&i.ProductMnID,
 		&i.ProductNameMn,
-		&i.ImageID,
 		&i.SubCategoryIDMn,
 		&i.PriceMn,
 		&i.StockQuantity,

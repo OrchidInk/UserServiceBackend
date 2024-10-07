@@ -2,7 +2,6 @@
 INSERT INTO
     "productEn" (
         "ProductNameEn",
-        "ImageID",
         "subCategoryIDEn",
         "PriceEn",
         "StockQuantity",
@@ -10,13 +9,11 @@ INSERT INTO
     )
 VALUES
     (
-        "ProductNameEn" = sqlc.arg('ProductNameEn'),
-        "ImageID" = sqlc.arg('ImageID'),
-        "subCategoryIDEn" = sqlc.arg('subCategoryIDEn'),
-        "PriceEn" = sqlc.arg('PriceEn'),
-        "StockQuantity" = sqlc.arg('StockQuantity'),
-        "ImagesPathEn" = sqcl.arg('ImagesPathEn')
-
+        sqlc.arg('ProductNameEn'),
+        sqlc.arg('subCategoryIDEn'),
+        sqlc.arg('PriceEn'),
+        sqlc.arg('StockQuantity'),
+        sqlc.arg('ImagesPathEn')
     ) RETURNING *;
 
 -- name: GetListProductEn :many
@@ -28,28 +25,32 @@ ORDER BY
     "Created_At" DESC;
 
 -- name: UpdateByProductEnPrice :one
-UPDATE "productEn"
+UPDATE
+    "productEn"
 SET
     "PriceEn" = sqlc.arg ('PriceEn')
 WHERE
     "ProductEnID" = sqlc.arg ('ProductEnID') RETURNING *;
 
 -- name: UpdateByProductEnStockQuantity :one
-UPDATE "productEn"
+UPDATE
+    "productEn"
 SET
     "StockQuantity" = sqlc.arg ('StockQuantity')
 WHERE
     "ProductEnID" = sqlc.arg ('ProductEnID') RETURNING *;
 
 -- name: UpdateByProductEnImagePath :one
-UPDATE "productEn"
+UPDATE
+    "productEn"
 SET
     "ImagesPathEn" = sqlc.arg ('ImagesPathEn')
 WHERE
     "ProductEnID" = sqlc.arg ('ProductEnID') RETURNING *;
 
 -- name: DeleteByProductEnId :exec
-DELETE FROM "productEn"
+DELETE FROM
+    "productEn"
 WHERE
     "ProductEnID" = sqlc.arg ('ProductEnID');
 

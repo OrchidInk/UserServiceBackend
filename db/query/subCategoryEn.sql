@@ -2,12 +2,13 @@
 INSERT INTO
     "subCategoryEn" (
         "subCategoryNameEn",
+        -- Correct casing here
         "CategoryEnID"
     )
 VALUES
     (
-        "subCategoryNameEN" = sqlc.arg('subCategoryNameEN') :: VARCHAR(100),
-        "CategoryEnID" = sqlc.arg('CategoryEnID') :: INT
+        sqlc.arg('subCategoryNameEn') :: VARCHAR(100),
+        sqlc.arg('CategoryEnID') :: INT
     ) RETURNING *;
 
 -- name: GetListAllSubCategoriesEn :many
@@ -40,16 +41,25 @@ WHERE
 LIMIT
     1;
 
+-- name: FindByNameSubCategoryEn :one
+SELECT
+    *
+FROM
+    "subCategoryEn"
+WHERE
+    "subCategoryNameEn" = sqlc.arg('subCategoryNameEn')
+LIMIT
+    1;
+
 -- name: GetProductsBySubCategoryEn :many
-SELECT 
+SELECT
     p."ProductEnID",
     p."ProductNameEn",
     p."PriceEn",
     p."StockQuantity",
     p."ImagesPathEn"
 FROM
-    "subCategoryEn"  sc
-JOIN 
-    "productEn"  p ON sc."subCategoryIDEn" = p."subCategoryIDEn"
-WHERE 
-    sc."subCategoryIDEn" = $1;
+    "subCategoryEn" sc
+    JOIN "productEn" p ON sc."subCategoryIDEn" = p."subCategoryIDEn"
+WHERE
+    sc."subCategoryIDEn" = sqlc.arg('subCategoryIDEn');

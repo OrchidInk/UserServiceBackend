@@ -20,23 +20,24 @@ func superAdminRoutes(app *fiber.App, hd *handlers.Handlers) {
 	user.Get("/list/admin", hd.GetListAdmin)
 	user.Get("/list/user", hd.GetListUser)
 
-	// category request
-	// category := api.Group("/categoryEn", hd.Authorize, hd.SuperAdminLogin)
-	// create category request
-	// 	category.Post("/create/mn", hd.CreateCategoryMn)
-	// 	category.Post("/create/en", hd.CreateCategoryEn)
+	//Category
+	category := api.Group("/category")
+	category.Post("/createEn", hd.CreateCategoryEn)
+	category.Post("/createMn", hd.CreateCategoryMn)
 
-	// 	// update category request
-	// 	category.Put("/en/:id", hd.UpdateCategoryEn)
-	// 	category.Put("/mn/:id", hd.CreateCategoryMn)
+	category.Get("/listEn", hd.GetCategoriesWithSubCategoriesEn)
+	category.Get("/listMn", hd.GetCategoriesWithSubCategoriesMn)
 
-	// 	// delete category request
-	// 	category.Delete("/en/:id", hd.DeleteCategoryEn)
-	// 	category.Delete("/mn/:id", hd.DeleteCategoryMn)
+	// subCategory
+	subCategory := api.Group("/subCategory")
+	subCategory.Post("/createEn", hd.CreateSubCategoryEn)
+	subCategory.Post("/createMn", hd.CreateSubCategoryMn)
+	subCategory.Get("/list/:subCategoryIDEn", hd.GetProductsBySubCategoryEn)
 
-	// 	// Get category
-	// 	category.Get("/list/en", hd.GetListCategoryEn)
-	// 	category.Get("/list/mn", hd.GetListCategoryMn)
+	//Product
+	product := api.Group("/product")
+	product.Post("/createEn", hd.CreateProductEn)
+	product.Post("/createMn", hd.CreateProductMn)
 }
 
 func adminRoutes(app *fiber.App, hd *handlers.Handlers) {

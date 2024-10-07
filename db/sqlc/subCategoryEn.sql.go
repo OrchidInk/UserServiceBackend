@@ -13,22 +13,23 @@ const createSubCategoryEn = `-- name: CreateSubCategoryEn :one
 INSERT INTO
     "subCategoryEn" (
         "subCategoryNameEn",
+        -- Correct casing here
         "CategoryEnID"
     )
 VALUES
     (
-        "subCategoryNameEN" = $1 :: VARCHAR(100),
-        "CategoryEnID" = $2 :: INT
+        $1 :: VARCHAR(100),
+        $2 :: INT
     ) RETURNING "subCategoryIDEn", "subCategoryNameEn", "CategoryEnID"
 `
 
 type CreateSubCategoryEnParams struct {
-	SubCategoryNameEN string
+	SubCategoryNameEn string
 	CategoryEnID      int32
 }
 
 func (q *Queries) CreateSubCategoryEn(ctx context.Context, arg CreateSubCategoryEnParams) (SubCategoryEn, error) {
-	row := q.db.QueryRowContext(ctx, createSubCategoryEn, arg.SubCategoryNameEN, arg.CategoryEnID)
+	row := q.db.QueryRowContext(ctx, createSubCategoryEn, arg.SubCategoryNameEn, arg.CategoryEnID)
 	var i SubCategoryEn
 	err := row.Scan(&i.SubCategoryIDEn, &i.SubCategoryNameEn, &i.CategoryEnID)
 	return i, err
@@ -44,6 +45,24 @@ WHERE
 func (q *Queries) DeleteSubCategoryEn(ctx context.Context, subcategoryiden int32) error {
 	_, err := q.db.ExecContext(ctx, deleteSubCategoryEn, subcategoryiden)
 	return err
+}
+
+const findByNameSubCategoryEn = `-- name: FindByNameSubCategoryEn :one
+SELECT
+    "subCategoryIDEn", "subCategoryNameEn", "CategoryEnID"
+FROM
+    "subCategoryEn"
+WHERE
+    "subCategoryNameEn" = $1
+LIMIT
+    1
+`
+
+func (q *Queries) FindByNameSubCategoryEn(ctx context.Context, subcategorynameen string) (SubCategoryEn, error) {
+	row := q.db.QueryRowContext(ctx, findByNameSubCategoryEn, subcategorynameen)
+	var i SubCategoryEn
+	err := row.Scan(&i.SubCategoryIDEn, &i.SubCategoryNameEn, &i.CategoryEnID)
+	return i, err
 }
 
 const findBySubCategoryIDEn = `-- name: FindBySubCategoryIDEn :one
@@ -95,17 +114,16 @@ func (q *Queries) GetListAllSubCategoriesEn(ctx context.Context) ([]SubCategoryE
 }
 
 const getProductsBySubCategoryEn = `-- name: GetProductsBySubCategoryEn :many
-SELECT 
+SELECT
     p."ProductEnID",
     p."ProductNameEn",
     p."PriceEn",
     p."StockQuantity",
     p."ImagesPathEn"
 FROM
-    "subCategoryEn"  sc
-JOIN 
-    "productEn"  p ON sc."subCategoryIDEn" = p."subCategoryIDEn"
-WHERE 
+    "subCategoryEn" sc
+    JOIN "productEn" p ON sc."subCategoryIDEn" = p."subCategoryIDEn"
+WHERE
     sc."subCategoryIDEn" = $1
 `
 

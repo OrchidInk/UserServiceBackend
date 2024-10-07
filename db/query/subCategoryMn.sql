@@ -6,8 +6,8 @@ INSERT INTO
     )
 VALUES
     (
-        "subCategoryNameMn" = sqlc.arg('subCategoryNameMn') :: VARCHAR(100),
-        "CategoryMnID" = sqlc.arg('CategoryMnID')
+        sqlc.arg('subCategoryNameMn') :: VARCHAR(100),
+        sqlc.arg('CategoryMnID') :: INT
     ) RETURNING *;
 
 -- name: GetListAllSubCategoryMn :many
@@ -15,6 +15,16 @@ SELECT
     *
 FROM
     "subCategoryMn";
+
+-- name: FindByNameSubCategoryMn :one
+SELECT
+    *
+FROM
+    "subCategoryMn"
+WHERE
+    "subCategoryNameMn" = sqlc.arg('subCategoryNameMn')
+LIMIT
+    1;
 
 -- name: UpdateBySubCategoryNameMn :one
 UPDATE
@@ -47,15 +57,14 @@ SET
     "CategoryMnID" = sqlc.arg('CategoryMnID') RETURNING *;
 
 -- name: GetProductsBySubCategoryMn :many
-SELECT 
+SELECT
     p."ProductMnID",
     p."ProductNameMn",
     p."PriceMn",
     p."StockQuantity",
     p."ImagesPathMn"
 FROM
-    "subCategoryMn"  sc
-JOIN 
-    "productMn"  p ON sc."subCategoryIDMn" = p."subCategoryIDMn"
-WHERE 
-    sc."subCategoryIDMn" = $1;
+    "subCategoryMn" sc
+    JOIN "productMn" p ON sc."subCategoryIDMn" = p."subCategoryIDMn"
+WHERE
+    sc."subCategoryIDMn" = sqlc.arg('subCategoryIDMn');

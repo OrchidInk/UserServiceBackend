@@ -17,8 +17,8 @@ INSERT INTO
     )
 VALUES
     (
-        "subCategoryNameMn" = $1 :: VARCHAR(100),
-        "CategoryMnID" = $2
+        $1 :: VARCHAR(100),
+        $2 :: INT
     ) RETURNING "subCategoryIDMn", "subCategoryNameMn", "CategoryMnID"
 `
 
@@ -44,6 +44,24 @@ WHERE
 func (q *Queries) DeleteBySubCategoryMn(ctx context.Context, subcategoryidmn int32) error {
 	_, err := q.db.ExecContext(ctx, deleteBySubCategoryMn, subcategoryidmn)
 	return err
+}
+
+const findByNameSubCategoryMn = `-- name: FindByNameSubCategoryMn :one
+SELECT
+    "subCategoryIDMn", "subCategoryNameMn", "CategoryMnID"
+FROM
+    "subCategoryMn"
+WHERE
+    "subCategoryNameMn" = $1
+LIMIT
+    1
+`
+
+func (q *Queries) FindByNameSubCategoryMn(ctx context.Context, subcategorynamemn string) (SubCategoryMn, error) {
+	row := q.db.QueryRowContext(ctx, findByNameSubCategoryMn, subcategorynamemn)
+	var i SubCategoryMn
+	err := row.Scan(&i.SubCategoryIDMn, &i.SubCategoryNameMn, &i.CategoryMnID)
+	return i, err
 }
 
 const findBySubCategoryID = `-- name: FindBySubCategoryID :one
@@ -95,17 +113,16 @@ func (q *Queries) GetListAllSubCategoryMn(ctx context.Context) ([]SubCategoryMn,
 }
 
 const getProductsBySubCategoryMn = `-- name: GetProductsBySubCategoryMn :many
-SELECT 
+SELECT
     p."ProductMnID",
     p."ProductNameMn",
     p."PriceMn",
     p."StockQuantity",
     p."ImagesPathMn"
 FROM
-    "subCategoryMn"  sc
-JOIN 
-    "productMn"  p ON sc."subCategoryIDMn" = p."subCategoryIDMn"
-WHERE 
+    "subCategoryMn" sc
+    JOIN "productMn" p ON sc."subCategoryIDMn" = p."subCategoryIDMn"
+WHERE
     sc."subCategoryIDMn" = $1
 `
 

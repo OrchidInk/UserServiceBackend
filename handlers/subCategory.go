@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"database/sql"
 	"log/slog"
 	"strconv"
 
@@ -17,21 +18,32 @@ func (hd *Handlers) CreateSubCategoryEn(ctx *fiber.Ctx) error {
 		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"err": "invalid request body"})
 	}
 
-	subCategory, err := queries.FindBySubCategoryIDEn(ctx.Context(), request.SubCategoryIdEN)
-	if err != nil {
-		slog.Error("this sub category already exist", slog.Any("err", err))
-		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"err": err})
-	}
-
-	createSubCategory, err := queries.CreateSubCategoryEn(ctx.Context(), db.CreateSubCategoryEnParams{
-		SubCategoryNameEN: request.SubCategoryNameEN,
-		CategoryEnID:      subCategory.CategoryEnID,
-	})
-	if err != nil {
+	// Check if the subcategory already exists by name, not ID
+	_, err := queries.FindByNameSubCategoryEn(ctx.Context(), request.SubCategoryNameEN) // Correct column name here
+	if err == nil {
+		// Subcategory already exists, return conflict
+		slog.Error("this subcategory already exists", slog.Any("err", err))
+		return ctx.Status(fiber.StatusConflict).JSON(fiber.Map{"err": "subcategory already exists"})
+	} else if err != sql.ErrNoRows {
+		// Some other error occurred
 		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"err": err})
 	}
 
-	return ctx.Status(fiber.StatusOK).JSON(fiber.Map{"message": "successfullly created", "subCategoryID": createSubCategory.SubCategoryIDEn, "subcategoryNameEn": createSubCategory.SubCategoryNameEn})
+	// Proceed with subcategory creation
+	createSubCategory, err := queries.CreateSubCategoryEn(ctx.Context(), db.CreateSubCategoryEnParams{
+		SubCategoryNameEn: request.SubCategoryNameEN, // Correct column name here
+		CategoryEnID:      request.CategoryEnID,
+	})
+	if err != nil {
+		slog.Error("unable to create subCategory", slog.Any("err", err))
+		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"err": err})
+	}
+
+	return ctx.Status(fiber.StatusOK).JSON(fiber.Map{
+		"message":           "successfully created",
+		"subCategoryID":     createSubCategory.SubCategoryIDEn,
+		"subcategoryNameEn": createSubCategory.SubCategoryNameEn,
+	})
 }
 
 func (hd *Handlers) CreateSubCategoryMn(ctx *fiber.Ctx) error {
@@ -42,20 +54,28 @@ func (hd *Handlers) CreateSubCategoryMn(ctx *fiber.Ctx) error {
 		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"err": err})
 	}
 
-	subCategory, err := queries.FindBySubCategoryID(ctx.Context(), request.SubCategoryIdMn)
-	if err != nil {
-		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"err": err})
+	_, err := queries.FindByNameSubCategoryMn(ctx.Context(), request.SubCategoryNameMn)
+	if err == nil {
+		slog.Error("this subcategory already exists", slog.Any("err", err))
+		return ctx.Status(fiber.StatusConflict).JSON(fiber.Map{"err": "subcategory already exists"})
+	} else if err != sql.ErrNoRows {
+		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"err": err})
 	}
 
 	createdSubCategory, err := queries.CreateSubCategoryMn(ctx.Context(), db.CreateSubCategoryMnParams{
 		SubCategoryNameMn: request.SubCategoryNameMn,
-		CategoryMnID:      subCategory.CategoryMnID,
+		CategoryMnID:      request.CategoryMnID,
 	})
 	if err != nil {
-		slog.Error("unable to sub category", slog.Any("err", "err"))
+		slog.Error("unable to create subcategory", slog.Any("err", err)) // Fix this line
+		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"err": err})
 	}
 
-	return ctx.Status(fiber.StatusOK).JSON(fiber.Map{"message": "successfully", "subCategoryId": createdSubCategory.SubCategoryIDMn, "subCategoryName": createdSubCategory.SubCategoryNameMn})
+	return ctx.Status(fiber.StatusOK).JSON(fiber.Map{
+		"message":         "successfully created",
+		"subCategoryId":   createdSubCategory.SubCategoryIDMn,
+		"subCategoryName": createdSubCategory.SubCategoryNameMn,
+	})
 }
 
 func (hd *Handlers) UpdateSubCategoryEn(ctx *fiber.Ctx) error {
@@ -150,4 +170,21 @@ func (hd *Handlers) DeleteSubCategoryMn(ctx *fiber.Ctx) error {
 	}
 
 	return ctx.Status(fiber.StatusOK).JSON(fiber.Map{"message": "deleted successfully"})
+}
+
+func (hd *Handlers) GetProductsBySubCategoryEn(ctx *fiber.Ctx) error {
+	queries, _, _ := hd.queries()
+
+	subCategoryIDStr := ctx.Params("subCategoryIDEn")
+	subCategoryID, err := strconv.Atoi(subCategoryIDStr)
+	if err != nil {
+		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"message": "Invalid subcategory ID"})
+	}
+
+	products, err := queries.GetProductsBySubCategoryEn(ctx.Context(), int32(subCategoryID))
+	if err != nil {
+		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"message": "Failed to fetch products"})
+	}
+
+	return ctx.Status(fiber.StatusOK).JSON(products)
 }
