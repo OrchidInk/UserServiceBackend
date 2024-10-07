@@ -26,7 +26,7 @@ func (hd *Handlers) CreateProductEn(ctx *fiber.Ctx) error {
 	createProduct, err := queries.CreateProductEn(ctx.Context(), db.CreateProductEnParams{
 		ProductNameEn:   request.ProductNameEn,
 		SubCategoryIDEn: request.SubCategoryEnID,
-		PriceEn:         price.String(), // Using the converted float64 price
+		PriceEn:         price.String(),
 		StockQuantity:   request.StockQuantity,
 		ImagesPathEn:    request.ImagesPathEn,
 	})

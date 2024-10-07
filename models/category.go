@@ -1,75 +1,61 @@
 package models
 
 type CategoryEn struct {
-	CategoryEnID   int32           `json:"category_en_id"`
-	CategoryNameEn string          `json:"category_name_en"`
+	CategoryEnID   int32           `json:"categoryEnId"`
+	CategoryNameEn string          `json:"categoryNameEn"`
 	SubCategories  []SubCategoryEn `json:"subcategories"`
 }
 
 type CategoryMn struct {
-	CategoryMnID   int32           `json:"category_mn_id"`
-	CategoryNameMn string          `json:"category_name_mn"`
+	CategoryMnID   int32           `json:"categoryMnId"`
+	CategoryNameMn string          `json:"categoryNameMn"`
 	SubCategories  []SubCategoryMn `json:"subcategories"`
 }
 
 type UpdateCategoryEn struct {
-	CategoryEnId   int32  `json:"category_en_id"`
-	CategoryNameEn string `json:"category_name_en" validate:"required"`
+	CategoryEnId   int32  `json:"categoryEnId"`
+	CategoryNameEn string `json:"categoryNameEn" validate:"required"`
 }
 
 type UpdateCategoryMn struct {
-	CategoryMnId   int32  `json:"category_mn_id"`
-	CategoryNameMn string `json:"category_name_mn" validate:"required"`
+	CategoryMnId   int32  `json:"categoryMnId"`
+	CategoryNameMn string `json:"categoryNameMn" validate:"required"`
 }
 
 type CreateCategoryEn struct {
-	CategoryNameEn string `json:"category_name_en" validate:"required"`
+	CategoryNameEn string `json:"categoryNameEn" validate:"required"`
 }
 
 type CreateCategoryMn struct {
-	CategoryNameMn string `json:"category_name_mn" validate:"required"`
+	CategoryNameMn string `json:"categoryNameMn" validate:"required"`
 }
 
 type SubCategoryEn struct {
 	SubCategoryIdEN   int32  `json:"subcategoryIDEN"`
 	SubCategoryNameEN string `json:"SubCategoryNameEN"`
-	CategoryEnID      int32  `json:"category_en_id"`
+	CategoryEnID      int32  `json:"categoryEnId"`
 }
 
 type SubCategoryMn struct {
-	SubCategoryIdMn   int32  `json:"sub_category_ID_mn"`
+	SubCategoryIdMn   int32  `json:"subCategoryIDMn"`
 	SubCategoryNameMn string `json:"SubCategoryNameMN"`
-	CategoryMnID      int32  `json:"category_mn_id"`
+	CategoryMnID      int32  `json:"categoryMnId"`
 }
 
 type UpdateSubCategoryEn struct {
-	SubCategoryNameEn string `json:"Sub_Category_NameEn"`
-	SubCategoryEnId   int32  `json:"Sub_Category_EN_ID"`
+	SubCategoryNameEn string `json:"subCategoryNameEn"`
+	SubCategoryEnId   int32  `json:"subCategoryENID"`
 }
 
 type UpdateSubCategoryMn struct {
-	SubCategoryNameMn string `json:"Sub_Category_NameMn"`
-	SubCategoryMnID   int32  `json:"Sub_Category_MN_ID"`
+	SubCategoryNameMn string `json:"subCategoryNameMn"`
+	SubCategoryMnID   int32  `json:"subCategoryMNID"`
 }
 
 type DeleteSubCategoryEn struct {
-	SubCategoryEnID int32 `json:"Sub_Category_EN_ID"`
+	SubCategoryEnID int32 `json:"subCategoryENID"`
 }
 
 type DeleteSubCategoryMn struct {
-	SubCategoryMnID int32 `json:"Sub_Category_MN_ID"`
+	SubCategoryMnID int32 `json:"subCategoryMNID"`
 }
-
-// type SubCategoryEnWithProducts struct {
-// 	SubCategoryIDEn   int32       `json:"sub_category_en_id"`
-// 	SubCategoryNameEn string      `json:"sub_category_name_en"`
-// 	Products          []ProductEn `json:"products"`
-// }
-
-// type ProductEn struct {
-// 	ProductEnID   int32   `json:"product_en_id"`
-// 	PriceEn       float64 `json:"price_en"`
-// 	StockQuantity int32   `json:"stock_quantity"`
-// 	ImagesPathEn  string  `json:"images_path_en"`
-// 	CreatedAt     string  `json:"created_at"`
-// }
