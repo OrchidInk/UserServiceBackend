@@ -8,6 +8,7 @@ import (
 	db "orchid.admin.service/db/sqlc"
 	"orchid.admin.service/models"
 	"orchid.admin.service/utils"
+	"orchid.admin.service/utils/secure"
 )
 
 func (hd *Handlers) RegisterSuperAdmin(ctx *fiber.Ctx) error {
@@ -149,4 +150,122 @@ func (hd *Handlers) RegisterUser(ctx *fiber.Ctx) error {
 	}
 
 	return ctx.Status(fiber.StatusOK).JSON(fiber.Map{"message": "User created", "user_id": createUser.ID})
+}
+
+func (hd *Handlers) SuperAdminLogin(ctx *fiber.Ctx) error {
+	queries, _, _ := hd.queries()
+
+	var loginRequest models.SuperAdminLogin
+	if err := ctx.BodyParser(&loginRequest); err != nil {
+		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"message": "Invalid request"})
+	}
+
+	superAdminLogin, err := queries.FindByUserName(ctx.Context(), loginRequest.UserName)
+	if err != nil || !superAdminLogin.IsSuperAdmin {
+		return ctx.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"message": "Unauthorized"})
+	}
+
+	if !utils.CheckPassword(loginRequest.Password, superAdminLogin.IsHashedPassword) {
+		return ctx.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"message": "invalied super admin password"})
+	}
+
+	token, err := secure.IssueToken(superAdminLogin.ID, superAdminLogin.IsAdmin, superAdminLogin.IsSuperAdmin, hd.kp)
+	if err != nil {
+		slog.Error("Unable to generate token", slog.Any("err", err))
+		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"message": "Could not log in"})
+	}
+
+	return ctx.Status(fiber.StatusOK).JSON(fiber.Map{
+		"message": "Login successful",
+		"token":   token,
+		"role":    "SuperAdmin",
+		"user":    superAdminLogin.UserName,
+	})
+}
+
+func (hd *Handlers) AdminLogin(ctx *fiber.Ctx) error {
+	queries, _, _ := hd.queries()
+
+	var loginRequest models.AdminLogin
+	if err := ctx.BodyParser(&loginRequest); err != nil {
+		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"messgae": "Invalied request in body"})
+	}
+
+	adminLogin, err := queries.FindByUserName(ctx.Context(), loginRequest.UserName)
+	if err != nil || !adminLogin.IsAdmin {
+		return ctx.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"message": "Unauthorized admin"})
+	}
+
+	if !utils.CheckPassword(loginRequest.Password, adminLogin.IsHashedPassword) {
+		return ctx.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"message": "password is wrong"})
+	}
+
+	token, err := secure.IssueToken(adminLogin.ID, adminLogin.IsSuperAdmin, adminLogin.IsAdmin, hd.kp)
+	if err != nil {
+		slog.Error("unable to generate token err", slog.Any("err", err))
+		return ctx.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"message": "unable to generate token this is not admin role user"})
+	}
+
+	return ctx.Status(fiber.StatusOK).JSON(fiber.Map{
+		"message": "Login successful",
+		"token":   token,
+		"role":    "Admin",
+		"user":    adminLogin.UserName,
+	})
+}
+
+func (hd *Handlers) UserLogin(ctx *fiber.Ctx) error {
+	queries, _, _ := hd.queries()
+
+	var loginRequest models.UserLogin
+	if err := ctx.BodyParser(&loginRequest); err != nil {
+		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"message": "invalied request"})
+	}
+
+	userLogin, err := queries.FindByUserName(ctx.Context(), loginRequest.UserName)
+	if err != nil || !userLogin.IsUser {
+		return ctx.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"message": "this user is not user login"})
+	}
+
+	if !utils.CheckPassword(loginRequest.Password, userLogin.IsHashedPassword) {
+		slog.Error("wrong password err", slog.Any("err", err))
+		return ctx.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"message": "wrong password"})
+	}
+
+	token, err := secure.IssueToken(userLogin.ID, userLogin.IsSuperAdmin, userLogin.IsAdmin, hd.kp)
+	if err != nil {
+		slog.Error("unable to generate token", slog.Any("err", err))
+		return ctx.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"message": "unable to generate token"})
+	}
+
+	return ctx.Status(fiber.StatusOK).JSON(fiber.Map{
+		"message":  "user created",
+		"userid":   userLogin.ID,
+		"token":    token,
+		"username": userLogin.UserName,
+	})
+}
+
+func (hd *Handlers) GetListAdmin(ctx *fiber.Ctx) error {
+	queries, _, _ := hd.queries()
+
+	admins, err := queries.GetListAdmin(ctx.Context())
+	if err != nil {
+		slog.Error("unable to get admin users", slog.Any("err", err))
+		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"err": err.Error()})
+	}
+
+	return ctx.JSON(admins)
+}
+
+func (hd *Handlers) GetListUser(ctx *fiber.Ctx) error {
+	queries, _, _ := hd.queries()
+
+	users, err := queries.GetListUser(ctx.Context())
+	if err != nil {
+		slog.Error("unable to get admin users", slog.Any("err", err))
+		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"err": err.Error()})
+	}
+
+	return ctx.JSON(users)
 }

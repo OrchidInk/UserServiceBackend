@@ -113,36 +113,36 @@ func (hd *Handlers) AdminOnly(c *fiber.Ctx) error {
 }
 
 func (hd *Handlers) SuperAdminOnly(c *fiber.Ctx) error {
+	// Get the Authorization header
 	authHeader := c.Get("Authorization")
 	if authHeader == "" {
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
-			"message": "Unauthorized",
+			"message": "Unauthorized: Missing token",
 		})
 	}
 
+	// Split the Bearer token
 	parts := strings.Split(authHeader, " ")
 	if len(parts) != 2 || parts[0] != "Bearer" {
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
-			"message": "Invalid Authorization header format",
+			"message": "Unauthorized: Invalid token format",
 		})
 	}
 
+	// Get the token from header
 	token := parts[1]
+
+	// Verify the token and check if the user is a SuperAdmin
 	claims, _, isSuperAdmin, err := secure.VerifyToken(token, hd.kp)
-	if err != nil {
-		slog.Error("Invalid token", slog.Any("err", err))
-		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
-			"message": "Invalid token",
-		})
-	}
-
-	slog.Info("Token claims", slog.Any("claims", claims))
-
-	if !isSuperAdmin {
+	if err != nil || !isSuperAdmin {
 		return c.Status(fiber.StatusForbidden).JSON(fiber.Map{
-			"message": "Forbidden: Super Admin access only",
+			"message": "Forbidden: SuperAdmin access only",
 		})
 	}
 
+	// Store relevant claims in the request context (optional, if needed later)
+	c.Locals("superAdminId", claims["adminId"])
+
+	// Continue to the next handler
 	return c.Next()
 }

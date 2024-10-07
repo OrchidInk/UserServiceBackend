@@ -5,8 +5,159 @@
 package db
 
 import (
+	"database/sql"
 	"time"
 )
+
+type AdminPermission struct {
+	PermissionID int32
+	AdminID      sql.NullInt32
+	CanCreate    sql.NullBool
+	CanRead      sql.NullBool
+	CanUpdate    sql.NullBool
+	CanDelete    sql.NullBool
+	AssignedAt   sql.NullTime
+}
+
+type BannerInfo struct {
+	BannerId        int32
+	BannerImagePath string
+	BannerImageUrl  string
+}
+
+type CategoryEn struct {
+	CategoryEnID   int32
+	CategoryNameEn string
+}
+
+type CategoryMn struct {
+	CategoryMnID   int32
+	CategoryNameMn string
+}
+
+type Customer struct {
+	CustomerId   int32
+	CustomerName string
+	ContractDate int32
+	IsActive     bool
+	CreatedAt    time.Time
+	UpdatedAt    time.Time
+}
+
+type CustomerOrderDetail struct {
+	CustomerOrderId int32
+	CustomerId      int32
+	OrderDate       sql.NullTime
+	OrderStatus     sql.NullString
+	TotalAmount     string
+	PaymentStatus   sql.NullString
+}
+
+type Delivery struct {
+	DeliverId   int32
+	DeliverName string
+	OrderId     int32
+}
+
+type DetailEn struct {
+	DetailEnId  int32
+	ProductEnID int32
+	ChoiceName  string
+	ChoiceValue string
+}
+
+type DetailMn struct {
+	DetailMnId  int32
+	ProductMnID int32
+	ChoiceName  string
+	ChoiceValue string
+}
+
+type OrderItem struct {
+	OrderItemId     int32
+	CustomerOrderId int32
+	ProductMnID     int32
+	ProductEnID     int32
+	Quantity        int32
+	PriceAtOrder    string
+}
+
+type Payment struct {
+	PaymentID     int32
+	OrderID       int32
+	UserID        int32
+	PaymentMethod string
+	PaymentStatus string
+	Amount        string
+	CreatedAt     sql.NullTime
+	UpdatedAt     sql.NullTime
+}
+
+type ProductEn struct {
+	ProductEnID     int32
+	ProductNameEn   string
+	SubCategoryIDEn int32
+	PriceEn         string
+	StockQuantity   int32
+	ImagesPathEn    string
+	CreatedAt       sql.NullTime
+	UpdatedAt       sql.NullTime
+}
+
+type ProductImage struct {
+	ImageID     int32
+	ImagePathEn string
+	ImagePathMn string
+}
+
+type ProductMn struct {
+	ProductMnID     int32
+	ProductNameMn   string
+	SubCategoryIDMn int32
+	PriceMn         string
+	StockQuantity   int32
+	ImagesPathMn    string
+	CreatedAt       sql.NullTime
+	UpdatedAt       sql.NullTime
+}
+
+type ProductReview struct {
+	ReviewID    int32
+	ProductMnID sql.NullInt32
+	ProductEnID sql.NullInt32
+	UserID      sql.NullInt32
+	Rating      sql.NullInt32
+	ReviewText  sql.NullString
+	CreatedAt   sql.NullTime
+}
+
+type ProductTranslationsEn struct {
+	ProductTranslationEnID int32
+	ProductEnID            sql.NullInt32
+	LanguageCode           string
+	ProductEnName          string
+	ProductDescription     sql.NullString
+}
+
+type ProductTranslationsMn struct {
+	ProductTranslationMnID int32
+	ProductMnID            sql.NullInt32
+	LanguageCode           string
+	ProductMnName          string
+	ProductDescription     sql.NullString
+}
+
+type SubCategoryEn struct {
+	SubCategoryIDEn   int32
+	SubCategoryNameEn string
+	CategoryEnID      int32
+}
+
+type SubCategoryMn struct {
+	SubCategoryIDMn   int32
+	SubCategoryNameMn string
+	CategoryMnID      int32
+}
 
 type User struct {
 	ID               int32
@@ -20,4 +171,23 @@ type User struct {
 	IsSuperAdmin     bool
 	IsActive         bool
 	CreatedAt        time.Time
+}
+
+type UserInfo struct {
+	UserInfoId    int32
+	UserId        int32
+	UserImagePath string
+	LastName      string
+	FirstName     string
+	Email         string
+	BirthDate     time.Time
+	PhoneNumber1  string
+	PhoneNumber2  string
+	Address1      string
+}
+
+type UserPicture struct {
+	UserPicId     int32
+	UserImagePath string
+	UserImageUrl  string
 }

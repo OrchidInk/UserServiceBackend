@@ -33,6 +33,26 @@ WHERE
     "ID" = sqlc.arg('ID')
     AND "IsAdmin" = TRUE;
 
+-- name: FindByUserID :one
+SELECT
+    *,
+    "IsAdmin",
+    "IsUser",
+    "IsSuperAdmin"
+FROM
+    "User"
+WHERE 
+    "ID" = sqlc.arg('ID')
+LIMIT 1;
+
+-- name: FindByUser :one
+SELECT
+    *
+FROM
+    "User"
+WHERE
+    "UserName" = sqlc.arg('UserName') :: VARCHAR(100)
+LIMIT 1;
 
 -- name: FindByUserName :one
 SELECT
@@ -46,15 +66,6 @@ WHERE
     "UserName" = sqlc.arg('UserName') :: VARCHAR(100)
 LIMIT 1;
 
-
--- name: FindByAdminAdmin :many
-SELECT
-    *
-FROM
-    "User"
-WHERE
-    "IsAdmin" = TRUE;
-
 -- name: FindBySuperAdminAdmin :many
 SELECT
     *
@@ -62,3 +73,19 @@ FROM
     "User"
 WHERE
     "IsSuperAdmin" = TRUE;
+
+-- name: GetListAdmin :many
+SELECT
+    *
+FROM
+    "User"
+WHERE
+    "IsAdmin" = TRUE;
+
+-- name: GetListUser :many
+SELECT  
+    *
+FROM
+    "User"
+WHERE
+    "IsUser" = TRUE;

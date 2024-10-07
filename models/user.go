@@ -37,32 +37,19 @@ type UserRegister struct {
 	Password  string `json:"password" validate:"required,min=6"`
 }
 
-type UserLogin struct {
-	Email    string `json:"email" validate:"required,email"`
+type SuperAdminLogin struct {
+	UserName string `json:"username" validate:"required"`
 	Password string `json:"password" validate:"required"`
 }
 
-type UserInfo struct {
-	UserId    int32     `json:"userId"`
-	LastName  string    `json:"lastName"`
-	FirstName string    `json:"firstName"`
-	RegNo     string    `json:"regNo"`
-	Email     string    `json:"email"`
-	Phone1    string    `json:"phone1"`
-	Address   string    `json:"address"`
-	BirthDate time.Time `json:"birthDate"`
-	CreatedAt time.Time `json:"createdAt"`
+type AdminLogin struct {
+	UserName string `json:"username" validate:"required"`
+	Password string `json:"password" validate:"required"`
 }
 
-type UserInfoRegister struct {
-	UserId    int32  `json:"userId"`
-	LastName  string `json:"lastName"`
-	FirstName string `json:"firstName"`
-	RegNo     string `json:"regNo"`
-	Email     string `json:"email"`
-	Phone1    string `json:"phone1"`
-	Address   string `json:"address"`
-	BirthDate string `json:"birthDate"`
+type UserLogin struct {
+	UserName string `json:"username" validate:"required"`
+	Password string `json:"password" validate:"required"`
 }
 
 type ForgetPasswordRequest struct {
