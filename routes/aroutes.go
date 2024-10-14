@@ -41,6 +41,9 @@ func superAdminRoutes(app *fiber.App, hd *handlers.Handlers) {
 
 	product.Delete("/deleteEn/:id", hd.DeleteCategoryEn)
 	product.Delete("/deleteMn/:id", hd.DeleteProductMn)
+
+	file := api.Group("/file")
+	file.Post("/file", hd.UploadFile)
 }
 
 func adminRoutes(app *fiber.App, hd *handlers.Handlers) {

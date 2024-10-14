@@ -3,6 +3,7 @@ package aws
 import (
 	"context"
 	"errors"
+	"fmt"
 	"io"
 	"time"
 
@@ -24,8 +25,10 @@ type AwsBucket struct {
 
 func NewAwsBucket(c *conf.Config) (*AwsBucket, error) {
 	client := s3.New(s3.Options{
-		Region:      c.AwsS3.Region,
+		Region:      c.AwsS3.Region, // Ensure the correct region is used here
 		Credentials: aws.NewCredentialsCache(credentials.NewStaticCredentialsProvider(c.AwsS3.Key, c.AwsS3.Secret, "")),
+		EndpointResolver: s3.EndpointResolverFromURL(
+			fmt.Sprintf("https://s3.%s.amazonaws.com", c.AwsS3.Region)), // Explicit region endpoint
 	})
 
 	aws3 := &AwsBucket{c, client}
