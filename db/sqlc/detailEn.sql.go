@@ -54,6 +54,29 @@ func (q *Queries) DeleteDetailEn(ctx context.Context, detailenid int32) error {
 	return err
 }
 
+const findByDetailEn = `-- name: FindByDetailEn :one
+SELECT
+    "detailEnId", "ProductEnID", "ChoiceName", "ChoiceValue"
+FROM
+    "detailEn"
+WHERE
+    "detailEnId" = $1
+LIMIT
+    1
+`
+
+func (q *Queries) FindByDetailEn(ctx context.Context, detailenid int32) (DetailEn, error) {
+	row := q.db.QueryRowContext(ctx, findByDetailEn, detailenid)
+	var i DetailEn
+	err := row.Scan(
+		&i.DetailEnId,
+		&i.ProductEnID,
+		&i.ChoiceName,
+		&i.ChoiceValue,
+	)
+	return i, err
+}
+
 const getAllDetailsEn = `-- name: GetAllDetailsEn :many
 SELECT
     "detailEnId",

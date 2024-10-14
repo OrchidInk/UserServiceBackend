@@ -42,16 +42,39 @@ func (q *Queries) CreateDetailMn(ctx context.Context, arg CreateDetailMnParams) 
 	return i, err
 }
 
-const delteDetailMn = `-- name: DelteDetailMn :exec
+const deleteDetailMn = `-- name: DeleteDetailMn :exec
 DELETE FROM
     "detailMn"
 WHERE
     "detailMnId" = $1
 `
 
-func (q *Queries) DelteDetailMn(ctx context.Context, detailmnid int32) error {
-	_, err := q.db.ExecContext(ctx, delteDetailMn, detailmnid)
+func (q *Queries) DeleteDetailMn(ctx context.Context, detailmnid int32) error {
+	_, err := q.db.ExecContext(ctx, deleteDetailMn, detailmnid)
 	return err
+}
+
+const findByDetailMnID = `-- name: FindByDetailMnID :one
+SELECT
+    "detailMnId", "ProductMnID", "ChoiceName", "ChoiceValue"
+FROM
+    "detailMn"
+WHERE
+    "detailMnId" = $1
+LIMIT
+    1
+`
+
+func (q *Queries) FindByDetailMnID(ctx context.Context, detailmnid int32) (DetailMn, error) {
+	row := q.db.QueryRowContext(ctx, findByDetailMnID, detailmnid)
+	var i DetailMn
+	err := row.Scan(
+		&i.DetailMnId,
+		&i.ProductMnID,
+		&i.ChoiceName,
+		&i.ChoiceValue,
+	)
+	return i, err
 }
 
 const getAllDetailsMn = `-- name: GetAllDetailsMn :many

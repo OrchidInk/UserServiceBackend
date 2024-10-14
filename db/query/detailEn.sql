@@ -48,3 +48,13 @@ FROM
     "detailEn"
 ORDER BY
     "ProductEnID";
+
+-- name: FindByDetailEn :one
+SELECT
+    *
+FROM
+    "detailEn"
+WHERE
+    "detailEnId" = sqlc.arg('detailEnId')
+LIMIT
+    1;

@@ -3,8 +3,8 @@ package models
 type DetailEn struct {
 	DetailEnID  int32  `json:"detailEnId"`
 	ProductEnID int32  `json:"productEnId"`
-	ChoiceName  string `json:"choice_name"`
-	ChoiceValue string `json:"choice_value"`
+	ChoiceName  string `json:"choiceName"`
+	ChoiceValue string `json:"choiceValue"`
 }
 
 type CreateDetailEnRequest struct {

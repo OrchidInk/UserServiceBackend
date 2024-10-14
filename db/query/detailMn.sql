@@ -32,7 +32,7 @@ SET
 WHERE
     "detailMnId" = sqlc.arg('detailMnId') RETURNING *;
 
--- name: DelteDetailMn :exec
+-- name: DeleteDetailMn :exec
 DELETE FROM
     "detailMn"
 WHERE
@@ -48,3 +48,13 @@ FROM
     "detailMn"
 ORDER BY
     "ProductMnID";
+
+-- name: FindByDetailMnID :one
+SELECT
+    *
+FROM
+    "detailMn"
+WHERE
+    "detailMnId" = sqlc.arg('detailMnId')
+LIMIT
+    1;
