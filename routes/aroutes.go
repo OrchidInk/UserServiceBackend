@@ -39,6 +39,9 @@ func superAdminRoutes(app *fiber.App, hd *handlers.Handlers) {
 	product.Post("/createEn", hd.CreateProductEn)
 	product.Post("/createMn", hd.CreateProductMn)
 
+	product.Put("/purchaseEn/:id", hd.DeductProductStockEn)
+	product.Put("/purchaseMn/:id", hd.DeductProductStockMn)
+
 	product.Delete("/deleteEn/:id", hd.DeleteCategoryEn)
 	product.Delete("/deleteMn/:id", hd.DeleteProductMn)
 
@@ -77,4 +80,8 @@ func userRoutes(app *fiber.App, hd *handlers.Handlers) {
 	category := api.Group("/category", hd.Authorize)
 	category.Get("/listEn", hd.GetCategoriesWithSubCategoriesEn)
 	category.Get("/listMn", hd.GetCategoriesWithSubCategoriesMn)
+
+	product := api.Group("/product", hd.Authorize)
+	product.Put("/purchaseEn/:id", hd.DeductProductStockEn)
+	product.Put("/purchaseMn/:id", hd.DeductProductStockMn)
 }
