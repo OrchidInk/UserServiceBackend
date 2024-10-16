@@ -1,0 +1,10 @@
+--TABLE: "images"
+BEGIN;
+
+CREATE TABLE "images" (
+    "Id" SERIAL PRIMARY KEY,
+    "ImagePath" TEXT NOT NULL,
+    "Created_At" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+) TABLESPACE pg_default;
+
+COMMIT;

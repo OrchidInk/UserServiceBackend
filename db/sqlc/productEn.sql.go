@@ -59,6 +59,37 @@ func (q *Queries) CreateProductEn(ctx context.Context, arg CreateProductEnParams
 	return i, err
 }
 
+const deductStockQuantityByProductEnID = `-- name: DeductStockQuantityByProductEnID :one
+UPDATE
+    "productEn"
+SET
+    "StockQuantity" = "StockQuantity" - $1
+WHERE
+    "ProductEnID" = $2
+    AND "StockQuantity" >= $1 RETURNING "ProductEnID", "ProductNameEn", "subCategoryIDEn", "PriceEn", "StockQuantity", "ImagesPathEn", "Created_At", "Updated_At"
+`
+
+type DeductStockQuantityByProductEnIDParams struct {
+	QuantityPurchased int32
+	ProductEnID       int32
+}
+
+func (q *Queries) DeductStockQuantityByProductEnID(ctx context.Context, arg DeductStockQuantityByProductEnIDParams) (ProductEn, error) {
+	row := q.db.QueryRowContext(ctx, deductStockQuantityByProductEnID, arg.QuantityPurchased, arg.ProductEnID)
+	var i ProductEn
+	err := row.Scan(
+		&i.ProductEnID,
+		&i.ProductNameEn,
+		&i.SubCategoryIDEn,
+		&i.PriceEn,
+		&i.StockQuantity,
+		&i.ImagesPathEn,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+	)
+	return i, err
+}
+
 const deleteByProductEnId = `-- name: DeleteByProductEnId :exec
 DELETE FROM
     "productEn"

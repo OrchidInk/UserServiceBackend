@@ -110,3 +110,67 @@ func (hd *Handlers) DeleteProductMn(ctx *fiber.Ctx) error {
 	}
 	return ctx.Status(fiber.StatusOK).JSON(fiber.Map{"message": "successfully deleted product "})
 }
+
+func (hd *Handlers) DeductProductStockEn(ctx *fiber.Ctx) error {
+	queries, _, _ := hd.queries()
+
+	ProductIDStr := ctx.Params("id")
+	ProductID, err := strconv.Atoi(ProductIDStr)
+	if err != nil {
+		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"message": "Invalid product ID"})
+	}
+
+	var request struct {
+		QuantityPurchased int32 `json:"quantityPurchased"`
+	}
+	if err := ctx.BodyParser(&request); err != nil || request.QuantityPurchased <= 0 {
+		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"message": "Invalid quantity"})
+	}
+
+	updatedProduct, err := queries.DeductStockQuantityByProductEnID(ctx.Context(), db.DeductStockQuantityByProductEnIDParams{
+		ProductEnID:       int32(ProductID),
+		QuantityPurchased: request.QuantityPurchased,
+	})
+	if err != nil {
+		slog.Error("unable to deduct stock", slog.Any("err", err))
+		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"message": "Failed to deduct stock", "error": err.Error()})
+	}
+
+	return ctx.Status(fiber.StatusOK).JSON(fiber.Map{
+		"message":   "Stock deducted successfully",
+		"productId": updatedProduct.ProductEnID,
+		"stockLeft": updatedProduct.StockQuantity,
+	})
+}
+
+func (hd *Handlers) DeductProductStockMn(ctx *fiber.Ctx) error {
+	queries, _, _ := hd.queries()
+
+	ProductIDStr := ctx.Params("id")
+	ProductID, err := strconv.Atoi(ProductIDStr)
+	if err != nil {
+		slog.Error("unable to parse id", slog.Any("err", err))
+		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"err": err})
+	}
+
+	var request struct {
+		QuantityPurchased int32 `json:"quantityPurchased"`
+	}
+	if err := ctx.BodyParser(&request); err != nil || request.QuantityPurchased <= 0 {
+		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"message": "Invalid quantity"})
+	}
+
+	updatedProduct, err := queries.DeductSockQuantityByProductMnID(ctx.Context(), db.DeductSockQuantityByProductMnIDParams{
+		ProductMnID:       int32(ProductID),
+		QuantityPurchased: request.QuantityPurchased,
+	})
+	if err != nil {
+		slog.Error("unable to deduct stock", slog.Any("err", err))
+		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"message": "Failed to deduct stock", "error": err.Error()})
+	}
+	return ctx.Status(fiber.StatusOK).JSON(fiber.Map{
+		"message":   "Stock deducted successfully",
+		"productId": updatedProduct.ProductMnID,
+		"stockLeft": updatedProduct.StockQuantity,
+	})
+}

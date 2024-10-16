@@ -73,3 +73,12 @@ WHERE
     "ProductMnID" = sqlc.arg('ProductMnID')
 LIMIT
     1;
+
+-- name: DeductSockQuantityByProductMnID :one
+UPDATE
+    "productMn"
+SET
+    "StockQuantity" = "StockQuantity" - sqlc.arg('quantityPurchased')
+WHERE
+    "ProductMnID" = sqlc.arg('ProductMnID')
+    AND "StockQuantity" >= sqlc.arg('quantityPurchased') RETURNING *;

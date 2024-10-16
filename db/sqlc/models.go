@@ -73,6 +73,12 @@ type DetailMn struct {
 	ChoiceValue string
 }
 
+type Image struct {
+	Id        int32
+	ImagePath string
+	CreatedAt sql.NullTime
+}
+
 type OrderItem struct {
 	OrderItemId     int32
 	CustomerOrderId int32
