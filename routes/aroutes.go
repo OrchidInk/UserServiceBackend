@@ -39,15 +39,19 @@ func superAdminRoutes(app *fiber.App, hd *handlers.Handlers) {
 	product.Post("/createEn", hd.CreateProductEn)
 	product.Post("/createMn", hd.CreateProductMn)
 
+	// Product Update
 	product.Put("/purchaseEn/:id", hd.DeductProductStockEn)
 	product.Put("/purchaseMn/:id", hd.DeductProductStockMn)
 
+	// Product Delete
 	product.Delete("/deleteEn/:id", hd.DeleteCategoryEn)
 	product.Delete("/deleteMn/:id", hd.DeleteProductMn)
 
+	//File
 	file := api.Group("/file")
 	file.Post("/create", hd.UploadFile)
 
+	//Banner
 	banner := api.Group("/banner")
 	banner.Post("/create", hd.CreateBanner)
 }
@@ -81,6 +85,7 @@ func userRoutes(app *fiber.App, hd *handlers.Handlers) {
 	category.Get("/listEn", hd.GetCategoriesWithSubCategoriesEn)
 	category.Get("/listMn", hd.GetCategoriesWithSubCategoriesMn)
 
+	// Product
 	product := api.Group("/product", hd.Authorize)
 	product.Put("/purchaseEn/:id", hd.DeductProductStockEn)
 	product.Put("/purchaseMn/:id", hd.DeductProductStockMn)
