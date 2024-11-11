@@ -13,13 +13,18 @@ const createImages = `-- name: CreateImages :one
 INSERT INTO
     "images" ("ImagePath")
 VALUES
-    ($1 :: TEXT) RETURNING "Id", "ImagePath", "Created_At"
+    ($1 :: TEXT) RETURNING "Id", "ProductMnID", "ImagePath", "Created_At"
 `
 
 func (q *Queries) CreateImages(ctx context.Context, imagepath string) (Image, error) {
 	row := q.db.QueryRowContext(ctx, createImages, imagepath)
 	var i Image
-	err := row.Scan(&i.Id, &i.ImagePath, &i.CreatedAt)
+	err := row.Scan(
+		&i.Id,
+		&i.ProductMnID,
+		&i.ImagePath,
+		&i.CreatedAt,
+	)
 	return i, err
 }
 
@@ -37,7 +42,7 @@ func (q *Queries) DeleteByImages(ctx context.Context, id int32) error {
 
 const findByImageId = `-- name: FindByImageId :one
 SELECT
-    "Id", "ImagePath", "Created_At"
+    "Id", "ProductMnID", "ImagePath", "Created_At"
 FROM
     "images"
 WHERE
@@ -49,13 +54,18 @@ LIMIT
 func (q *Queries) FindByImageId(ctx context.Context, id int32) (Image, error) {
 	row := q.db.QueryRowContext(ctx, findByImageId, id)
 	var i Image
-	err := row.Scan(&i.Id, &i.ImagePath, &i.CreatedAt)
+	err := row.Scan(
+		&i.Id,
+		&i.ProductMnID,
+		&i.ImagePath,
+		&i.CreatedAt,
+	)
 	return i, err
 }
 
 const findByImageUrl = `-- name: FindByImageUrl :one
 SELECT
-    "Id", "ImagePath", "Created_At"
+    "Id", "ProductMnID", "ImagePath", "Created_At"
 FROM
     "images"
 WHERE
@@ -67,13 +77,18 @@ LIMIT
 func (q *Queries) FindByImageUrl(ctx context.Context, imagepath string) (Image, error) {
 	row := q.db.QueryRowContext(ctx, findByImageUrl, imagepath)
 	var i Image
-	err := row.Scan(&i.Id, &i.ImagePath, &i.CreatedAt)
+	err := row.Scan(
+		&i.Id,
+		&i.ProductMnID,
+		&i.ImagePath,
+		&i.CreatedAt,
+	)
 	return i, err
 }
 
 const findByListImages = `-- name: FindByListImages :many
 SELECT
-    "Id", "ImagePath", "Created_At"
+    "Id", "ProductMnID", "ImagePath", "Created_At"
 FROM
     "images"
 ORDER BY
@@ -89,7 +104,12 @@ func (q *Queries) FindByListImages(ctx context.Context) ([]Image, error) {
 	var items []Image
 	for rows.Next() {
 		var i Image
-		if err := rows.Scan(&i.Id, &i.ImagePath, &i.CreatedAt); err != nil {
+		if err := rows.Scan(
+			&i.Id,
+			&i.ProductMnID,
+			&i.ImagePath,
+			&i.CreatedAt,
+		); err != nil {
 			return nil, err
 		}
 		items = append(items, i)

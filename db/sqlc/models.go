@@ -61,7 +61,7 @@ type Delivery struct {
 	CreatedAt      sql.NullTime
 }
 
-type DeliveryAddress struct {
+type Deliveryaddress struct {
 	AddressId  int32
 	DeliverId  int32
 	Street     string
@@ -85,10 +85,18 @@ type DetailMn struct {
 	ChoiceValue string
 }
 
-type Image struct {
-	Id        int32
-	ImagePath string
-	CreatedAt sql.NullTime
+type ImagesEn struct {
+	Id          int32
+	ProductEnID int32
+	ImagePath   string
+	CreatedAt   sql.NullTime
+}
+
+type ImagesMn struct {
+	Id          int32
+	ProductMnID int32
+	ImagePath   string
+	CreatedAt   sql.NullTime
 }
 
 type OrderItem struct {
