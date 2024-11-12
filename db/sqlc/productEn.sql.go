@@ -59,6 +59,37 @@ func (q *Queries) CreateProductEn(ctx context.Context, arg CreateProductEnParams
 	return i, err
 }
 
+const deductStockQuantityByProductEnID = `-- name: DeductStockQuantityByProductEnID :one
+UPDATE
+    "productEn"
+SET
+    "StockQuantity" = "StockQuantity" - $1
+WHERE
+    "ProductEnID" = $2
+    AND "StockQuantity" >= $1 RETURNING "ProductEnID", "ProductNameEn", "subCategoryIDEn", "PriceEn", "StockQuantity", "ImagesPathEn", "Created_At", "Updated_At"
+`
+
+type DeductStockQuantityByProductEnIDParams struct {
+	QuantityPurchased int32
+	ProductEnID       int32
+}
+
+func (q *Queries) DeductStockQuantityByProductEnID(ctx context.Context, arg DeductStockQuantityByProductEnIDParams) (ProductEn, error) {
+	row := q.db.QueryRowContext(ctx, deductStockQuantityByProductEnID, arg.QuantityPurchased, arg.ProductEnID)
+	var i ProductEn
+	err := row.Scan(
+		&i.ProductEnID,
+		&i.ProductNameEn,
+		&i.SubCategoryIDEn,
+		&i.PriceEn,
+		&i.StockQuantity,
+		&i.ImagesPathEn,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+	)
+	return i, err
+}
+
 const deleteByProductEnId = `-- name: DeleteByProductEnId :exec
 DELETE FROM
     "productEn"
@@ -112,6 +143,33 @@ func (q *Queries) FilterByProductEnName(ctx context.Context, productenname sql.N
 		return nil, err
 	}
 	return items, nil
+}
+
+const findByProductEnID = `-- name: FindByProductEnID :one
+SELECT
+    "ProductEnID", "ProductNameEn", "subCategoryIDEn", "PriceEn", "StockQuantity", "ImagesPathEn", "Created_At", "Updated_At"
+FROM
+    "productEn"
+WHERE
+    "ProductEnID" = $1
+LIMIT
+    1
+`
+
+func (q *Queries) FindByProductEnID(ctx context.Context, productenid int32) (ProductEn, error) {
+	row := q.db.QueryRowContext(ctx, findByProductEnID, productenid)
+	var i ProductEn
+	err := row.Scan(
+		&i.ProductEnID,
+		&i.ProductNameEn,
+		&i.SubCategoryIDEn,
+		&i.PriceEn,
+		&i.StockQuantity,
+		&i.ImagesPathEn,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+	)
+	return i, err
 }
 
 const getListProductEn = `-- name: GetListProductEn :many

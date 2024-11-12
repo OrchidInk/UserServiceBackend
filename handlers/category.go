@@ -28,9 +28,9 @@ func (hd *Handlers) CreateCategoryEn(ctx *fiber.Ctx) error {
 	}
 
 	return ctx.Status(fiber.StatusOK).JSON(fiber.Map{
-		"message":       "Category created successfully",
-		"category_id":   category.CategoryEnID,
-		"category_name": category.CategoryNameEn,
+		"message":      "Category created successfully",
+		"categoryId":   category.CategoryEnID,
+		"categoryName": category.CategoryNameEn,
 	})
 }
 
@@ -53,9 +53,9 @@ func (hd *Handlers) CreateCategoryMn(ctx *fiber.Ctx) error {
 	}
 
 	return ctx.Status(fiber.StatusOK).JSON(fiber.Map{
-		"message":       "Category created successfully",
-		"category_id":   category.CategoryMnID,
-		"category_name": category.CategoryNameMn,
+		"message":      "Category created successfully",
+		"categoryId":   category.CategoryMnID,
+		"categoryName": category.CategoryNameMn,
 	})
 }
 
@@ -80,9 +80,9 @@ func (hd *Handlers) UpdateCategoryEn(ctx *fiber.Ctx) error {
 	}
 
 	return ctx.Status(fiber.StatusOK).JSON(fiber.Map{
-		"message":       "Category updated successfully",
-		"category_id":   updatedCategory.CategoryEnID,
-		"category_name": updatedCategory.CategoryNameEn,
+		"message":      "Category updated successfully",
+		"categoryId":   updatedCategory.CategoryEnID,
+		"categoryName": updatedCategory.CategoryNameEn,
 	})
 }
 
@@ -108,9 +108,9 @@ func (hd *Handlers) UpdateCategoryMn(ctx *fiber.Ctx) error {
 	}
 
 	return ctx.Status(fiber.StatusOK).JSON(fiber.Map{
-		"message":       "Category updated successfully",
-		"Category_ID":   updatedCategory.CategoryMnID,
-		"category_name": updatedCategory.CategoryNameMn,
+		"message":      "Category updated successfully",
+		"CategoryID":   updatedCategory.CategoryMnID,
+		"categoryName": updatedCategory.CategoryNameMn,
 	})
 }
 
@@ -214,9 +214,9 @@ func (hd *Handlers) GetCategoriesWithSubCategoriesEn(ctx *fiber.Ctx) error {
 	var categoryList []fiber.Map
 	for _, category := range categoryMap {
 		categoryList = append(categoryList, fiber.Map{
-			"category_en_id":   category.CategoryEnID,
-			"category_name_en": category.CategoryNameEn,
-			"subcategories":    category.SubCategories,
+			"categoryEnId":   category.CategoryEnID,
+			"categoryNameEn": category.CategoryNameEn,
+			"subcategories":  category.SubCategories,
 		})
 	}
 
@@ -255,9 +255,9 @@ func (hd *Handlers) GetCategoriesWithSubCategoriesMn(ctx *fiber.Ctx) error {
 	var categoryList []fiber.Map
 	for _, category := range categoryMap {
 		categoryList = append(categoryList, fiber.Map{
-			"category_mn_id":   category.CategoryMnID,
-			"category_name_mn": category.CategoryNameMn,
-			"subcategories":    category.SubCategories,
+			"categoryMnId":   category.CategoryMnID,
+			"categoryNameMn": category.CategoryNameMn,
+			"subcategories":  category.SubCategories,
 		})
 	}
 

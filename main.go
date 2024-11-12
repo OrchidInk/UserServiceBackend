@@ -50,23 +50,19 @@ func main() {
 
 	logger := slog.New(logHandler)
 
-	// set customer logger to default slog
 	slog.SetDefault(logger)
 
-	// Check if the file exists, and read the contents, unmarshal the yaml.
 	c := &conf.Config{}
 	if err := conf.CreateConfig(c); err != nil {
 		slog.Error("Unable to create the config", slog.Any("err", err))
 		os.Exit(1)
 	}
 
-	// Validate the configuration attributes.
 	if err := c.Validate(); err != nil {
 		slog.Error("Unable to validate the config", slog.Any("err", err))
 		os.Exit(1)
 	}
 
-	// Migarate database
 	if err := migrate.MigrateDatabase(c); err != nil {
 		slog.Error("Unable to migrate the database", slog.Any("err", err))
 		os.Exit(1)
@@ -74,10 +70,6 @@ func main() {
 		slog.Info("Migrate database completed.")
 	}
 
-	// The returned DB is safe for concurrent use by multiple goroutines
-	// and maintains its own pool of idle connections. Thus, the OpenDB
-	// function should be called just once. It is rarely necessary to
-	// close a DB.
 	pgsql, err := db.CreateSqlDB(c)
 	if err != nil {
 		slog.Error("Unable to create the database object", slog.Any("err", err))
@@ -86,7 +78,6 @@ func main() {
 
 	slog.Info("Connected to the database.")
 
-	// Create RSA key pair.
 	kp := secure.NewRsaKey(c)
 	if err := kp.ReadKeyPair(); err != nil {
 		slog.Error("Unable to read RSA key pair", slog.Any("err", err))
@@ -104,13 +95,10 @@ func main() {
 		slog.Info("RSA key pair created.")
 	}
 
-	// Creating handlers for fiber route
 	hd := handlers.NewHandlers(c, pgsql, kp)
 
-	// Creating fiber
 	rt := routes.Routes(hd)
 
-	// Fiber listen port
 	err = rt.Listen(":8000")
 	if err != nil {
 		slog.Error("Unable to listen port", slog.Any("err", err))

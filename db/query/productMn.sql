@@ -63,3 +63,22 @@ WHERE
     "ProductMnName" ILIKE '%' || sqlc.arg ('ProductMnName') || '%' -- Case-insensitive search for partial match
 ORDER BY
     "Created_At" DESC;
+
+-- name: FindByProductIdMn :one
+SELECT
+    *
+FROM
+    "productMn"
+WHERE
+    "ProductMnID" = sqlc.arg('ProductMnID')
+LIMIT
+    1;
+
+-- name: DeductSockQuantityByProductMnID :one
+UPDATE
+    "productMn"
+SET
+    "StockQuantity" = "StockQuantity" - sqlc.arg('quantityPurchased')
+WHERE
+    "ProductMnID" = sqlc.arg('ProductMnID')
+    AND "StockQuantity" >= sqlc.arg('quantityPurchased') RETURNING *;

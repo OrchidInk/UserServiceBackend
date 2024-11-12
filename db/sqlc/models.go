@@ -54,9 +54,21 @@ type CustomerOrderDetail struct {
 }
 
 type Delivery struct {
-	DeliverId   int32
-	DeliverName string
-	OrderId     int32
+	DeliverId      int32
+	DeliverName    string
+	OrderId        int32
+	DeliveryAmount string
+	CreatedAt      sql.NullTime
+}
+
+type Deliveryaddress struct {
+	AddressId  int32
+	DeliverId  int32
+	Street     string
+	City       string
+	State      sql.NullString
+	PostalCode string
+	CreatedAt  sql.NullTime
 }
 
 type DetailEn struct {
@@ -71,6 +83,20 @@ type DetailMn struct {
 	ProductMnID int32
 	ChoiceName  string
 	ChoiceValue string
+}
+
+type ImagesEn struct {
+	Id          int32
+	ProductEnID int32
+	ImagePath   string
+	CreatedAt   sql.NullTime
+}
+
+type ImagesMn struct {
+	Id          int32
+	ProductMnID int32
+	ImagePath   string
+	CreatedAt   sql.NullTime
 }
 
 type OrderItem struct {

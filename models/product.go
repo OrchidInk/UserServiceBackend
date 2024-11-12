@@ -17,16 +17,26 @@ type CreateProductMnRequest struct {
 }
 
 type UpdateProductEnPriceRequest struct {
-	ProductEnID int32  `json:"product_en_id" validate:"required"`
-	PriceEn     string `json:"price_en" validate:"required"`
+	ProductEnID int32  `json:"productEnId" validate:"required"`
+	PriceEn     string `json:"priceEn" validate:"required"`
 }
 
 type UpdateProductEnStockRequest struct {
-	ProductEnID   int32 `json:"product_en_id" validate:"required"`
-	StockQuantity int32 `json:"stock_quantity" validate:"required"`
+	ProductEnID   int32 `json:"productEnId" validate:"required"`
+	StockQuantity int32 `json:"stockQuantity" validate:"required"`
 }
 
 type UpdateProductEnImagePathRequest struct {
-	ProductEnID  int32  `json:"product_en_id" validate:"required"`
-	ImagesPathEn string `json:"images_path_en"`
+	ProductEnID  int32  `json:"productEnId" validate:"required"`
+	ImagesPathEn string `json:"imagesPathEn"`
+}
+
+type PurchaseProductEnRequest struct {
+	ProductEnID       int32 `json:"productEnId" validate:"required"`
+	QuantityPurchased int32 `json:"quantityPurchased" validate:"required"`
+}
+
+type PurchaseProductMnRequest struct {
+	ProductMnID       int32 `json:"productMnId" validate:"required"`
+	QuantityPurchased int32 `json:"quantityPurchased" validate:"required"`
 }

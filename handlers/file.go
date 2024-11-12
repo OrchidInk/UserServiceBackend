@@ -38,6 +38,7 @@ func (hd *Handlers) UploadFile(ctx *fiber.Ctx) error {
 		"user-pic",
 		"product-en",
 		"product-mn",
+		"banner-pic",
 	}
 	found := false
 	for _, validName := range validFolderNames {
@@ -54,21 +55,20 @@ func (hd *Handlers) UploadFile(ctx *fiber.Ctx) error {
 	guuid := uuid.NewString()
 	newFileName := folderName + "/" + guuid + "$" + rqFile.Filename
 
-	// Determine MIME type
 	var contentDisposition, fileType string
 	switch folderName {
 	case "images":
 		contentDisposition = "inline"
-		fileType = "image/png" // This should be more dynamic, you might want to inspect the file to determine the actual type
+		fileType = "image/png"
 	case "music":
 		contentDisposition = "inline"
-		fileType = "audio/mpeg" // or "audio/wav" depending on the file type
+		fileType = "audio/mpeg"
 	case "videos":
 		contentDisposition = "inline"
-		fileType = "video/mp4" // or other video MIME types
+		fileType = "video/mp4"
 	default:
 		contentDisposition = "inline"
-		fileType = "application/octet-stream" // default binary type
+		fileType = "application/octet-stream"
 	}
 
 	// Upload file to S3

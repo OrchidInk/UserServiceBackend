@@ -51,11 +51,3 @@ type UpdateSubCategoryMn struct {
 	SubCategoryNameMn string `json:"subCategoryNameMn"`
 	SubCategoryMnID   int32  `json:"subCategoryMNID"`
 }
-
-type DeleteSubCategoryEn struct {
-	SubCategoryEnID int32 `json:"subCategoryENID"`
-}
-
-type DeleteSubCategoryMn struct {
-	SubCategoryMnID int32 `json:"subCategoryMNID"`
-}
