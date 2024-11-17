@@ -174,3 +174,27 @@ func (hd *Handlers) DeductProductStockMn(ctx *fiber.Ctx) error {
 		"stockLeft": updatedProduct.StockQuantity,
 	})
 }
+
+func (hd *Handlers) GetProductEn(ctx *fiber.Ctx) error {
+	queries, _, _ := hd.queries()
+
+	Product, err := queries.GetListProductEn(ctx.Context())
+	if err != nil {
+		slog.Error("unable to product get list")
+		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"err": err})
+	}
+
+	return ctx.Status(fiber.StatusOK).JSON(Product)
+}
+
+func (hd *Handlers) GetProductMn(ctx *fiber.Ctx) error {
+	queries, _, _ := hd.queries()
+
+	Product, err := queries.GetListProductMn(ctx.Context())
+	if err != nil {
+		slog.Error("unable to product get list")
+		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"err": err})
+	}
+
+	return ctx.Status(fiber.StatusOK).JSON(Product)
+}
