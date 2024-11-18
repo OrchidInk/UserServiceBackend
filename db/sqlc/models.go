@@ -36,12 +36,13 @@ type CategoryMn struct {
 }
 
 type Customer struct {
-	CustomerId   int32
-	CustomerName string
-	ContractDate int32
-	IsActive     bool
-	CreatedAt    time.Time
-	UpdatedAt    time.Time
+	CustomerId        int32
+	CustomerName      string
+	ContractStartDate int32
+	ContractEndDate   int32
+	IsActive          bool
+	CreatedAt         time.Time
+	UpdatedAt         time.Time
 }
 
 type CustomerOrderDetail struct {

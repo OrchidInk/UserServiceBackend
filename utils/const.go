@@ -28,7 +28,7 @@ const (
 
 	// file.
 	ErrFileNameDup = "файлын нэр давхцаж байна"
-	BucketName     = "greatpeaks"
+	BucketName     = "orchidink"
 
 	// lang.
 	ErrNotFoundLang = "Хэл сонгоогүй байна"

@@ -179,4 +179,3 @@ func (hd *Handlers) UpdateUserInfo(ctx *fiber.Ctx) error {
 		"message": "User info updated successfully",
 	})
 }
-
