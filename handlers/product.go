@@ -19,11 +19,20 @@ func (hd *Handlers) CreateProductEn(ctx *fiber.Ctx) error {
 		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"err": "invalid request body"})
 	}
 
+	// Check if the subCategoryEnID exists
+	_, err := queries.FindBySubCategoryIDEn(ctx.Context(), request.SubCategoryEnID)
+	if err != nil {
+		slog.Error("subcategory does not exist", slog.Any("err", err))
+		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"err": "Invalid subCategoryEnID"})
+	}
+
+	// Convert price to decimal
 	price, err := decimal.NewFromString(request.PriceEn)
 	if err != nil {
 		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"message": "Invalid price format"})
 	}
 
+	// Insert product
 	createProduct, err := queries.CreateProductEn(ctx.Context(), db.CreateProductEnParams{
 		ProductNameEn:   request.ProductNameEn,
 		SubCategoryIDEn: request.SubCategoryEnID,
@@ -37,7 +46,7 @@ func (hd *Handlers) CreateProductEn(ctx *fiber.Ctx) error {
 	}
 
 	return ctx.Status(fiber.StatusOK).JSON(fiber.Map{
-		"message":    "product created successfully",
+		"message":    "Product created successfully",
 		"product ID": createProduct.ProductEnID,
 	})
 }
@@ -50,10 +59,21 @@ func (hd *Handlers) CreateProductMn(ctx *fiber.Ctx) error {
 		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"err": err})
 	}
 
+	_, err := queries.FindBySubCategoryID(ctx.Context(), request.SubCategoryMnID)
+	if err != nil {
+		slog.Error("subCategory does not exist", slog.Any("Err", err))
+		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"err": "invalid subCategoryENID"})
+	}
+
+	price, err := decimal.NewFromString(request.PriceMn)
+	if err != nil {
+		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"message": "invalid price "})
+	}
+
 	createProduct, err := queries.CreateProductMn(ctx.Context(), db.CreateProductMnParams{
 		ProductNameMn:   request.ProductNameMn,
 		SubCategoryIDMn: request.SubCategoryMnID,
-		PriceMn:         request.PriceMn,
+		PriceMn:         price.String(),
 		StockQuantity:   request.StockQuantity,
 		ImagesPathMn:    request.ImagesPathMn,
 	})

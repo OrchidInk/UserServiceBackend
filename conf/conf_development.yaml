@@ -17,5 +17,5 @@ rsa:
 # aws s3 credit
 awss3:
   region: us-east-1
-  key: AKIA2OAJTUIMFUCF6BAP
-  secret: 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
+  key: AKIA2OAJTUIMKKBVHMHD
+  secret: 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
