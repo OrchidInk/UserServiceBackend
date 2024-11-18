@@ -7,6 +7,7 @@ package db
 
 import (
 	"context"
+	"time"
 )
 
 const countActiveCustomers = `-- name: CountActiveCustomers :one
@@ -60,8 +61,8 @@ VALUES
 
 type CreateCustomerParams struct {
 	CustomerName      string
-	ContractStartDate int32
-	ContractEndDate   int32
+	ContractStartDate time.Time
+	ContractEndDate   time.Time
 	IsActive          bool
 }
 
@@ -226,8 +227,8 @@ WHERE
 `
 
 type UpdateCustomerContractDatesParams struct {
-	ContractStartDate int32
-	ContractEndDate   int32
+	ContractStartDate time.Time
+	ContractEndDate   time.Time
 	CustomerId        int32
 }
 

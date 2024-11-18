@@ -38,8 +38,8 @@ type CategoryMn struct {
 type Customer struct {
 	CustomerId        int32
 	CustomerName      string
-	ContractStartDate int32
-	ContractEndDate   int32
+	ContractStartDate time.Time
+	ContractEndDate   time.Time
 	IsActive          bool
 	CreatedAt         time.Time
 	UpdatedAt         time.Time
