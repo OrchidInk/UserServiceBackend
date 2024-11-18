@@ -13,3 +13,9 @@ rsa:
   size: 2048
   public: ./utils/secure/rsa.pub
   private: ./utils/secure/rsa
+
+# aws s3 credit
+awss3:
+  region: us-east-1
+  key: AKIA2OAJTUIMKKBVHMHD
+  secret: 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
