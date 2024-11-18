@@ -1,0 +1,12 @@
+--TABLE: "images"
+BEGIN;
+
+CREATE TABLE "imagesEn" (
+    "Id" SERIAL PRIMARY KEY,
+    "ProductEnID" INT NOT NULL,
+    "ImagePath" TEXT NOT NULL,
+    "Created_At" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT "FK_Product_ID" FOREIGN KEY ("ProductEnID") REFERENCES "productEn" ("ProductEnID") ON DELETE CASCADE
+) TABLESPACE pg_default;
+
+COMMIT;

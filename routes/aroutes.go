@@ -36,6 +36,8 @@ func superAdminRoutes(app *fiber.App, hd *handlers.Handlers) {
 
 	//Product
 	product := api.Group("/product")
+	product.Get("/listEn", hd.GetProductEn)
+	product.Get("/listMn", hd.GetProductMn)
 	product.Post("/createEn", hd.CreateProductEn)
 	product.Post("/createMn", hd.CreateProductMn)
 
@@ -46,6 +48,18 @@ func superAdminRoutes(app *fiber.App, hd *handlers.Handlers) {
 	// Product Delete
 	product.Delete("/deleteEn/:id", hd.DeleteCategoryEn)
 	product.Delete("/deleteMn/:id", hd.DeleteProductMn)
+
+	// ProductImages
+	product.Post("/createImagesEn", hd.CreateProductImagesEn)
+	product.Post("/createImagesMn", hd.CreateProductImagesMn)
+
+	product.Put("/images/en/update", hd.UpdateProductImagesEn)
+	product.Delete("/images/en/delete/:id", hd.DeleteProductImagesEn)
+	app.Get("/images/en/list", hd.GetListImagesEn)
+
+	product.Put("/images/mn/update", hd.UpdateProductImagesMn)
+	product.Delete("/images/mn/delete/:id", hd.DeleteProductImagesMn)
+	product.Get("/images/mn/list", hd.GetListImagesMn)
 
 	//File
 	file := api.Group("/file")
@@ -66,6 +80,56 @@ func adminRoutes(app *fiber.App, hd *handlers.Handlers) {
 	adminRegistery := api.Group("/registery", hd.AdminOnly, hd.Authorize)
 	adminRegistery.Post("/info", hd.CreateAdminInfo)
 	adminRegistery.Put("/info/:user_id", hd.UpdateAdminInfo)
+	user := api.Group("/user", hd.Authorize, hd.AdminOnly)
+	user.Get("/list/admin", hd.GetListAdmin)
+	user.Get("/list/user", hd.GetListUser)
+
+	//Category
+	category := api.Group("/category")
+	category.Post("/createEn", hd.CreateCategoryEn)
+	category.Post("/createMn", hd.CreateCategoryMn)
+
+	category.Get("/listEn", hd.GetCategoriesWithSubCategoriesEn)
+	category.Get("/listMn", hd.GetCategoriesWithSubCategoriesMn)
+
+	// subCategory
+	subCategory := api.Group("/subCategory")
+	subCategory.Post("/createEn", hd.CreateSubCategoryEn)
+	subCategory.Post("/createMn", hd.CreateSubCategoryMn)
+	subCategory.Get("/list/:subCategoryIDEn", hd.GetProductsBySubCategoryEn)
+
+	//Product
+	product := api.Group("/product")
+	product.Post("/createEn", hd.CreateProductEn)
+	product.Post("/createMn", hd.CreateProductMn)
+
+	// Product Update
+	product.Put("/purchaseEn/:id", hd.DeductProductStockEn)
+	product.Put("/purchaseMn/:id", hd.DeductProductStockMn)
+
+	// Product Delete
+	product.Delete("/deleteEn/:id", hd.DeleteCategoryEn)
+	product.Delete("/deleteMn/:id", hd.DeleteProductMn)
+
+	// ProductImages
+	product.Post("/createImagesEn", hd.CreateProductImagesEn)
+	product.Post("/createImagesMn", hd.CreateProductImagesMn)
+
+	product.Put("/images/en/update", hd.UpdateProductImagesEn)
+	product.Delete("/images/en/delete/:id", hd.DeleteProductImagesEn)
+	app.Get("/images/en/list", hd.GetListImagesEn)
+
+	product.Put("/images/mn/update", hd.UpdateProductImagesMn)
+	product.Delete("/images/mn/delete/:id", hd.DeleteProductImagesMn)
+	product.Get("/images/mn/list", hd.GetListImagesMn)
+
+	//File
+	file := api.Group("/file")
+	file.Post("/create", hd.UploadFile)
+
+	//Banner
+	banner := api.Group("/banner")
+	banner.Post("/create", hd.CreateBanner)
 }
 
 func userRoutes(app *fiber.App, hd *handlers.Handlers) {

@@ -25,23 +25,25 @@ type AwsBucket struct {
 
 func NewAwsBucket(c *conf.Config) (*AwsBucket, error) {
 	client := s3.New(s3.Options{
-		Region:      c.AwsS3.Region, // Ensure the correct region is used here
+		Region:      c.AwsS3.Region,
 		Credentials: aws.NewCredentialsCache(credentials.NewStaticCredentialsProvider(c.AwsS3.Key, c.AwsS3.Secret, "")),
 		EndpointResolver: s3.EndpointResolverFromURL(
-			fmt.Sprintf("https://s3.%s.amazonaws.com", c.AwsS3.Region)), // Explicit region endpoint
+			fmt.Sprintf("https://s3.%s.amazonaws.com", c.AwsS3.Region),
+		),
+		UsePathStyle: true, // Ensure path-style URLs for compatibility
 	})
 
 	aws3 := &AwsBucket{c, client}
 	isExist, err := aws3.BucketExists()
 	if err != nil {
-		slog.Error("unable to check bucket is exist", slog.Any("err", err))
+		slog.Error("Unable to check if bucket exists", slog.Any("err", err))
 		return nil, err
 	}
 
 	if !isExist {
 		err = aws3.CreateBucket(utils.BucketName)
 		if err != nil {
-			slog.Error("unable to create bucket", slog.Any("err", err))
+			slog.Error("Unable to create bucket", slog.Any("err", err))
 			return nil, err
 		}
 	}
