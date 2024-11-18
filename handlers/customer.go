@@ -13,12 +13,15 @@ func (hd *Handlers) CreateCustomer(ctx *fiber.Ctx) error {
 
 	var request models.CreateCustomerRequest
 	if err := ctx.BodyParser(&request); err != nil {
+		slog.Error("unable to parse request", slog.Any("err", err))
 		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"err": "invalid request"})
 	}
 
-	contractStartDate := int32(request.ContractStartDate.Unix())
-	contractEndDate := int32(request.ContractEndDate.Unix())
+	// Convert time.Time to Unix timestamp (int32)
+	contractStartDate := int32(request.ContractStartDate)
+	contractEndDate := int32(request.ContractEndDate)
 
+	// Use the correct field names with uppercase initials
 	customer, err := queries.CreateCustomer(ctx.Context(), db.CreateCustomerParams{
 		CustomerName:      request.CustomerName,
 		ContractStartDate: contractStartDate,
