@@ -50,3 +50,14 @@ func (hd *Handlers) CreateCustomer(ctx *fiber.Ctx) error {
 		"isActive":      customer.IsActive,
 	})
 }
+
+func (hd *Handlers) GetListCustomer(ctx *fiber.Ctx) error {
+	queries, _, _ := hd.queries()
+
+	org, err := queries.GetAllCustomers(ctx.Context())
+	if err != nil {
+		slog.Error("unable to fetched customer", slog.Any("err", err))
+		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"err": "Unable to customer fetched"})
+	}
+	return ctx.Status(fiber.StatusOK).JSON(org)
+}

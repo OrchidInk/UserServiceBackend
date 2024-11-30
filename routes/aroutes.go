@@ -58,6 +58,7 @@ func superAdminRoutes(app *fiber.App, hd *handlers.Handlers) {
 	// Customer
 	customer := api.Group("/customer")
 	customer.Post("/create", hd.CreateCustomer)
+	customer.Get("/list", hd.GetListCustomer)
 }
 
 func adminRoutes(app *fiber.App, hd *handlers.Handlers) {
