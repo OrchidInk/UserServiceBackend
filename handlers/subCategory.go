@@ -188,3 +188,25 @@ func (hd *Handlers) GetProductsBySubCategoryEn(ctx *fiber.Ctx) error {
 
 	return ctx.Status(fiber.StatusOK).JSON(products)
 }
+
+func (hd *Handlers) GetSubCategoryEn(ctx *fiber.Ctx) error {
+	queries, _, _ := hd.queries()
+
+	cat, err := queries.GetListAllSubCategoriesEn(ctx.Context())
+	if err != nil {
+		slog.Error("unable to fetching", slog.Any("err", err))
+		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"err": err})
+	}
+	return ctx.Status(fiber.StatusOK).JSON(cat)
+}
+
+func (hd *Handlers) GetSubCategoryMn(ctx *fiber.Ctx) error {
+	queries, _, _ := hd.queries()
+
+	cat, err := queries.GetListAllSubCategoryMn(ctx.Context())
+	if err != nil {
+		slog.Error("unable to fetching", slog.Any("err", err))
+		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"err": err})
+	}
+	return ctx.Status(fiber.StatusOK).JSON(cat)
+}

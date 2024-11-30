@@ -67,7 +67,13 @@ func (hd *Handlers) CreateProductMn(ctx *fiber.Ctx) error {
 
 	price, err := decimal.NewFromString(request.PriceMn)
 	if err != nil {
-		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"message": "invalid price "})
+		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"message": "Invalid price format"})
+	}
+
+	if price.Exponent() < -2 || price.GreaterThan(decimal.NewFromInt(9999999999)) {
+		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": "Price exceeds allowed range (maximum: 9999999999.99)",
+		})
 	}
 
 	createProduct, err := queries.CreateProductMn(ctx.Context(), db.CreateProductMnParams{

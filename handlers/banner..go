@@ -17,10 +17,7 @@ func (hd *Handlers) CreateBanner(ctx *fiber.Ctx) error {
 		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"err": err})
 	}
 
-	createBanner, err := queries.CreateBannerInfo(ctx.Context(), db.CreateBannerInfoParams{
-		BannerImagePath: request.BannerImagePath,
-		BannerImageUrl:  request.BannerImageUrl,
-	})
+	createBanner, err := queries.CreateBannerInfo(ctx.Context(), request.BannerImageUrl)
 	if err != nil {
 		slog.Error("unable to create banner", slog.Any("err", err))
 		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"err": err})
@@ -42,15 +39,10 @@ func (hd *Handlers) UpdateBanner(ctx *fiber.Ctx) error {
 		slog.Error("unable to find banner", slog.Any("err", err))
 		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"err": err})
 	}
-	if banner.BannerImagePath == request.BannerImagePath {
-		slog.Error("this banner image already taken")
-		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"err": err})
-	}
 
 	updateBanner, err := queries.UpdateBannerInfo(ctx.Context(), db.UpdateBannerInfoParams{
-		BannerId:        banner.BannerId,
-		BannerImagePath: request.BannerImagePath,
-		BannerImageUrl:  request.BannerImageUrl,
+		BannerId:       banner.BannerId,
+		BannerImageUrl: request.BannerImageUrl,
 	})
 	if err != nil {
 		slog.Error("unable to update banner", slog.Any("Err", err))

@@ -20,9 +20,8 @@ type AdminPermission struct {
 }
 
 type BannerInfo struct {
-	BannerId        int32
-	BannerImagePath string
-	BannerImageUrl  string
+	BannerId       int32
+	BannerImageUrl string
 }
 
 type CategoryEn struct {
@@ -84,20 +83,6 @@ type DetailMn struct {
 	ProductMnID int32
 	ChoiceName  string
 	ChoiceValue string
-}
-
-type ImagesEn struct {
-	Id          int32
-	ProductEnID int32
-	ImagePath   string
-	CreatedAt   sql.NullTime
-}
-
-type ImagesMn struct {
-	Id          int32
-	ProductMnID int32
-	ImagePath   string
-	CreatedAt   sql.NullTime
 }
 
 type OrderItem struct {
@@ -211,10 +196,4 @@ type UserInfo struct {
 	PhoneNumber1  string
 	PhoneNumber2  string
 	Address1      string
-}
-
-type UserPicture struct {
-	UserPicId     int32
-	UserImagePath string
-	UserImageUrl  string
 }

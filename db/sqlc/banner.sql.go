@@ -11,23 +11,15 @@ import (
 
 const createBannerInfo = `-- name: CreateBannerInfo :one
 INSERT INTO
-    "BannerInfo" ("BannerImagePath", "BannerImageUrl")
+    "BannerInfo" ("BannerImageUrl")
 VALUES
-    (
-        $1,
-        $2
-    ) RETURNING "BannerId", "BannerImagePath", "BannerImageUrl"
+    ($1) RETURNING "BannerId", "BannerImageUrl"
 `
 
-type CreateBannerInfoParams struct {
-	BannerImagePath string
-	BannerImageUrl  string
-}
-
-func (q *Queries) CreateBannerInfo(ctx context.Context, arg CreateBannerInfoParams) (BannerInfo, error) {
-	row := q.db.QueryRowContext(ctx, createBannerInfo, arg.BannerImagePath, arg.BannerImageUrl)
+func (q *Queries) CreateBannerInfo(ctx context.Context, bannerimageurl string) (BannerInfo, error) {
+	row := q.db.QueryRowContext(ctx, createBannerInfo, bannerimageurl)
 	var i BannerInfo
-	err := row.Scan(&i.BannerId, &i.BannerImagePath, &i.BannerImageUrl)
+	err := row.Scan(&i.BannerId, &i.BannerImageUrl)
 	return i, err
 }
 
@@ -45,7 +37,7 @@ func (q *Queries) DeleteBannerInfo(ctx context.Context, bannerid int32) error {
 
 const findByBannerId = `-- name: FindByBannerId :one
 SELECT
-    "BannerId", "BannerImagePath", "BannerImageUrl"
+    "BannerId", "BannerImageUrl"
 FROM
     "BannerInfo"
 WHERE
@@ -57,13 +49,13 @@ LIMIT
 func (q *Queries) FindByBannerId(ctx context.Context, bannerid int32) (BannerInfo, error) {
 	row := q.db.QueryRowContext(ctx, findByBannerId, bannerid)
 	var i BannerInfo
-	err := row.Scan(&i.BannerId, &i.BannerImagePath, &i.BannerImageUrl)
+	err := row.Scan(&i.BannerId, &i.BannerImageUrl)
 	return i, err
 }
 
 const getAllBanners = `-- name: GetAllBanners :many
 SELECT
-    "BannerId", "BannerImagePath", "BannerImageUrl"
+    "BannerId", "BannerImageUrl"
 FROM
     "BannerInfo"
 `
@@ -77,7 +69,7 @@ func (q *Queries) GetAllBanners(ctx context.Context) ([]BannerInfo, error) {
 	var items []BannerInfo
 	for rows.Next() {
 		var i BannerInfo
-		if err := rows.Scan(&i.BannerId, &i.BannerImagePath, &i.BannerImageUrl); err != nil {
+		if err := rows.Scan(&i.BannerId, &i.BannerImageUrl); err != nil {
 			return nil, err
 		}
 		items = append(items, i)
@@ -95,21 +87,19 @@ const updateBannerInfo = `-- name: UpdateBannerInfo :one
 UPDATE
     "BannerInfo"
 SET
-    "BannerImagePath" = $1,
-    "BannerImageUrl" = $2
+    "BannerImageUrl" = $1
 WHERE
-    "BannerId" = $3 RETURNING "BannerId", "BannerImagePath", "BannerImageUrl"
+    "BannerId" = $2 RETURNING "BannerId", "BannerImageUrl"
 `
 
 type UpdateBannerInfoParams struct {
-	BannerImagePath string
-	BannerImageUrl  string
-	BannerId        int32
+	BannerImageUrl string
+	BannerId       int32
 }
 
 func (q *Queries) UpdateBannerInfo(ctx context.Context, arg UpdateBannerInfoParams) (BannerInfo, error) {
-	row := q.db.QueryRowContext(ctx, updateBannerInfo, arg.BannerImagePath, arg.BannerImageUrl, arg.BannerId)
+	row := q.db.QueryRowContext(ctx, updateBannerInfo, arg.BannerImageUrl, arg.BannerId)
 	var i BannerInfo
-	err := row.Scan(&i.BannerId, &i.BannerImagePath, &i.BannerImageUrl)
+	err := row.Scan(&i.BannerId, &i.BannerImageUrl)
 	return i, err
 }
