@@ -1,6 +1,8 @@
 package handlers
 
 import (
+	"database/sql"
+	"strconv"
 	"time"
 
 	"github.com/gofiber/fiber/v2"
@@ -60,4 +62,51 @@ func (hd *Handlers) GetListCustomer(ctx *fiber.Ctx) error {
 		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"err": "Unable to customer fetched"})
 	}
 	return ctx.Status(fiber.StatusOK).JSON(org)
+}
+
+func (hd *Handlers) UpdateCustomer(ctx *fiber.Ctx) error {
+	queries, _, _ := hd.queries()
+
+	// Extract CustomerId from URL parameter
+	customerIDStr := ctx.Params("Id")
+	customerId, err := strconv.Atoi(customerIDStr)
+	if err != nil || customerId <= 0 {
+		slog.Error("Invalid or missing Customer ID in URL", slog.Any("err", err))
+		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"err": "Invalid Customer ID in URL"})
+	}
+
+	// Parse request body
+	var rqst models.UpdateCustomerIsActiveRequest
+	if err := ctx.BodyParser(&rqst); err != nil {
+		slog.Error("Invalid request body", slog.Any("err", err))
+		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"err": "Invalid request body"})
+	}
+
+	// Check if the customer exists in the database
+	_, err = queries.FindByCustomerId(ctx.Context(), int32(customerId))
+	if err != nil {
+		if err == sql.ErrNoRows {
+			slog.Error("Customer ID not found", slog.Int("CustomerID", customerId))
+			return ctx.Status(fiber.StatusNotFound).JSON(fiber.Map{"err": "Customer ID not found"})
+		}
+		slog.Error("Database error while finding customer", slog.Any("err", err))
+		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"err": "Internal server error"})
+	}
+
+	// Update customer status
+	customerUpdate, err := queries.UpdateCustomerIsActive(ctx.Context(), db.UpdateCustomerIsActiveParams{
+		CustomerId:      int32(customerId), // Pass the ID from URL param
+		IsActive:        rqst.IsActive,     // From the body
+		ContractEndDate: rqst.ContractEndDate,
+	})
+	if err != nil {
+		slog.Error("Unable to update customer", slog.Any("err", err))
+		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"err": "Failed to update customer"})
+	}
+
+	// Respond with success
+	return ctx.Status(fiber.StatusOK).JSON(fiber.Map{
+		"message":    "Customer updated successfully",
+		"customerID": customerUpdate.CustomerId,
+	})
 }

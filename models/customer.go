@@ -20,8 +20,9 @@ type CreateCustomerRequest struct {
 }
 
 type UpdateCustomerIsActiveRequest struct {
-	CustomerID int32 `json:"customerId" validate:"required"`
-	IsActive   bool  `json:"isActive" validate:"required"`
+	CustomerID      int32     `json:"customerId" validate:"required"`
+	ContractEndDate time.Time `json:"contractEndDate" validate:"required"`
+	IsActive        bool      `json:"isActive" validate:"required"`
 }
 
 type UpdateCustomerContractDateRequest struct {
