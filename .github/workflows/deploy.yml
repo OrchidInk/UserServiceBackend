@@ -3,29 +3,13 @@ name: Deploy to Ubuntu Server
 on:
   push:
     branches:
-      - master 
+      - master
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
-
-    - name: Set up SSH
-      uses: webfactory/ssh-agent@v0.7.0
-      with:
-        ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
-
-    - name: Deploy to Server
+    - name: Trigger Deployment
       run: |
-        ssh -o StrictHostKeyChecking=no ubuntu@103.50.205.42 << 'EOF'
-          cd /home/ubuntu/UserServiceBackend
-
-          git pull
-
-          sudo docker-compose down
-          sudo docker-compose up --build -d
-        EOF
-
+        curl -X GET http://103.50.205.42:8080
