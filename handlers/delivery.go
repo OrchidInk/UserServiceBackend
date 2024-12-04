@@ -33,12 +33,19 @@ func (hd *Handlers) CreateDelivery(ctx *fiber.Ctx) error {
 func (hd *Handlers) UpdateDelivery(ctx *fiber.Ctx) error {
 	queries, _, _ := hd.queries()
 
+	updateIDSTR := ctx.Params("Id")
+	updateId, err := strconv.Atoi(updateIDSTR)
+	if err != nil {
+		slog.Error("unablet to parse delivery id", slog.Any("err", "delivery id cannot parse"))
+		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"err": err})
+	}
+
 	var request models.UpdateDeliveryRequest
 	if err := ctx.BodyParser(&request); err != nil {
 		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"err": err})
 	}
 
-	delivery, err := queries.FindByDeliveryId(ctx.Context(), request.DeliveryId)
+	delivery, err := queries.FindByDeliveryId(ctx.Context(), int32(updateId))
 	if err != nil {
 		slog.Error("unable to find delivery", slog.Any("Err", err))
 		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"err": err})

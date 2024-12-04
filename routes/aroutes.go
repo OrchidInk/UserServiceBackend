@@ -55,12 +55,26 @@ func superAdminRoutes(app *fiber.App, hd *handlers.Handlers) {
 	//Banner
 	banner := api.Group("/banner")
 	banner.Post("/create", hd.CreateBanner)
+	banner.Get("/list", hd.GetListBanner)
 
 	// Customer
 	customer := api.Group("/customer")
 	customer.Post("/create", hd.CreateCustomer)
 	customer.Get("/list", hd.GetListCustomer)
 	customer.Put("/update/:id", hd.UpdateCustomer)
+
+	// Delivery
+	delivery := api.Group("/delivery")
+	delivery.Post("/create", hd.CreateDelivery)
+	delivery.Get("/list", hd.GetListDelivery)
+	delivery.Put("/update/:id", hd.UpdateDelivery)
+	delivery.Delete("/delete/:id", hd.DeleteDelivery)
+
+	order := api.Group("/order")
+	order.Post("/create", hd.CreateOrderItem)
+	order.Get("/list", hd.GetOrderItemsByCustomerOrderID)
+	order.Put("/update", hd.UpdateOrderItem)
+	order.Delete("/delete/:orderItemId", hd.DeleteOrderItem)
 }
 
 func adminRoutes(app *fiber.App, hd *handlers.Handlers) {
@@ -107,6 +121,18 @@ func adminRoutes(app *fiber.App, hd *handlers.Handlers) {
 	//Banner
 	banner := api.Group("/banner")
 	banner.Post("/create", hd.CreateBanner)
+
+	delivery := api.Group("/delivery")
+	delivery.Post("/create", hd.CreateDelivery)
+	delivery.Get("/list", hd.GetListDelivery)
+	delivery.Put("/update/:id", hd.UpdateDelivery)
+	delivery.Delete("/delete/:id", hd.DeleteDelivery)
+
+	order := api.Group("/order")
+	order.Post("/create", hd.CreateOrderItem)
+	order.Get("/list", hd.GetOrderItemsByCustomerOrderID)
+	order.Put("/update", hd.UpdateOrderItem)
+	order.Delete("/delete/:orderItemId", hd.DeleteOrderItem)
 }
 
 func userRoutes(app *fiber.App, hd *handlers.Handlers) {
@@ -130,4 +156,16 @@ func userRoutes(app *fiber.App, hd *handlers.Handlers) {
 	product := api.Group("/product", hd.Authorize)
 	product.Put("/purchaseEn/:id", hd.DeductProductStockEn)
 	product.Put("/purchaseMn/:id", hd.DeductProductStockMn)
+
+	delivery := api.Group("/delivery", hd.Authorize)
+	delivery.Post("/create", hd.CreateDelivery)
+	delivery.Get("/list", hd.GetListDelivery)
+	delivery.Put("/update/:id", hd.UpdateDelivery)
+	delivery.Delete("/delete/:id", hd.DeleteDelivery)
+
+	order := api.Group("/order")
+	order.Post("/create", hd.CreateOrderItem)
+	order.Get("/list", hd.GetOrderItemsByCustomerOrderID)
+	order.Put("/update", hd.UpdateOrderItem)
+	order.Delete("/delete/:orderItemId", hd.DeleteOrderItem)
 }
