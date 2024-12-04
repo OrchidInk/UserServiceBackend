@@ -1,35 +1,22 @@
 version: '3.8'
 
 services:
-  db:
-    image: postgres:15
-    environment:
-      POSTGRES_USER: root
-      POSTGRES_PASSWORD: "root"
-      POSTGRES_DB: OrchidUserService
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    ports:
-      - "5432:5432"
-    networks:
-      - orchid_network
-
-  backend:
+  userservice:
     build: .
     ports:
       - "8000:8000"
     environment:
-      DATABASE_URL: postgresql://root:root@db:5432/OrchidUserService?sslmode=disable
+      DATABASE_URL: "postgres://UserService:User@Service@postgres:5432/OrchidUserService?sslmode=disable"
     depends_on:
-      - db
-    entrypoint: ["/app/backend", "conf/conf_development.yml"] 
-    networks:
-      - orchid_network
+      - postgres 
 
-volumes:
-  postgres_data:
-    driver: local
+  postgres:
+    image: postgres:15
+    container_name: postgres
+    environment:
+      POSTGRES_USER: UserService
+      POSTGRES_PASSWORD: User@Service
+      POSTGRES_DB: OrchidUserService
+    ports:
+      - "5433:5432"
 
-networks:
-  orchid_network:
-    driver: bridge

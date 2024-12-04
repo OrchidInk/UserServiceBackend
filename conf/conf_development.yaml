@@ -1,7 +1,7 @@
 # Database config
 database:
   driver: postgres
-  url: postgresql://UserService:%s@103.50.205.42:5432/OrchidUserService?sslmode=disable
+  url: postgresql://UserService:%s@postgres:5432/OrchidUserService?sslmode=disable 
   password: "User@Service"
 
 # Migration database config
@@ -13,3 +13,4 @@ rsa:
   size: 2048
   public: ./utils/secure/rsa.pub
   private: ./utils/secure/rsa
+
