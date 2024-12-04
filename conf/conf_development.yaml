@@ -1,8 +1,8 @@
 # Database config
 database:
   driver: postgres
-  url: postgresql://UserService:%s@103.50.205.32:5432/OrchidUserService?sslmode=disable
-  password: "User@Service"
+  url: postgresql://root:%s@localhost:5432/OrchidUserService?sslmode=disable
+  password: "root"
 
 # Migration database config
 migration:
@@ -13,9 +13,3 @@ rsa:
   size: 2048
   public: ./utils/secure/rsa.pub
   private: ./utils/secure/rsa
-
-# aws s3 credit
-awss3:
-  region: us-east-1
-  key: AKIA2OAJTUIMKKBVHMHD
-  secret: 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
