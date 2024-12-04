@@ -1,8 +1,8 @@
 # Database config
 database:
   driver: postgres
-  url: postgresql://root:%s@localhost:5432/OrchidUserService?sslmode=disable
-  password: "root"
+  url: postgresql://UserService:%s@103.50.205.42:5432/OrchidUserService?sslmode=disable
+  password: "User@Service"
 
 # Migration database config
 migration:
