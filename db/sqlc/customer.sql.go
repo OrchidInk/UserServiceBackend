@@ -7,6 +7,7 @@ package db
 
 import (
 	"context"
+	"time"
 )
 
 const countActiveCustomers = `-- name: CountActiveCustomers :one
@@ -60,8 +61,8 @@ VALUES
 
 type CreateCustomerParams struct {
 	CustomerName      string
-	ContractStartDate int32
-	ContractEndDate   int32
+	ContractStartDate time.Time
+	ContractEndDate   time.Time
 	IsActive          bool
 }
 
@@ -219,20 +220,18 @@ const updateCustomerContractDates = `-- name: UpdateCustomerContractDates :one
 UPDATE
     "Customer"
 SET
-    "ContractStartDate" = $1,
-    "ContractEndDate" = $2
+    "ContractStartDate" = $1
 WHERE
-    "CustomerId" = $3 RETURNING "CustomerId", "CustomerName", "ContractStartDate", "ContractEndDate", "IsActive", "Created_At", "Updated_At"
+    "CustomerId" = $2 RETURNING "CustomerId", "CustomerName", "ContractStartDate", "ContractEndDate", "IsActive", "Created_At", "Updated_At"
 `
 
 type UpdateCustomerContractDatesParams struct {
-	ContractStartDate int32
-	ContractEndDate   int32
+	ContractStartDate time.Time
 	CustomerId        int32
 }
 
 func (q *Queries) UpdateCustomerContractDates(ctx context.Context, arg UpdateCustomerContractDatesParams) (Customer, error) {
-	row := q.db.QueryRowContext(ctx, updateCustomerContractDates, arg.ContractStartDate, arg.ContractEndDate, arg.CustomerId)
+	row := q.db.QueryRowContext(ctx, updateCustomerContractDates, arg.ContractStartDate, arg.CustomerId)
 	var i Customer
 	err := row.Scan(
 		&i.CustomerId,
@@ -250,18 +249,20 @@ const updateCustomerIsActive = `-- name: UpdateCustomerIsActive :one
 UPDATE
     "Customer"
 SET
-    "IsActive" = $1
+    "IsActive" = $1,
+    "ContractEndDate" = $2
 WHERE
-    "CustomerId" = $2 RETURNING "CustomerId", "CustomerName", "ContractStartDate", "ContractEndDate", "IsActive", "Created_At", "Updated_At"
+    "CustomerId" = $3 RETURNING "CustomerId", "CustomerName", "ContractStartDate", "ContractEndDate", "IsActive", "Created_At", "Updated_At"
 `
 
 type UpdateCustomerIsActiveParams struct {
-	IsActive   bool
-	CustomerId int32
+	IsActive        bool
+	ContractEndDate time.Time
+	CustomerId      int32
 }
 
 func (q *Queries) UpdateCustomerIsActive(ctx context.Context, arg UpdateCustomerIsActiveParams) (Customer, error) {
-	row := q.db.QueryRowContext(ctx, updateCustomerIsActive, arg.IsActive, arg.CustomerId)
+	row := q.db.QueryRowContext(ctx, updateCustomerIsActive, arg.IsActive, arg.ContractEndDate, arg.CustomerId)
 	var i Customer
 	err := row.Scan(
 		&i.CustomerId,

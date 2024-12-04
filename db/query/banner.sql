@@ -1,11 +1,8 @@
 -- name: CreateBannerInfo :one
 INSERT INTO
-    "BannerInfo" ("BannerImagePath", "BannerImageUrl")
+    "BannerInfo" ("BannerImageUrl")
 VALUES
-    (
-        sqlc.arg('BannerImagePath'),
-        sqlc.arg('BannerImageUrl')
-    ) RETURNING *;
+    (sqlc.arg('BannerImageUrl')) RETURNING *;
 
 -- name: GetAllBanners :many
 SELECT
@@ -17,7 +14,6 @@ FROM
 UPDATE
     "BannerInfo"
 SET
-    "BannerImagePath" = sqlc.arg('BannerImagePath'),
     "BannerImageUrl" = sqlc.arg('BannerImageUrl')
 WHERE
     "BannerId" = sqlc.arg('BannerId') RETURNING *;

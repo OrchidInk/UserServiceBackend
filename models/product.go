@@ -10,7 +10,7 @@ type CreateProductEnRequest struct {
 
 type CreateProductMnRequest struct {
 	ProductNameMn   string `json:"productNameMN" validate:"required"`
-	SubCategoryMnID int32  `json:"subCategoryMnID" validate:"required"`
+	SubCategoryMnID int32  `json:"subCategoryMnId" validate:"required"`
 	PriceMn         string `json:"priceMn" validate:"required"`
 	StockQuantity   int32  `json:"stockQuantity" validate:"required"`
 	ImagesPathMn    string `json:"imagesPathMn" validate:"required"`

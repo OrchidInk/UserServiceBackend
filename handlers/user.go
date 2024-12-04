@@ -269,3 +269,15 @@ func (hd *Handlers) GetListUser(ctx *fiber.Ctx) error {
 
 	return ctx.JSON(users)
 }
+
+func (hd *Handlers) GetListSuperAdmin(ctx *fiber.Ctx) error {
+	queries, _, _ := hd.queries()
+
+	superAdmin, err := queries.FindBySuperAdminAdmin(ctx.Context())
+	if err != nil {
+		slog.Error("unable to fetch superadmin")
+		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"err": err})
+	}
+
+	return ctx.JSON(superAdmin)
+}

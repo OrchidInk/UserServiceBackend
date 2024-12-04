@@ -72,7 +72,8 @@ WHERE
 UPDATE
     "Customer"
 SET
-    "IsActive" = sqlc.arg('IsActive')
+    "IsActive" = sqlc.arg('IsActive'),
+    "ContractEndDate" = sqlc.arg('ContractEndDate')
 WHERE
     "CustomerId" = sqlc.arg('CustomerId') RETURNING *;
 
@@ -80,8 +81,7 @@ WHERE
 UPDATE
     "Customer"
 SET
-    "ContractStartDate" = sqlc.arg('ContractStartDate'),
-    "ContractEndDate" = sqlc.arg('ContractEndDate')
+    "ContractStartDate" = sqlc.arg('ContractStartDate')
 WHERE
     "CustomerId" = sqlc.arg('CustomerId') RETURNING *;
 
