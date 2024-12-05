@@ -12,4 +12,5 @@ jobs:
     steps:
     - name: Trigger Deployment
       run: |
-        curl -X GET http://103.50.205.86:8000
+        curl -X GET http://103.50.205.86:8000/api/v1/superadmin/user/list/superadmin
+
