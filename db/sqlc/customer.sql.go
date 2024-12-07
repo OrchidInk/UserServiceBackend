@@ -216,6 +216,166 @@ func (q *Queries) GetAllCustomers(ctx context.Context) ([]Customer, error) {
 	return items, nil
 }
 
+const getContractsEndingSoon = `-- name: GetContractsEndingSoon :many
+SELECT
+    "CustomerId", "CustomerName", "ContractStartDate", "ContractEndDate", "IsActive", "Created_At", "Updated_At"
+FROM
+    "Customer"
+WHERE
+    "ContractEndDate" BETWEEN CURRENT_DATE AND (CURRENT_DATE + INTERVAL '30 days')
+`
+
+func (q *Queries) GetContractsEndingSoon(ctx context.Context) ([]Customer, error) {
+	rows, err := q.db.QueryContext(ctx, getContractsEndingSoon)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []Customer
+	for rows.Next() {
+		var i Customer
+		if err := rows.Scan(
+			&i.CustomerId,
+			&i.CustomerName,
+			&i.ContractStartDate,
+			&i.ContractEndDate,
+			&i.IsActive,
+			&i.CreatedAt,
+			&i.UpdatedAt,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const getCustomerCountByStatus = `-- name: GetCustomerCountByStatus :many
+SELECT
+    "IsActive" AS status,
+    COUNT(*) AS count
+FROM
+    "Customer"
+GROUP BY
+    "IsActive"
+`
+
+type GetCustomerCountByStatusRow struct {
+	Status bool
+	Count  int64
+}
+
+func (q *Queries) GetCustomerCountByStatus(ctx context.Context) ([]GetCustomerCountByStatusRow, error) {
+	rows, err := q.db.QueryContext(ctx, getCustomerCountByStatus)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []GetCustomerCountByStatusRow
+	for rows.Next() {
+		var i GetCustomerCountByStatusRow
+		if err := rows.Scan(&i.Status, &i.Count); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const getCustomerStatusOverTime = `-- name: GetCustomerStatusOverTime :many
+SELECT
+    DATE_TRUNC('month', "Created_At") AS month,
+    SUM(CASE WHEN "IsActive" = TRUE THEN 1 ELSE 0 END) AS active_customers,
+    SUM(CASE WHEN "IsActive" = FALSE THEN 1 ELSE 0 END) AS inactive_customers
+FROM
+    "Customer"
+GROUP BY
+    DATE_TRUNC('month', "Created_At")
+ORDER BY
+    month ASC
+`
+
+type GetCustomerStatusOverTimeRow struct {
+	Month             int64
+	ActiveCustomers   int64
+	InactiveCustomers int64
+}
+
+func (q *Queries) GetCustomerStatusOverTime(ctx context.Context) ([]GetCustomerStatusOverTimeRow, error) {
+	rows, err := q.db.QueryContext(ctx, getCustomerStatusOverTime)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []GetCustomerStatusOverTimeRow
+	for rows.Next() {
+		var i GetCustomerStatusOverTimeRow
+		if err := rows.Scan(&i.Month, &i.ActiveCustomers, &i.InactiveCustomers); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const getExpiredContracts = `-- name: GetExpiredContracts :many
+SELECT
+    "CustomerId", "CustomerName", "ContractStartDate", "ContractEndDate", "IsActive", "Created_At", "Updated_At"
+FROM
+    "Customer"
+WHERE
+    "ContractEndDate" < CURRENT_DATE
+`
+
+func (q *Queries) GetExpiredContracts(ctx context.Context) ([]Customer, error) {
+	rows, err := q.db.QueryContext(ctx, getExpiredContracts)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []Customer
+	for rows.Next() {
+		var i Customer
+		if err := rows.Scan(
+			&i.CustomerId,
+			&i.CustomerName,
+			&i.ContractStartDate,
+			&i.ContractEndDate,
+			&i.IsActive,
+			&i.CreatedAt,
+			&i.UpdatedAt,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const updateCustomerContractDates = `-- name: UpdateCustomerContractDates :one
 UPDATE
     "Customer"

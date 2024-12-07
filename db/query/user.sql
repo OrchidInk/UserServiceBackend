@@ -89,3 +89,12 @@ FROM
     "User"
 WHERE
     "IsUser" = TRUE;
+
+
+-- name: CountListUser :many
+SELECT
+    count(*)
+FROM
+    "User"
+WHERE
+    "IsUser" = TRUE;
