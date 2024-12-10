@@ -164,7 +164,7 @@ func userRoutes(app *fiber.App, hd *handlers.Handlers) {
 	api.Post("/login", hd.UserLogin)
 
 	// User info creation and updates
-	userRegistery := api.Group("/registery", hd.Authorize)
+	userRegistery := api.Group("/registery")
 	userRegistery.Post("/info", hd.CreateUserInfo)
 	userRegistery.Put("/info/:user_id", hd.UpdateUserInfo)
 
@@ -174,11 +174,11 @@ func userRoutes(app *fiber.App, hd *handlers.Handlers) {
 	category.Get("/listMn", hd.GetCategoriesWithSubCategoriesMn)
 
 	// Product
-	product := api.Group("/product", hd.Authorize)
+	product := api.Group("/product")
 	product.Put("/purchaseEn/:id", hd.DeductProductStockEn)
 	product.Put("/purchaseMn/:id", hd.DeductProductStockMn)
 
-	delivery := api.Group("/delivery", hd.Authorize)
+	delivery := api.Group("/delivery")
 	delivery.Post("/create", hd.CreateDelivery)
 	delivery.Get("/list", hd.GetListDelivery)
 	delivery.Put("/update/:id", hd.UpdateDelivery)
