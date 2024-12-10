@@ -103,7 +103,7 @@ ORDER BY
     p."ProductMnID",
     d."detailMnId";
 
--- name: FindProductwithDetailsByIDMn :many
+-- name: FindProductWithDetailsByIDMn :many
 SELECT
     p."ProductMnID",
     p."ProductNameMn",
