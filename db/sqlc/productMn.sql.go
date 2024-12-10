@@ -172,7 +172,7 @@ func (q *Queries) FindByProductIdMn(ctx context.Context, productmnid int32) (Pro
 	return i, err
 }
 
-const findProductwithDetailsByIDMn = `-- name: FindProductwithDetailsByIDMn :many
+const findProductWithDetailsByIDMn = `-- name: FindProductWithDetailsByIDMn :many
 SELECT
     p."ProductMnID",
     p."ProductNameMn",
@@ -192,7 +192,7 @@ WHERE
     p."ProductMnID" = $1
 `
 
-type FindProductwithDetailsByIDMnRow struct {
+type FindProductWithDetailsByIDMnRow struct {
 	ProductMnID     int32
 	ProductNameMn   string
 	SubCategoryIDMn int32
@@ -206,15 +206,15 @@ type FindProductwithDetailsByIDMnRow struct {
 	ChoiceValue     sql.NullString
 }
 
-func (q *Queries) FindProductwithDetailsByIDMn(ctx context.Context, productmnid int32) ([]FindProductwithDetailsByIDMnRow, error) {
-	rows, err := q.db.QueryContext(ctx, findProductwithDetailsByIDMn, productmnid)
+func (q *Queries) FindProductWithDetailsByIDMn(ctx context.Context, productmnid int32) ([]FindProductWithDetailsByIDMnRow, error) {
+	rows, err := q.db.QueryContext(ctx, findProductWithDetailsByIDMn, productmnid)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []FindProductwithDetailsByIDMnRow
+	var items []FindProductWithDetailsByIDMnRow
 	for rows.Next() {
-		var i FindProductwithDetailsByIDMnRow
+		var i FindProductWithDetailsByIDMnRow
 		if err := rows.Scan(
 			&i.ProductMnID,
 			&i.ProductNameMn,

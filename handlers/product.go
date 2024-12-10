@@ -373,23 +373,22 @@ func (hd *Handlers) FindByProductWithDetailsByIDEn(ctx *fiber.Ctx) error {
 func (hd *Handlers) FindByProductWithDetailsByIDMn(ctx *fiber.Ctx) error {
 	queries, _, _ := hd.queries()
 
+	// Parse the product ID from URL
 	productIDSTR := ctx.Params("id")
 	productID, err := strconv.Atoi(productIDSTR)
 	if err != nil {
-		slog.Error("unable to parse product id", slog.Any("err", err))
-		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"err": err})
+		slog.Error("Unable to parse product ID", slog.Any("err", err))
+		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"err": "Invalid product ID"})
 	}
 
-	rows, err := queries.FindProductwithDetailsByIDMn(ctx.Context(), int32(productID))
+	// Query the product and its details
+	rows, err := queries.FindProductWithDetailsByIDMn(ctx.Context(), int32(productID))
 	if err != nil {
-		if err == sql.ErrNoRows {
-			slog.Error("product not found", slog.Int("productID", productID))
-			return ctx.Status(fiber.StatusNotFound).JSON(fiber.Map{"err": err})
-		}
-		slog.Error("unable to find product id", slog.Any("Err", err))
-		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"err": err})
+		slog.Error("Database query error", slog.Any("err", err))
+		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"err": err.Error()})
 	}
 
+	// Build the product response
 	var product *models.ProductWithDetailsMn
 	for _, row := range rows {
 		if product == nil {
@@ -406,7 +405,7 @@ func (hd *Handlers) FindByProductWithDetailsByIDMn(ctx *fiber.Ctx) error {
 			}
 		}
 
-		if row.DetailMnId.Valid { // Ensure the detail is not null
+		if row.DetailMnId.Valid {
 			product.Details = append(product.Details, models.DetailMn{
 				DetailMnID:  row.DetailMnId.Int32,
 				ChoiceName:  row.ChoiceName.String,
@@ -415,10 +414,11 @@ func (hd *Handlers) FindByProductWithDetailsByIDMn(ctx *fiber.Ctx) error {
 		}
 	}
 
+	// Handle product not found
 	if product == nil {
 		return ctx.Status(fiber.StatusNotFound).JSON(fiber.Map{"error": "Product not found"})
 	}
 
-	// Return the response
+	// Return the product with details
 	return ctx.Status(fiber.StatusOK).JSON(product)
 }

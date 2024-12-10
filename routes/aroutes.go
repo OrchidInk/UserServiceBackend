@@ -169,7 +169,7 @@ func userRoutes(app *fiber.App, hd *handlers.Handlers) {
 	userRegistery.Put("/info/:user_id", hd.UpdateUserInfo)
 
 	// Category
-	category := api.Group("/category", hd.Authorize)
+	category := api.Group("/category")
 	category.Get("/listEn", hd.GetCategoriesWithSubCategoriesEn)
 	category.Get("/listMn", hd.GetCategoriesWithSubCategoriesMn)
 
