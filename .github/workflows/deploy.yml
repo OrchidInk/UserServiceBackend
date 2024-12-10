@@ -1,16 +1,44 @@
-name: Deploy to Ubuntu Server
+name: Deploy Go App
 
 on:
   push:
     branches:
-      - master
+      - master # Trigger deployment only when pushing to the master branch
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Trigger Deployment
-      run: |
-        curl -X GET http://103.50.205.86:8000/api/v1/superadmin/user/list/superadmin
+    # Step 1: Check out the repository
+    - name: Checkout code
+      uses: actions/checkout@v3
 
+    # Step 2: Set up SSH
+    - name: Set up SSH
+      uses: webfactory/ssh-agent@v0.7.0
+      with:
+        ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+    # Step 3: Deploy to the server
+    - name: Deploy Go App
+      run: |
+        ssh -o StrictHostKeyChecking=no cloudmn@103.50.205.86 << 'EOF'
+          # Stop the running Go application service
+          sudo systemctl stop my-go-app.service || true
+
+          # Navigate to the project directory
+          cd ~/UserServiceBackend/
+
+          # Pull the latest code from the repository
+          git pull origin master
+
+          # Build the Go application
+          go build -o main main.go
+
+          # Restart the Go application service
+          sudo systemctl start my-go-app.service
+
+          # Reload Nginx to apply any changes
+          sudo systemctl reload nginx
+        EOF

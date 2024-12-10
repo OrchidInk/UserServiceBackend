@@ -172,6 +172,75 @@ func (q *Queries) FindByProductEnID(ctx context.Context, productenid int32) (Pro
 	return i, err
 }
 
+const findProductWithDetailsByIDEn = `-- name: FindProductWithDetailsByIDEn :many
+SELECT
+    p."ProductEnID",
+    p."ProductNameEn",
+    p."subCategoryIDEn",
+    p."PriceEn",
+    p."StockQuantity",
+    p."ImagesPathEn",
+    p."Created_At",
+    p."Updated_At",
+    d."detailEnId",
+    d."ChoiceName",
+    d."ChoiceValue"
+FROM
+    "productEn" p
+    LEFT JOIN "detailEn" d ON p."ProductEnID" = d."ProductEnID"
+WHERE
+    p."ProductEnID" = $1
+`
+
+type FindProductWithDetailsByIDEnRow struct {
+	ProductEnID     int32
+	ProductNameEn   string
+	SubCategoryIDEn int32
+	PriceEn         string
+	StockQuantity   int32
+	ImagesPathEn    string
+	CreatedAt       sql.NullTime
+	UpdatedAt       sql.NullTime
+	DetailEnId      sql.NullInt32
+	ChoiceName      sql.NullString
+	ChoiceValue     sql.NullString
+}
+
+func (q *Queries) FindProductWithDetailsByIDEn(ctx context.Context, productenid int32) ([]FindProductWithDetailsByIDEnRow, error) {
+	rows, err := q.db.QueryContext(ctx, findProductWithDetailsByIDEn, productenid)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []FindProductWithDetailsByIDEnRow
+	for rows.Next() {
+		var i FindProductWithDetailsByIDEnRow
+		if err := rows.Scan(
+			&i.ProductEnID,
+			&i.ProductNameEn,
+			&i.SubCategoryIDEn,
+			&i.PriceEn,
+			&i.StockQuantity,
+			&i.ImagesPathEn,
+			&i.CreatedAt,
+			&i.UpdatedAt,
+			&i.DetailEnId,
+			&i.ChoiceName,
+			&i.ChoiceValue,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const getListProductEn = `-- name: GetListProductEn :many
 SELECT
     "ProductEnID", "ProductNameEn", "subCategoryIDEn", "PriceEn", "StockQuantity", "ImagesPathEn", "Created_At", "Updated_At"
@@ -199,6 +268,76 @@ func (q *Queries) GetListProductEn(ctx context.Context) ([]ProductEn, error) {
 			&i.ImagesPathEn,
 			&i.CreatedAt,
 			&i.UpdatedAt,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const getProductWithDetailsEn = `-- name: GetProductWithDetailsEn :many
+SELECT
+    p."ProductEnID",
+    p."ProductNameEn",
+    p."subCategoryIDEn",
+    p."PriceEn",
+    p."StockQuantity",
+    p."ImagesPathEn",
+    p."Created_At",
+    p."Updated_At",
+    d."detailEnId",
+    d."ChoiceName",
+    d."ChoiceValue"
+FROM
+    "productEn" p
+    LEFT JOIN "detailEn" d ON p."ProductEnID" = d."ProductEnID"
+ORDER BY
+    p."ProductEnID",
+    d."detailEnId"
+`
+
+type GetProductWithDetailsEnRow struct {
+	ProductEnID     int32
+	ProductNameEn   string
+	SubCategoryIDEn int32
+	PriceEn         string
+	StockQuantity   int32
+	ImagesPathEn    string
+	CreatedAt       sql.NullTime
+	UpdatedAt       sql.NullTime
+	DetailEnId      sql.NullInt32
+	ChoiceName      sql.NullString
+	ChoiceValue     sql.NullString
+}
+
+func (q *Queries) GetProductWithDetailsEn(ctx context.Context) ([]GetProductWithDetailsEnRow, error) {
+	rows, err := q.db.QueryContext(ctx, getProductWithDetailsEn)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []GetProductWithDetailsEnRow
+	for rows.Next() {
+		var i GetProductWithDetailsEnRow
+		if err := rows.Scan(
+			&i.ProductEnID,
+			&i.ProductNameEn,
+			&i.SubCategoryIDEn,
+			&i.PriceEn,
+			&i.StockQuantity,
+			&i.ImagesPathEn,
+			&i.CreatedAt,
+			&i.UpdatedAt,
+			&i.DetailEnId,
+			&i.ChoiceName,
+			&i.ChoiceValue,
 		); err != nil {
 			return nil, err
 		}
