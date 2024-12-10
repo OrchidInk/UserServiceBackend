@@ -10,6 +10,38 @@ import (
 	"time"
 )
 
+const countListUser = `-- name: CountListUser :many
+SELECT
+    count(*)
+FROM
+    "User"
+WHERE
+    "IsUser" = TRUE
+`
+
+func (q *Queries) CountListUser(ctx context.Context) ([]int64, error) {
+	rows, err := q.db.QueryContext(ctx, countListUser)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []int64
+	for rows.Next() {
+		var count int64
+		if err := rows.Scan(&count); err != nil {
+			return nil, err
+		}
+		items = append(items, count)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const createUser = `-- name: CreateUser :one
 INSERT INTO
     "User" (

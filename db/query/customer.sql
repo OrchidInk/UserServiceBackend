@@ -90,3 +90,42 @@ DELETE FROM
     "Customer"
 WHERE
     "CustomerId" = sqlc.arg('CustomerId');
+
+-- name: GetCustomerCountByStatus :many
+SELECT
+    "IsActive" AS status,
+    COUNT(*) AS count
+FROM
+    "Customer"
+GROUP BY
+    "IsActive";
+
+
+
+-- name: GetExpiredContracts :many
+SELECT
+    *
+FROM
+    "Customer"
+WHERE
+    "ContractEndDate" < CURRENT_DATE;
+
+-- name: GetContractsEndingSoon :many
+SELECT
+    *
+FROM
+    "Customer"
+WHERE
+    "ContractEndDate" BETWEEN CURRENT_DATE AND (CURRENT_DATE + INTERVAL '30 days');
+
+-- name: GetCustomerStatusOverTime :many
+SELECT
+    DATE_TRUNC('month', "Created_At") AS month,
+    SUM(CASE WHEN "IsActive" = TRUE THEN 1 ELSE 0 END) AS active_customers,
+    SUM(CASE WHEN "IsActive" = FALSE THEN 1 ELSE 0 END) AS inactive_customers
+FROM
+    "Customer"
+GROUP BY
+    DATE_TRUNC('month', "Created_At")
+ORDER BY
+    month ASC;

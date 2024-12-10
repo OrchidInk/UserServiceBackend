@@ -9,6 +9,52 @@ import (
 	"context"
 )
 
+const countActiveCustomersOrder = `-- name: CountActiveCustomersOrder :one
+SELECT 
+    COUNT(*) AS active_customers
+FROM 
+    "Customer"
+WHERE 
+    "IsActive" = TRUE
+`
+
+func (q *Queries) CountActiveCustomersOrder(ctx context.Context) (int64, error) {
+	row := q.db.QueryRowContext(ctx, countActiveCustomersOrder)
+	var active_customers int64
+	err := row.Scan(&active_customers)
+	return active_customers, err
+}
+
+const countInactiveCustomersOrder = `-- name: CountInactiveCustomersOrder :one
+SELECT 
+    COUNT(*) AS inactive_customers
+FROM 
+    "Customer"
+WHERE 
+    "IsActive" = FALSE
+`
+
+func (q *Queries) CountInactiveCustomersOrder(ctx context.Context) (int64, error) {
+	row := q.db.QueryRowContext(ctx, countInactiveCustomersOrder)
+	var inactive_customers int64
+	err := row.Scan(&inactive_customers)
+	return inactive_customers, err
+}
+
+const countTotalCustomers = `-- name: CountTotalCustomers :one
+SELECT 
+    COUNT(*) AS total_customers
+FROM 
+    "Customer"
+`
+
+func (q *Queries) CountTotalCustomers(ctx context.Context) (int64, error) {
+	row := q.db.QueryRowContext(ctx, countTotalCustomers)
+	var total_customers int64
+	err := row.Scan(&total_customers)
+	return total_customers, err
+}
+
 const createOrderItem = `-- name: CreateOrderItem :one
 INSERT INTO "OrderItems" (
     "CustomerOrderId",
@@ -61,6 +107,66 @@ WHERE "OrderItemId" = $1
 func (q *Queries) DeleteOrderItem(ctx context.Context, orderitemid int32) error {
 	_, err := q.db.ExecContext(ctx, deleteOrderItem, orderitemid)
 	return err
+}
+
+const getCustomerAnalysisOrder = `-- name: GetCustomerAnalysisOrder :one
+SELECT 
+    (SELECT COUNT(*) FROM "Customer") AS total_customers,
+    (SELECT COUNT(*) FROM "Customer" WHERE "IsActive" = TRUE) AS active_customers,
+    (SELECT COUNT(*) FROM "Customer" WHERE "IsActive" = FALSE) AS inactive_customers
+`
+
+type GetCustomerAnalysisOrderRow struct {
+	TotalCustomers    int64
+	ActiveCustomers   int64
+	InactiveCustomers int64
+}
+
+func (q *Queries) GetCustomerAnalysisOrder(ctx context.Context) (GetCustomerAnalysisOrderRow, error) {
+	row := q.db.QueryRowContext(ctx, getCustomerAnalysisOrder)
+	var i GetCustomerAnalysisOrderRow
+	err := row.Scan(&i.TotalCustomers, &i.ActiveCustomers, &i.InactiveCustomers)
+	return i, err
+}
+
+const getDeliveriesByUserId = `-- name: GetDeliveriesByUserId :many
+SELECT
+    d."DeliverId", d."DeliverName", d."OrderId", d."DeliveryAmount", d."CreatedAt"
+FROM
+    "delivery" d
+    JOIN "CustomerOrderDetail" cod ON d."OrderId" = cod."CustomerOrderId"
+    JOIN "Customer" c ON cod."CustomerId" = c."CustomerId"
+WHERE
+    c."CustomerId" = $1
+`
+
+func (q *Queries) GetDeliveriesByUserId(ctx context.Context, customerid int32) ([]Delivery, error) {
+	rows, err := q.db.QueryContext(ctx, getDeliveriesByUserId, customerid)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []Delivery
+	for rows.Next() {
+		var i Delivery
+		if err := rows.Scan(
+			&i.DeliverId,
+			&i.DeliverName,
+			&i.OrderId,
+			&i.DeliveryAmount,
+			&i.CreatedAt,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
 }
 
 const getOrderItemsByCustomerOrderID = `-- name: GetOrderItemsByCustomerOrderID :many
