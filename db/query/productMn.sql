@@ -82,3 +82,42 @@ SET
 WHERE
     "ProductMnID" = sqlc.arg('ProductMnID')
     AND "StockQuantity" >= sqlc.arg('quantityPurchased') RETURNING *;
+
+-- name: GetProductWithDetailMn :many
+SELECT
+    p."ProductMnID",
+    p."ProductNameMn",
+    p."subCategoryIDMn",
+    p."PriceMn",
+    p."StockQuantity",
+    p."ImagesPathMn",
+    p."Created_At",
+    p."Updated_At",
+    d."detailMnId",
+    d."ChoiceName",
+    d."ChoiceValue"
+FROM
+    "productMn" p
+    LEFT JOIN "detailMn" d ON p."ProductMnID" = d."ProductMnID"
+ORDER BY
+    p."ProductMnID",
+    d."detailMnId";
+
+-- name: FindProductwithDetailsByIDMn :many
+SELECT
+    p."ProductMnID",
+    p."ProductNameMn",
+    p."subCategoryIDMn",
+    p."PriceMn",
+    p."StockQuantity",
+    p."ImagesPathMn",
+    p."Created_At",
+    p."Updated_At",
+    d."detailMnId",
+    d."ChoiceName",
+    d."ChoiceValue"
+FROM
+    "productMn" p
+    LEFT JOIN "detailMn" d ON p."ProductMnID" = d."ProductMnID"
+WHERE
+    p."ProductMnID" = sqlc.arg('ProductMnID');
