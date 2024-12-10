@@ -36,6 +36,8 @@ jobs:
           # Build the Go application
           go build -o main main.go
 
+          sudo systemctl restart my-go-app.service
+
           # Restart the Go application service
           sudo systemctl start my-go-app.service
 
