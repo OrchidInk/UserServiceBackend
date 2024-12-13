@@ -37,6 +37,8 @@ func superAdminRoutes(app *fiber.App, hd *handlers.Handlers) {
 
 	category.Get("/with-productEn", hd.GetCategoriesWithSubCategoriesAndProductsEn)
 	category.Get("/with-productMn", hd.GetCategoriesWithSubCategoriesAndProductsMn)
+	category.Get("/with-productEn/:id", hd.FindSubCategoriesAndProductsByCategoryIDEn)
+	category.Get("/with-productMn/:id", hd.FindSubCategoriesAndProductsByCategoryIDMn)
 
 	// subCategory
 	subCategory := api.Group("/subCategory")
