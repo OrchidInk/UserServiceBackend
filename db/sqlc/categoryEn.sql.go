@@ -139,6 +139,74 @@ func (q *Queries) GetCategoriesWithSubCategories(ctx context.Context) ([]GetCate
 	return items, nil
 }
 
+const getCategoriesWithSubCategoriesAndProductsEn = `-- name: GetCategoriesWithSubCategoriesAndProductsEn :many
+SELECT
+    c."CategoryEnID",
+    c."CategoryNameEn",
+    sc."subCategoryIDEn",
+    sc."subCategoryNameEn",
+    p."ProductEnID",
+    p."ProductNameEn",
+    p."PriceEn",
+    p."StockQuantity",
+    p."ImagesPathEn"
+FROM
+    "categoryEn" c
+LEFT JOIN
+    "subCategoryEn" sc ON c."CategoryEnID" = sc."CategoryEnID"
+LEFT JOIN
+    "productEn" p ON sc."subCategoryIDEn" = p."subCategoryIDEn"
+ORDER BY
+    c."CategoryEnID",
+    sc."subCategoryIDEn",
+    p."ProductEnID"
+`
+
+type GetCategoriesWithSubCategoriesAndProductsEnRow struct {
+	CategoryEnID      int32
+	CategoryNameEn    string
+	SubCategoryIDEn   sql.NullInt32
+	SubCategoryNameEn sql.NullString
+	ProductEnID       sql.NullInt32
+	ProductNameEn     sql.NullString
+	PriceEn           sql.NullString
+	StockQuantity     sql.NullInt32
+	ImagesPathEn      sql.NullString
+}
+
+func (q *Queries) GetCategoriesWithSubCategoriesAndProductsEn(ctx context.Context) ([]GetCategoriesWithSubCategoriesAndProductsEnRow, error) {
+	rows, err := q.db.QueryContext(ctx, getCategoriesWithSubCategoriesAndProductsEn)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []GetCategoriesWithSubCategoriesAndProductsEnRow
+	for rows.Next() {
+		var i GetCategoriesWithSubCategoriesAndProductsEnRow
+		if err := rows.Scan(
+			&i.CategoryEnID,
+			&i.CategoryNameEn,
+			&i.SubCategoryIDEn,
+			&i.SubCategoryNameEn,
+			&i.ProductEnID,
+			&i.ProductNameEn,
+			&i.PriceEn,
+			&i.StockQuantity,
+			&i.ImagesPathEn,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const getListByAllCategoryEn = `-- name: GetListByAllCategoryEn :many
 SELECT
     "CategoryEnID", "CategoryNameEn"

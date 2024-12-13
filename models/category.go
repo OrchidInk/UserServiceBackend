@@ -51,3 +51,43 @@ type UpdateSubCategoryMn struct {
 	SubCategoryNameMn string `json:"subCategoryNameMn"`
 	SubCategoryMnID   int32  `json:"subCategoryMNID"`
 }
+
+type SubCategoryWithProductsEn struct {
+	SubCategoryIDEn   int32       `json:"subCategoryIdEn"`
+	SubCategoryNameEn string      `json:"subCategoryNameEn"`
+	Products          []ProductEn `json:"products"`
+}
+
+type CategoryWithSubCategoriesAndProductsEn struct {
+	CategoryEnID    int32                       `json:"categoryEnId"`
+	CategoryNameEn  string                      `json:"categoryNameEn"`
+	SubcategoriesEn []SubCategoryWithProductsEn `json:"subCategoriesEn"`
+}
+
+type ProductEn struct {
+	ProductEnID   int32  `json:"productEnId"`
+	ProductNameEn string `json:"productNameEn"`
+	PriceEn       string `json:"priceEn"`
+	StockQuantity int32  `json:"stockQuantity"`
+	ImagesPathEn  string `json:"imagesPathEn"`
+}
+
+type SubCategoryWithProductsMn struct {
+	SubCategoryIDMn   int32       `json:"subCategoryIdMn"`
+	SubCategoryNameMn string      `json:"subCategoryNameMn"`
+	Products          []ProductMn `json:"products"`
+}
+
+type CategoryWithSubCategoriesAndProductsMn struct {
+	CategoryMnID    int32                       `json:"cateogoryMnId"`
+	CategoryNameMn  string                      `json:"categoryNameMn"`
+	SubCategoriesMn []SubCategoryWithProductsMn `json:"subCategoriesMn'`
+}
+
+type ProductMn struct {
+	ProductMnID   int32  `json:"productMnID"`
+	ProductNameMn string `json:"productNameMn"`
+	PriceMn       string `json:"priceMn"`
+	StockQuantity int32  `json:"stockQuantity"`
+	ImagesPathMn  string `json:"imagesPathMn"`
+}

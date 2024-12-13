@@ -35,6 +35,9 @@ func superAdminRoutes(app *fiber.App, hd *handlers.Handlers) {
 	category.Delete("/deleteEn/:id", hd.DeleteCategoryEn)
 	category.Delete("/deleteMn/:id", hd.DeleteCategoryMn)
 
+	category.Get("/with-productEn", hd.GetCategoriesWithSubCategoriesAndProductsEn)
+	category.Get("/with-productMn", hd.GetCategoriesWithSubCategoriesAndProductsMn)
+
 	// subCategory
 	subCategory := api.Group("/subCategory")
 	subCategory.Post("/createEn", hd.CreateSubCategoryEn)
@@ -72,6 +75,8 @@ func superAdminRoutes(app *fiber.App, hd *handlers.Handlers) {
 	// Product Delete
 	product.Delete("/deleteEn/:id", hd.DeleteCategoryEn)
 	product.Delete("/deleteMn/:id", hd.DeleteProductMn)
+
+	// Product With Category and subCategory
 
 	//Banner
 	banner := api.Group("/banner")
