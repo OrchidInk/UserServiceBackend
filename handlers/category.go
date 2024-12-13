@@ -397,3 +397,107 @@ func (hd *Handlers) GetCategoriesWithSubCategoriesAndProductsMn(ctx *fiber.Ctx) 
 
 	return ctx.Status(fiber.StatusOK).JSON(result)
 }
+
+func (hd *Handlers) FindSubCategoriesAndProductsByCategoryIDEn(ctx *fiber.Ctx) error {
+	queries, _, _ := hd.queries()
+
+	// Parse the Category ID from the request
+	categoryIDStr := ctx.Params("id")
+	categoryID, err := strconv.Atoi(categoryIDStr)
+	if err != nil {
+		slog.Error("unable to parse category id", slog.Any("err", err))
+		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"err": "Invalid category ID"})
+	}
+
+	// Execute the query
+	rows, err := queries.FindSubCategoriesAndProductsByCategoryIDEn(ctx.Context(), int32(categoryID))
+	if err != nil {
+		slog.Error("unable to find subcategories and products", slog.Any("err", err))
+		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"err": "Database error"})
+	}
+
+	// Structure the result
+	result := make(map[string]interface{})
+	result["CategoryID"] = categoryID
+	result["SubCategories"] = []map[string]interface{}{}
+
+	subCategoryMap := make(map[int32]map[string]interface{})
+
+	for _, row := range rows {
+		// Group products under each subcategory
+		if _, exists := subCategoryMap[row.SubCategoryIDEn.Int32]; !exists {
+			subCategoryMap[row.SubCategoryIDEn.Int32] = map[string]interface{}{
+				"SubCategoryID":   row.SubCategoryIDEn,
+				"SubCategoryName": row.SubCategoryNameEn,
+				"Products":        []map[string]interface{}{},
+			}
+			result["SubCategories"] = append(result["SubCategories"].([]map[string]interface{}), subCategoryMap[row.SubCategoryIDEn.Int32])
+		}
+
+		// Add product to subcategory
+		if row.ProductEnID.Valid {
+			subCategoryMap[row.SubCategoryIDEn.Int32]["Products"] = append(
+				subCategoryMap[row.SubCategoryIDEn.Int32]["Products"].([]map[string]interface{}),
+				map[string]interface{}{
+					"ProductID":     row.ProductEnID.Int32,
+					"ProductName":   row.ProductNameEn.String,
+					"Price":         row.PriceEn.String,
+					"StockQuantity": row.StockQuantity.Int32,
+					"ImagesPath":    row.ImagesPathEn.String,
+				},
+			)
+		}
+	}
+
+	// Return the structured response
+	return ctx.Status(fiber.StatusOK).JSON(result)
+}
+
+func (hd *Handlers) FindSubCategoriesAndProductsByCategoryIDMn(ctx *fiber.Ctx) error {
+	queries, _, _ := hd.queries()
+
+	categoryIDStr := ctx.Params("id")
+	categoryID, err := strconv.Atoi(categoryIDStr)
+	if err != nil {
+		slog.Error("unable to parse category id", slog.Any("err", err))
+		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"err": err})
+	}
+
+	rows, err := queries.FindSubCategoriesAndProductsByCategoryIDMn(ctx.Context(), int32(categoryID))
+	if err != nil {
+		slog.Error("unable to find subcategories and products", slog.Any("Err", err))
+		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"err": err})
+	}
+
+	result := make(map[string]interface{})
+	result["CategoryID"] = categoryID
+	result["SubCategories"] = []map[string]interface{}{}
+
+	subCategoryMap := make(map[int32]map[string]interface{})
+
+	for _, row := range rows {
+		if _, exists := subCategoryMap[row.SubCategoryIDMn.Int32]; !exists {
+			subCategoryMap[row.SubCategoryIDMn.Int32] = map[string]interface{}{
+				"SubCategoryID":   row.SubCategoryIDMn,
+				"SubCategoryName": row.SubCategoryNameMn,
+				"Products":        []map[string]interface{}{},
+			}
+			result["SubCategories"] = append(result["SubCategories"].([]map[string]interface{}), subCategoryMap[row.SubCategoryIDMn.Int32])
+		}
+
+		if row.ProductMnID.Valid {
+			subCategoryMap[row.SubCategoryIDMn.Int32]["Products"] = append(
+				subCategoryMap[row.SubCategoryIDMn.Int32]["Products"].([]map[string]interface{}),
+				map[string]interface{}{
+					"ProductID":     row.ProductMnID.Int32,
+					"ProductName":   row.ProductNameMn.String,
+					"Price":         row.PriceMn.String,
+					"StockQuantity": row.StockQuantity.Int32,
+					"ImagesPath":    row.ImagesPathMn.String,
+				},
+			)
+		}
+	}
+
+	return ctx.Status(fiber.StatusOK).JSON(result)
+}

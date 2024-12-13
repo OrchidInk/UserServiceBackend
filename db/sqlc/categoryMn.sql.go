@@ -92,6 +92,75 @@ func (q *Queries) FindByNameMnCategoryMn(ctx context.Context, categorynamemn str
 	return i, err
 }
 
+const findSubCategoriesAndProductsByCategoryIDMn = `-- name: FindSubCategoriesAndProductsByCategoryIDMn :many
+SELECT
+    c."CategoryMnID",
+    c."CategoryNameMn",
+    sc."subCategoryIDMn",
+    sc."subCategoryNameMn",
+    p."ProductMnID",
+    p."ProductNameMn",
+    p."PriceMn",
+    p."StockQuantity",
+    p."ImagesPathMn"
+FROM
+    "categoryMn" c 
+LEFT JOIN 
+    "subCategoryMn" sc ON c."CategoryMnID" = sc."CategoryMnID"
+LEFT JOIN
+    "productMn" p on p."subCategoryIDMn" = sc."subCategoryIDMn"
+WHERE
+    c."CategoryMnID" = $1
+ORDER BY
+    sc."subCategoryIDMn",
+    p."ProductMnID"
+`
+
+type FindSubCategoriesAndProductsByCategoryIDMnRow struct {
+	CategoryMnID      int32
+	CategoryNameMn    string
+	SubCategoryIDMn   sql.NullInt32
+	SubCategoryNameMn sql.NullString
+	ProductMnID       sql.NullInt32
+	ProductNameMn     sql.NullString
+	PriceMn           sql.NullString
+	StockQuantity     sql.NullInt32
+	ImagesPathMn      sql.NullString
+}
+
+func (q *Queries) FindSubCategoriesAndProductsByCategoryIDMn(ctx context.Context, categorymnid int32) ([]FindSubCategoriesAndProductsByCategoryIDMnRow, error) {
+	rows, err := q.db.QueryContext(ctx, findSubCategoriesAndProductsByCategoryIDMn, categorymnid)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []FindSubCategoriesAndProductsByCategoryIDMnRow
+	for rows.Next() {
+		var i FindSubCategoriesAndProductsByCategoryIDMnRow
+		if err := rows.Scan(
+			&i.CategoryMnID,
+			&i.CategoryNameMn,
+			&i.SubCategoryIDMn,
+			&i.SubCategoryNameMn,
+			&i.ProductMnID,
+			&i.ProductNameMn,
+			&i.PriceMn,
+			&i.StockQuantity,
+			&i.ImagesPathMn,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const getCategoriesWithSubCategoriesAndProductMn = `-- name: GetCategoriesWithSubCategoriesAndProductMn :many
 SELECT
     c."CategoryMnID",

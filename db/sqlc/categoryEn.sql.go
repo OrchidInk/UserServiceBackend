@@ -90,6 +90,75 @@ func (q *Queries) FindByNameCategoryEn(ctx context.Context, categorynameen strin
 	return i, err
 }
 
+const findSubCategoriesAndProductsByCategoryIDEn = `-- name: FindSubCategoriesAndProductsByCategoryIDEn :many
+SELECT
+    c."CategoryEnID",
+    c."CategoryNameEn",
+    sc."subCategoryIDEn",
+    sc."subCategoryNameEn",
+    p."ProductEnID",
+    p."ProductNameEn",
+    p."PriceEn",
+    p."StockQuantity",
+    p."ImagesPathEn"
+FROM
+    "categoryEn" c
+LEFT JOIN
+    "subCategoryEn" sc ON c."CategoryEnID" = sc."CategoryEnID"
+LEFT JOIN
+    "productEn" p ON sc."subCategoryIDEn" = p."subCategoryIDEn"
+WHERE
+    c."CategoryEnID" = $1
+ORDER BY
+    sc."subCategoryIDEn",
+    p."ProductEnID"
+`
+
+type FindSubCategoriesAndProductsByCategoryIDEnRow struct {
+	CategoryEnID      int32
+	CategoryNameEn    string
+	SubCategoryIDEn   sql.NullInt32
+	SubCategoryNameEn sql.NullString
+	ProductEnID       sql.NullInt32
+	ProductNameEn     sql.NullString
+	PriceEn           sql.NullString
+	StockQuantity     sql.NullInt32
+	ImagesPathEn      sql.NullString
+}
+
+func (q *Queries) FindSubCategoriesAndProductsByCategoryIDEn(ctx context.Context, categoryenid int32) ([]FindSubCategoriesAndProductsByCategoryIDEnRow, error) {
+	rows, err := q.db.QueryContext(ctx, findSubCategoriesAndProductsByCategoryIDEn, categoryenid)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []FindSubCategoriesAndProductsByCategoryIDEnRow
+	for rows.Next() {
+		var i FindSubCategoriesAndProductsByCategoryIDEnRow
+		if err := rows.Scan(
+			&i.CategoryEnID,
+			&i.CategoryNameEn,
+			&i.SubCategoryIDEn,
+			&i.SubCategoryNameEn,
+			&i.ProductEnID,
+			&i.ProductNameEn,
+			&i.PriceEn,
+			&i.StockQuantity,
+			&i.ImagesPathEn,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const getCategoriesWithSubCategories = `-- name: GetCategoriesWithSubCategories :many
 SELECT
     c."CategoryEnID",

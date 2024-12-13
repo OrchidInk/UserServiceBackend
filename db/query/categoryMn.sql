@@ -91,3 +91,28 @@ ORDER BY
     c."CategoryMnID",
     sc."subCategoryIDMn",
     p."ProductMnID";
+
+
+-- name: FindSubCategoriesAndProductsByCategoryIDMn :many
+SELECT
+    c."CategoryMnID",
+    c."CategoryNameMn",
+    sc."subCategoryIDMn",
+    sc."subCategoryNameMn",
+    p."ProductMnID",
+    p."ProductNameMn",
+    p."PriceMn",
+    p."StockQuantity",
+    p."ImagesPathMn"
+FROM
+    "categoryMn" c 
+LEFT JOIN 
+    "subCategoryMn" sc ON c."CategoryMnID" = sc."CategoryMnID"
+LEFT JOIN
+    "productMn" p on p."subCategoryIDMn" = sc."subCategoryIDMn"
+WHERE
+    c."CategoryMnID" = sqlc.arg('CategoryMnID')
+ORDER BY
+    sc."subCategoryIDMn",
+    p."ProductMnID";
+
