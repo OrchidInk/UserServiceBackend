@@ -164,6 +164,29 @@ func (q *Queries) GetProductsBySubCategoryEn(ctx context.Context, subcategoryide
 	return items, nil
 }
 
+const updateSubCategoryByIDEn = `-- name: UpdateSubCategoryByIDEn :one
+UPDATE
+    "subCategoryEn"
+SET
+    "subCategoryNameEn" = $1,
+    "CategoryEnID" = $2
+WHERE
+    "subCategoryIDEn" = $3 RETURNING "subCategoryIDEn", "subCategoryNameEn", "CategoryEnID"
+`
+
+type UpdateSubCategoryByIDEnParams struct {
+	SubCategoryNameEn string
+	CategoryEnID      int32
+	SubCategoryIDEn   int32
+}
+
+func (q *Queries) UpdateSubCategoryByIDEn(ctx context.Context, arg UpdateSubCategoryByIDEnParams) (SubCategoryEn, error) {
+	row := q.db.QueryRowContext(ctx, updateSubCategoryByIDEn, arg.SubCategoryNameEn, arg.CategoryEnID, arg.SubCategoryIDEn)
+	var i SubCategoryEn
+	err := row.Scan(&i.SubCategoryIDEn, &i.SubCategoryNameEn, &i.CategoryEnID)
+	return i, err
+}
+
 const updateSubCategoryNameEn = `-- name: UpdateSubCategoryNameEn :one
 UPDATE
     "subCategoryEn"

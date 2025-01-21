@@ -2,18 +2,52 @@
 INSERT INTO
     "productEn" (
         "ProductNameEn",
-        "subCategoryIDEn",
+        "SubCategoryIDEn",
         "PriceEn",
         "StockQuantity",
-        "ImagesPathEn"
+        "ImagesPathEn",
+        "DescriptionEn",
+        "BrandEn",
+        "ManufacturedCountryEn",
+        "ColorEn",
+        "SizeEn",
+        "PenOutputEn",
+        "FeaturesEn",
+        "MaterialEn",
+        "StapleSizeEn",
+        "CapacityEn",
+        "WeightEn",
+        "ThicknessEn",
+        "PackagingEn",
+        "ProductCodeEn",
+        "CostPriceEn",
+        "RetailPriceEn",
+        "WarehouseStockEn"
     )
 VALUES
     (
         sqlc.arg('ProductNameEn'),
-        sqlc.arg('subCategoryIDEn'),
+        sqlc.arg('SubCategoryIDEn'),
         sqlc.arg('PriceEn'),
         sqlc.arg('StockQuantity'),
-        sqlc.arg('ImagesPathEn')
+        sqlc.arg('ImagesPathEn'),
+        sqlc.arg('DescriptionEn'),
+        sqlc.arg('BrandEn'),
+        sqlc.arg('ManufacturedCountryEn'),
+        sqlc.arg('ColorEn'),
+        sqlc.arg('SizeEn'),
+        sqlc.arg('PenOutputEn'),
+        sqlc.arg('FeaturesEn'),
+        sqlc.arg('MaterialEn'),
+        sqlc.arg('StapleSizeEn'),
+        sqlc.arg('CapacityEn'),
+        sqlc.arg('WeightEn'),
+        sqlc.arg('ThicknessEn'),
+        sqlc.arg('PackagingEn'),
+        sqlc.arg('ProductCodeEn'),
+        sqlc.arg('CostPriceEn'),
+        sqlc.arg('RetailPriceEn'),
+        sqlc.arg('WarehouseStockEn')
     ) RETURNING *;
 
 -- name: GetListProductEn :many
@@ -40,7 +74,7 @@ SET
 WHERE
     "ProductEnID" = sqlc.arg ('ProductEnID') RETURNING *;
 
--- name: UpdateByProductEnImagePath :one
+-- name: UpdateByEnImagePath :one
 UPDATE
     "productEn"
 SET
@@ -60,11 +94,11 @@ SELECT
 FROM
     "productEn"
 WHERE
-    "ProductEnName" ILIKE '%' || sqlc.arg ('ProductEnName') || '%' -- Case-insensitive search for partial match
+    "ProductNameEn" ILIKE '%' || sqlc.arg ('ProductNameEn') || '%' -- Case-insensitive search for partial match
 ORDER BY
     "Created_At" DESC;
 
--- name: FindByProductEnID :one
+-- name: FindByProductIdEn :one
 SELECT
     *
 FROM
@@ -74,7 +108,7 @@ WHERE
 LIMIT
     1;
 
--- name: DeductStockQuantityByProductEnID :one
+-- name: DeductSockQuantityByProductEnID :one
 UPDATE
     "productEn"
 SET
@@ -83,41 +117,10 @@ WHERE
     "ProductEnID" = sqlc.arg('ProductEnID')
     AND "StockQuantity" >= sqlc.arg('quantityPurchased') RETURNING *;
 
--- name: GetProductWithDetailsEn :many
-SELECT
-    p."ProductEnID",
-    p."ProductNameEn",
-    p."subCategoryIDEn",
-    p."PriceEn",
-    p."StockQuantity",
-    p."ImagesPathEn",
-    p."Created_At",
-    p."Updated_At",
-    d."detailEnId",
-    d."ChoiceName",
-    d."ChoiceValue"
-FROM
-    "productEn" p
-    LEFT JOIN "detailEn" d ON p."ProductEnID" = d."ProductEnID"
-ORDER BY
-    p."ProductEnID",
-    d."detailEnId";
-
--- name: FindProductWithDetailsByIDEn :many
-SELECT
-    p."ProductEnID",
-    p."ProductNameEn",
-    p."subCategoryIDEn",
-    p."PriceEn",
-    p."StockQuantity",
-    p."ImagesPathEn",
-    p."Created_At",
-    p."Updated_At",
-    d."detailEnId",
-    d."ChoiceName",
-    d."ChoiceValue"
-FROM
-    "productEn" p
-    LEFT JOIN "detailEn" d ON p."ProductEnID" = d."ProductEnID"
+-- name: UpdateProductEnSubCategory :one
+UPDATE
+    "productEn"
+SET
+    "SubCategoryIDEn" = sqlc.arg('SubCateogoryIDEn')
 WHERE
-    p."ProductEnID" = sqlc.arg('ProductEnID');
+    "ProductEnID" = sqlc.arg('ProductEnID') RETURNING *;

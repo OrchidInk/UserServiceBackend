@@ -2,18 +2,52 @@
 INSERT INTO
     "productMn" (
         "ProductNameMn",
-        "subCategoryIDMn",
+        "SubCategoryIDMn",
         "PriceMn",
         "StockQuantity",
-        "ImagesPathMn"
+        "ImagesPathMn",
+        "DescriptionMn",
+        "BrandMn",
+        "ManufacturedCountryMn",
+        "ColorMn",
+        "SizeMn",
+        "PenOutputMn",
+        "FeaturesMn",
+        "MaterialMn",
+        "StapleSizeMn",
+        "CapacityMn",
+        "WeightMn",
+        "ThicknessMn",
+        "PackagingMn",
+        "ProductCodeMn",
+        "CostPriceMn",
+        "RetailPriceMn",
+        "WarehouseStockMn"
     )
 VALUES
     (
         sqlc.arg('ProductNameMn'),
-        sqlc.arg('subCategoryIDMn'),
+        sqlc.arg('SubCategoryIDMn'),
         sqlc.arg('PriceMn'),
         sqlc.arg('StockQuantity'),
-        sqlc.arg('ImagesPathMn')
+        sqlc.arg('ImagesPathMn'),
+        sqlc.arg('DescriptionMn'),
+        sqlc.arg('BrandMn'),
+        sqlc.arg('ManufacturedCountryMn'),
+        sqlc.arg('ColorMn'),
+        sqlc.arg('SizeMn'),
+        sqlc.arg('PenOutputMn'),
+        sqlc.arg('FeaturesMn'),
+        sqlc.arg('MaterialMn'),
+        sqlc.arg('StapleSizeMn'),
+        sqlc.arg('CapacityMn'),
+        sqlc.arg('WeightMn'),
+        sqlc.arg('ThicknessMn'),
+        sqlc.arg('PackagingMn'),
+        sqlc.arg('ProductCodeMn'),
+        sqlc.arg('CostPriceMn'),
+        sqlc.arg('RetailPriceMn'),
+        sqlc.arg('WarehouseStockMn')
     ) RETURNING *;
 
 -- name: GetListProductMn :many
@@ -60,7 +94,7 @@ SELECT
 FROM
     "productMn"
 WHERE
-    "ProductMnName" ILIKE '%' || sqlc.arg ('ProductMnName') || '%' -- Case-insensitive search for partial match
+    "ProductNameMn" ILIKE '%' || sqlc.arg ('ProductNameMn') || '%' -- Case-insensitive search for partial match
 ORDER BY
     "Created_At" DESC;
 
@@ -83,41 +117,10 @@ WHERE
     "ProductMnID" = sqlc.arg('ProductMnID')
     AND "StockQuantity" >= sqlc.arg('quantityPurchased') RETURNING *;
 
--- name: GetProductWithDetailMn :many
-SELECT
-    p."ProductMnID",
-    p."ProductNameMn",
-    p."subCategoryIDMn",
-    p."PriceMn",
-    p."StockQuantity",
-    p."ImagesPathMn",
-    p."Created_At",
-    p."Updated_At",
-    d."detailMnId",
-    d."ChoiceName",
-    d."ChoiceValue"
-FROM
-    "productMn" p
-    LEFT JOIN "detailMn" d ON p."ProductMnID" = d."ProductMnID"
-ORDER BY
-    p."ProductMnID",
-    d."detailMnId";
-
--- name: FindProductWithDetailsByIDMn :many
-SELECT
-    p."ProductMnID",
-    p."ProductNameMn",
-    p."subCategoryIDMn",
-    p."PriceMn",
-    p."StockQuantity",
-    p."ImagesPathMn",
-    p."Created_At",
-    p."Updated_At",
-    d."detailMnId",
-    d."ChoiceName",
-    d."ChoiceValue"
-FROM
-    "productMn" p
-    LEFT JOIN "detailMn" d ON p."ProductMnID" = d."ProductMnID"
+-- name: UpdateProductMnSubCategory :one
+UPDATE
+    "productMn"
+SET
+    "SubCategoryIDMn" = sqlc.arg('SubCategoryIDMn')
 WHERE
-    p."ProductMnID" = sqlc.arg('ProductMnID');
+    "ProductMnID" = sqlc.arg('ProductMnID') RETURNING *;

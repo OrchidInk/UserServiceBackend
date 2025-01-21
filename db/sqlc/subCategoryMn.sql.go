@@ -197,3 +197,26 @@ func (q *Queries) UpdateBySubCategoryNameMn(ctx context.Context, arg UpdateBySub
 	err := row.Scan(&i.SubCategoryIDMn, &i.SubCategoryNameMn, &i.CategoryMnID)
 	return i, err
 }
+
+const updateSubCategoryByIDMn = `-- name: UpdateSubCategoryByIDMn :one
+UPDATE
+    "subCategoryMn"
+SET
+    "subCategoryNameMn" = $1,
+    "CategoryMnID" = $2
+WHERE
+    "subCategoryIDMn" = $3 RETURNING "subCategoryIDMn", "subCategoryNameMn", "CategoryMnID"
+`
+
+type UpdateSubCategoryByIDMnParams struct {
+	SubCategoryNameMn string
+	CategoryMnID      int32
+	SubCategoryIDMn   int32
+}
+
+func (q *Queries) UpdateSubCategoryByIDMn(ctx context.Context, arg UpdateSubCategoryByIDMnParams) (SubCategoryMn, error) {
+	row := q.db.QueryRowContext(ctx, updateSubCategoryByIDMn, arg.SubCategoryNameMn, arg.CategoryMnID, arg.SubCategoryIDMn)
+	var i SubCategoryMn
+	err := row.Scan(&i.SubCategoryIDMn, &i.SubCategoryNameMn, &i.CategoryMnID)
+	return i, err
+}

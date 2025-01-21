@@ -68,3 +68,12 @@ FROM
     JOIN "productMn" p ON sc."subCategoryIDMn" = p."subCategoryIDMn"
 WHERE
     sc."subCategoryIDMn" = sqlc.arg('subCategoryIDMn');
+
+-- name: UpdateSubCategoryByIDMn :one
+UPDATE
+    "subCategoryMn"
+SET
+    "subCategoryNameMn" = sqlc.arg('subCategoryNameMn'),
+    "CategoryMnID" = sqlc.arg('CategoryMnID')
+WHERE
+    "subCategoryIDMn" = sqlc.arg('subCategoryIDMn') RETURNING *;

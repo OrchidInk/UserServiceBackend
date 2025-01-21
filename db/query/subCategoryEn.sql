@@ -63,3 +63,12 @@ FROM
     JOIN "productEn" p ON sc."subCategoryIDEn" = p."subCategoryIDEn"
 WHERE
     sc."subCategoryIDEn" = sqlc.arg('subCategoryIDEn');
+
+-- name: UpdateSubCategoryByIDEn :one
+UPDATE
+    "subCategoryEn"
+SET
+    "subCategoryNameEn" = sqlc.arg('subCategoryNameEn'),
+    "CategoryEnID" = sqlc.arg('CategoryEnID')
+WHERE
+    "subCategoryIDEn" = sqlc.arg('subCategoryIDEn') RETURNING *;
