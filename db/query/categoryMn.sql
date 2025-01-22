@@ -56,17 +56,15 @@ WHERE
 LIMIT
     1;
 
-
 -- name: GetCategoriesWithSubCategoriesMn :many
 SELECT
     c."CategoryMnID",
     c."CategoryNameMn",
-    sc."subCategoryIDMn",
+    sc."SubCategoryIDMn",
     sc."subCategoryNameMn"
 FROM
     "categoryMn" c
-LEFT JOIN
-    "subCategoryMn" sc ON c."CategoryMnID" = sc."CategoryMnID"
+    LEFT JOIN "subCategoryMn" sc ON c."CategoryMnID" = sc."CategoryMnID"
 ORDER BY
     c."CategoryMnID";
 
@@ -74,7 +72,7 @@ ORDER BY
 SELECT
     c."CategoryMnID",
     c."CategoryNameMn",
-    sc."subCategoryIDMn",
+    sc."SubCategoryIDMn",
     sc."subCategoryNameMn",
     p."ProductMnID",
     p."ProductNameMn",
@@ -83,21 +81,18 @@ SELECT
     p."ImagesPathMn"
 FROM
     "categoryMn" c
-LEFT JOIN
-    "subCategoryMn" sc ON c."CategoryMnID" = sc."CategoryMnID"
-LEFT JOIN
-    "productMn" p ON sc."subCategoryIDMn" = p."subCategoryIDMn"
+    LEFT JOIN "subCategoryMn" sc ON c."CategoryMnID" = sc."CategoryMnID"
+    LEFT JOIN "productMn" p ON sc."SubCategoryIDMn" = p."SubCategoryIDMn"
 ORDER BY
     c."CategoryMnID",
-    sc."subCategoryIDMn",
+    sc."SubCategoryIDMn",
     p."ProductMnID";
-
 
 -- name: FindSubCategoriesAndProductsByCategoryIDMn :many
 SELECT
     c."CategoryMnID",
     c."CategoryNameMn",
-    sc."subCategoryIDMn",
+    sc."SubCategoryIDMn",
     sc."subCategoryNameMn",
     p."ProductMnID",
     p."ProductNameMn",
@@ -105,14 +100,11 @@ SELECT
     p."StockQuantity",
     p."ImagesPathMn"
 FROM
-    "categoryMn" c 
-LEFT JOIN 
-    "subCategoryMn" sc ON c."CategoryMnID" = sc."CategoryMnID"
-LEFT JOIN
-    "productMn" p on p."subCategoryIDMn" = sc."subCategoryIDMn"
+    "categoryMn" c
+    LEFT JOIN "subCategoryMn" sc ON c."CategoryMnID" = sc."CategoryMnID"
+    LEFT JOIN "productMn" p ON p."SubCategoryIDMn" = sc."SubCategoryIDMn"
 WHERE
     c."CategoryMnID" = sqlc.arg('CategoryMnID')
 ORDER BY
-    sc."subCategoryIDMn",
+    sc."SubCategoryIDMn",
     p."ProductMnID";
-

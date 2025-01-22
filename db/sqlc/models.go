@@ -106,14 +106,33 @@ type Payment struct {
 }
 
 type ProductEn struct {
-	ProductEnID     int32
-	ProductNameEn   string
-	SubCategoryIDEn int32
-	PriceEn         string
-	StockQuantity   int32
-	ImagesPathEn    string
-	CreatedAt       sql.NullTime
-	UpdatedAt       sql.NullTime
+	ProductEnID           int32
+	ProductNameEn         string
+	SubCategoryIDEn       int32
+	PriceEn               string
+	StockQuantity         int32
+	ImagesPathEn          string
+	DescriptionEn         string
+	BrandEn               string
+	ManufacturedCountryEn string
+	ColorEn               string
+	SizeEn                string
+	PenOutputEn           string
+	FeaturesEn            string
+	MaterialEn            string
+	StapleSizeEn          string
+	CapacityEn            string
+	WeightEn              string
+	ThicknessEn           string
+	PackagingEn           string
+	UsageEn               string
+	InstructionsEn        string
+	ProductCodeEn         string
+	CostPriceEn           string
+	RetailPriceEn         string
+	WarehouseStockEn      int32
+	CreatedAt             sql.NullTime
+	UpdatedAt             sql.NullTime
 }
 
 type ProductImage struct {
@@ -123,14 +142,33 @@ type ProductImage struct {
 }
 
 type ProductMn struct {
-	ProductMnID     int32
-	ProductNameMn   string
-	SubCategoryIDMn int32
-	PriceMn         string
-	StockQuantity   int32
-	ImagesPathMn    string
-	CreatedAt       sql.NullTime
-	UpdatedAt       sql.NullTime
+	ProductMnID           int32
+	ProductNameMn         string
+	SubCategoryIDMn       int32
+	PriceMn               string
+	StockQuantity         int32
+	ImagesPathMn          string
+	DescriptionMn         string
+	BrandMn               string
+	ManufacturedCountryMn string
+	ColorMn               string
+	SizeMn                string
+	PenOutputMn           string
+	FeaturesMn            string
+	MaterialMn            string
+	StapleSizeMn          string
+	CapacityMn            string
+	WeightMn              string
+	ThicknessMn           string
+	PackagingMn           string
+	UsageMn               string
+	InstructionsMn        string
+	ProductCodeMn         string
+	CostPriceMn           string
+	RetailPriceMn         string
+	WarehouseStockMn      int32
+	CreatedAt             sql.NullTime
+	UpdatedAt             sql.NullTime
 }
 
 type ProductReview struct {

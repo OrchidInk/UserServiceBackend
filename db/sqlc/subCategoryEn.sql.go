@@ -20,7 +20,7 @@ VALUES
     (
         $1 :: VARCHAR(100),
         $2 :: INT
-    ) RETURNING "subCategoryIDEn", "subCategoryNameEn", "CategoryEnID"
+    ) RETURNING "SubCategoryIDEn", "subCategoryNameEn", "CategoryEnID"
 `
 
 type CreateSubCategoryEnParams struct {
@@ -39,17 +39,17 @@ const deleteSubCategoryEn = `-- name: DeleteSubCategoryEn :exec
 DELETE FROM
     "subCategoryEn"
 WHERE
-    "subCategoryIDEn" = $1
+    "SubCategoryIDEn" = $1
 `
 
-func (q *Queries) DeleteSubCategoryEn(ctx context.Context, subcategoryiden int32) error {
-	_, err := q.db.ExecContext(ctx, deleteSubCategoryEn, subcategoryiden)
+func (q *Queries) DeleteSubCategoryEn(ctx context.Context, SubCategoryIDEn int32) error {
+	_, err := q.db.ExecContext(ctx, deleteSubCategoryEn, SubCategoryIDEn)
 	return err
 }
 
 const findByNameSubCategoryEn = `-- name: FindByNameSubCategoryEn :one
 SELECT
-    "subCategoryIDEn", "subCategoryNameEn", "CategoryEnID"
+    "SubCategoryIDEn", "subCategoryNameEn", "CategoryEnID"
 FROM
     "subCategoryEn"
 WHERE
@@ -67,17 +67,17 @@ func (q *Queries) FindByNameSubCategoryEn(ctx context.Context, subcategorynameen
 
 const findBySubCategoryIDEn = `-- name: FindBySubCategoryIDEn :one
 SELECT
-    "subCategoryIDEn", "subCategoryNameEn", "CategoryEnID"
+    "SubCategoryIDEn", "subCategoryNameEn", "CategoryEnID"
 FROM
     "subCategoryEn"
 WHERE
-    "subCategoryIDEn" = $1
+    "SubCategoryIDEn" = $1
 LIMIT
     1
 `
 
-func (q *Queries) FindBySubCategoryIDEn(ctx context.Context, subcategoryiden int32) (SubCategoryEn, error) {
-	row := q.db.QueryRowContext(ctx, findBySubCategoryIDEn, subcategoryiden)
+func (q *Queries) FindBySubCategoryIDEn(ctx context.Context, SubCategoryIDEn int32) (SubCategoryEn, error) {
+	row := q.db.QueryRowContext(ctx, findBySubCategoryIDEn, SubCategoryIDEn)
 	var i SubCategoryEn
 	err := row.Scan(&i.SubCategoryIDEn, &i.SubCategoryNameEn, &i.CategoryEnID)
 	return i, err
@@ -85,7 +85,7 @@ func (q *Queries) FindBySubCategoryIDEn(ctx context.Context, subcategoryiden int
 
 const getListAllSubCategoriesEn = `-- name: GetListAllSubCategoriesEn :many
 SELECT
-    "subCategoryIDEn", "subCategoryNameEn", "CategoryEnID"
+    "SubCategoryIDEn", "subCategoryNameEn", "CategoryEnID"
 FROM
     "subCategoryEn"
 `
@@ -122,9 +122,9 @@ SELECT
     p."ImagesPathEn"
 FROM
     "subCategoryEn" sc
-    JOIN "productEn" p ON sc."subCategoryIDEn" = p."subCategoryIDEn"
+    JOIN "productEn" p ON sc."SubCategoryIDEn" = p."SubCategoryIDEn"
 WHERE
-    sc."subCategoryIDEn" = $1
+    sc."SubCategoryIDEn" = $1
 `
 
 type GetProductsBySubCategoryEnRow struct {
@@ -135,8 +135,8 @@ type GetProductsBySubCategoryEnRow struct {
 	ImagesPathEn  string
 }
 
-func (q *Queries) GetProductsBySubCategoryEn(ctx context.Context, subcategoryiden int32) ([]GetProductsBySubCategoryEnRow, error) {
-	rows, err := q.db.QueryContext(ctx, getProductsBySubCategoryEn, subcategoryiden)
+func (q *Queries) GetProductsBySubCategoryEn(ctx context.Context, SubCategoryIDEn int32) ([]GetProductsBySubCategoryEnRow, error) {
+	rows, err := q.db.QueryContext(ctx, getProductsBySubCategoryEn, SubCategoryIDEn)
 	if err != nil {
 		return nil, err
 	}
@@ -164,13 +164,36 @@ func (q *Queries) GetProductsBySubCategoryEn(ctx context.Context, subcategoryide
 	return items, nil
 }
 
+const updateSubCategoryByIDEn = `-- name: UpdateSubCategoryByIDEn :one
+UPDATE
+    "subCategoryEn"
+SET
+    "subCategoryNameEn" = $1,
+    "CategoryEnID" = $2
+WHERE
+    "SubCategoryIDEn" = $3 RETURNING "SubCategoryIDEn", "subCategoryNameEn", "CategoryEnID"
+`
+
+type UpdateSubCategoryByIDEnParams struct {
+	SubCategoryNameEn string
+	CategoryEnID      int32
+	SubCategoryIDEn   int32
+}
+
+func (q *Queries) UpdateSubCategoryByIDEn(ctx context.Context, arg UpdateSubCategoryByIDEnParams) (SubCategoryEn, error) {
+	row := q.db.QueryRowContext(ctx, updateSubCategoryByIDEn, arg.SubCategoryNameEn, arg.CategoryEnID, arg.SubCategoryIDEn)
+	var i SubCategoryEn
+	err := row.Scan(&i.SubCategoryIDEn, &i.SubCategoryNameEn, &i.CategoryEnID)
+	return i, err
+}
+
 const updateSubCategoryNameEn = `-- name: UpdateSubCategoryNameEn :one
 UPDATE
     "subCategoryEn"
 SET
     "subCategoryNameEn" = $1 :: VARCHAR(100)
 WHERE
-    "subCategoryIDEn" = $2 RETURNING "subCategoryIDEn", "subCategoryNameEn", "CategoryEnID"
+    "SubCategoryIDEn" = $2 RETURNING "SubCategoryIDEn", "subCategoryNameEn", "CategoryEnID"
 `
 
 type UpdateSubCategoryNameEnParams struct {

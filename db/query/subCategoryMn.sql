@@ -32,7 +32,7 @@ UPDATE
 SET
     "subCategoryNameMn" = sqlc.arg('subCategoryNameMn') :: VARCHAR(100)
 WHERE
-    "subCategoryIDMn" = sqlc.arg('subCategoryIDMn') RETURNING *;
+    "SubCategoryIDMn" = sqlc.arg('SubCategoryIDMn') RETURNING *;
 
 -- name: FindBySubCategoryID :one
 SELECT
@@ -40,7 +40,7 @@ SELECT
 FROM
     "subCategoryMn"
 WHERE
-    "subCategoryIDMn" = sqlc.arg('subCategoryIDMn')
+    "SubCategoryIDMn" = sqlc.arg('SubCategoryIDMn')
 LIMIT
     1;
 
@@ -48,7 +48,7 @@ LIMIT
 DELETE FROM
     "subCategoryMn"
 WHERE
-    "subCategoryIDMn" = sqlc.arg('subCategoryIDMn');
+    "SubCategoryIDMn" = sqlc.arg('SubCategoryIDMn');
 
 -- name: UpdateByCategoryIDMn :one
 UPDATE
@@ -65,6 +65,15 @@ SELECT
     p."ImagesPathMn"
 FROM
     "subCategoryMn" sc
-    JOIN "productMn" p ON sc."subCategoryIDMn" = p."subCategoryIDMn"
+    JOIN "productMn" p ON sc."SubCategoryIDMn" = p."SubCategoryIDMn"
 WHERE
-    sc."subCategoryIDMn" = sqlc.arg('subCategoryIDMn');
+    sc."SubCategoryIDMn" = sqlc.arg('SubCategoryIDMn');
+
+-- name: UpdateSubCategoryByIDMn :one
+UPDATE
+    "subCategoryMn"
+SET
+    "subCategoryNameMn" = sqlc.arg('subCategoryNameMn'),
+    "CategoryMnID" = sqlc.arg('CategoryMnID')
+WHERE
+    "SubCategoryIDMn" = sqlc.arg('SubCategoryIDMn') RETURNING *;

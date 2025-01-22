@@ -281,3 +281,15 @@ func (hd *Handlers) GetListSuperAdmin(ctx *fiber.Ctx) error {
 
 	return ctx.JSON(superAdmin)
 }
+
+func (hd *Handlers) CountUser(ctx *fiber.Ctx) error {
+	queries, _, _ := hd.queries()
+
+	countUser, err := queries.CountListUser(ctx.Context())
+	if err != nil {
+		slog.Error("unable to count user")
+		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"err": err})
+	}
+
+	return ctx.Status(fiber.StatusOK).JSON(countUser)
+}

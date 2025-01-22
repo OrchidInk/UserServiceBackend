@@ -31,13 +31,13 @@ type CreateCategoryMn struct {
 }
 
 type SubCategoryEn struct {
-	SubCategoryIdEN   int32  `json:"subcategoryIDEN"`
+	SubCategoryIDEn   int32  `json:"SubCategoryIDEn"`
 	SubCategoryNameEN string `json:"SubCategoryNameEN"`
 	CategoryEnID      int32  `json:"categoryEnId"`
 }
 
 type SubCategoryMn struct {
-	SubCategoryIdMn   int32  `json:"subCategoryIDMn"`
+	SubCategoryIDMn   int32  `json:"SubCategoryIDMn"`
 	SubCategoryNameMn string `json:"SubCategoryNameMN"`
 	CategoryMnID      int32  `json:"categoryMnId"`
 }
@@ -53,7 +53,7 @@ type UpdateSubCategoryMn struct {
 }
 
 type SubCategoryWithProductsEn struct {
-	SubCategoryIDEn   int32       `json:"subCategoryIdEn"`
+	SubCategoryIDEn   int32       `json:"SubCategoryIDEn"`
 	SubCategoryNameEn string      `json:"subCategoryNameEn"`
 	Products          []ProductEn `json:"products"`
 }
@@ -73,7 +73,7 @@ type ProductEn struct {
 }
 
 type SubCategoryWithProductsMn struct {
-	SubCategoryIDMn   int32       `json:"subCategoryIdMn"`
+	SubCategoryIDMn   int32       `json:"SubCategoryIDMn"`
 	SubCategoryNameMn string      `json:"subCategoryNameMn"`
 	Products          []ProductMn `json:"products"`
 }

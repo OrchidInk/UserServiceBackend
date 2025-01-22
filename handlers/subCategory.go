@@ -175,7 +175,7 @@ func (hd *Handlers) DeleteSubCategoryMn(ctx *fiber.Ctx) error {
 func (hd *Handlers) GetProductsBySubCategoryEn(ctx *fiber.Ctx) error {
 	queries, _, _ := hd.queries()
 
-	subCategoryIDStr := ctx.Params("subCategoryIDEn")
+	subCategoryIDStr := ctx.Params("SubCategoryIDEn")
 	subCategoryID, err := strconv.Atoi(subCategoryIDStr)
 	if err != nil {
 		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"message": "Invalid subcategory ID"})
