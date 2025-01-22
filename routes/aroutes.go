@@ -65,10 +65,10 @@ func superAdminRoutes(app *fiber.App, hd *handlers.Handlers) {
 	product.Delete("/deleteDetailEn/:id", hd.DeleteDetailEn)
 	product.Delete("/deleteDetailMn/:id", hd.DeleteDetailMn)
 
-	product.Get("/listdetailen", hd.GetProductWithDetailsEn)
-	product.Get("/listdetailmn", hd.GetProductWithDetailsMn)
-	product.Get("/findEn/:id", hd.FindByProductWithDetailsByIDEn)
-	product.Get("/findMn/:id", hd.FindByProductWithDetailsByIDMn)
+	// product.Get("/listdetailen", hd.GetProductWithDetailsEn)
+	// product.Get("/listdetailmn", hd.GetProductWithDetailsMn)
+	// product.Get("/findEn/:id", hd.FindByProductWithDetailsByIDEn)
+	// product.Get("/findMn/:id", hd.FindByProductWithDetailsByIDMn)
 
 	// Product Update
 	product.Put("/purchaseEn/:id", hd.DeductProductStockEn)
