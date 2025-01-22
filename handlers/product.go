@@ -37,13 +37,50 @@ func (hd *Handlers) CreateProductEn(ctx *fiber.Ctx) error {
 		})
 	}
 
+	costPrice, err := decimal.NewFromString(request.CostPriceEn)
+	if err != nil {
+		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"message": "Invalid price format"})
+	}
+	if costPrice.Exponent() < -2 || costPrice.GreaterThan(decimal.NewFromInt(9999999999)) {
+		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": "Price exceeds allowed range (maximum: 9999999999.99)",
+		})
+	}
+
+	retailPrice, err := decimal.NewFromString(request.RetailPriceEn)
+	if err != nil {
+		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"message": "Invalid price format"})
+	}
+	if retailPrice.Exponent() < -2 || retailPrice.GreaterThan(decimal.NewFromInt(9999999999)) {
+		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": "Price exceeds allowed range (maximum: 9999999999.99)",
+		})
+	}
+
 	// Insert product
 	createProduct, err := queries.CreateProductEn(ctx.Context(), db.CreateProductEnParams{
-		ProductNameEn:   request.ProductNameEn,
-		SubCategoryIDEn: request.SubCategoryEnID,
-		PriceEn:         price.String(),
-		StockQuantity:   request.StockQuantity,
-		ImagesPathEn:    request.ImagesPathEn,
+		ProductNameEn:         request.ProductNameEn,
+		SubCategoryIDEn:       request.SubCategoryEnID,
+		PriceEn:               price.String(),
+		StockQuantity:         request.StockQuantity,
+		ImagesPathEn:          request.ImagesPathEn,
+		DescriptionEn:         request.DescriptionEn,
+		BrandEn:               request.BrandEn,
+		ManufacturedCountryEn: request.ManufacturedCountryEn,
+		ColorEn:               request.ColorEn,
+		SizeEn:                request.SizeEn,
+		PenOutputEn:           request.PenOutputEn,
+		FeaturesEn:            request.FeaturesEn,
+		MaterialEn:            request.MaterialEn,
+		StapleSizeEn:          request.StapleSizeEn,
+		CapacityEn:            request.CapacityEn,
+		WeightEn:              request.WeightEn,
+		ThicknessEn:           request.ThicknessEn,
+		PackagingEn:           request.PackagingEn,
+		ProductCodeEn:         request.ProductCodeEn,
+		CostPriceEn:           costPrice.String(),
+		RetailPriceEn:         retailPrice.String(),
+		WarehouseStockEn:      request.WarehouseStockEn,
 	})
 	if err != nil {
 		slog.Error("unable to create product en", slog.Any("err", err))
@@ -81,12 +118,51 @@ func (hd *Handlers) CreateProductMn(ctx *fiber.Ctx) error {
 		})
 	}
 
+	costPrice, err := decimal.NewFromString(request.CostPriceMn)
+	if err != nil {
+		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"message": "invalid cost price format"})
+	}
+
+	if costPrice.Exponent() < -2 || costPrice.GreaterThan(decimal.NewFromInt(9999999999)) {
+		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": "Price exceeds allowed range (maximum: 9999999999.99)",
+		})
+	}
+
+	retailPrice, err := decimal.NewFromString(request.RetailPriceMn)
+	if err != nil {
+		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"message": "invalid cost price format"})
+	}
+
+	if retailPrice.Exponent() < -2 || retailPrice.GreaterThan(decimal.NewFromInt(9999999999)) {
+		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": "Price exceeds allowed range (maximum: 9999999999.99)",
+		})
+	}
+
 	createProduct, err := queries.CreateProductMn(ctx.Context(), db.CreateProductMnParams{
-		ProductNameMn:   request.ProductNameMn,
-		SubCategoryIDMn: request.SubCategoryMnID,
-		PriceMn:         price.String(),
-		StockQuantity:   request.StockQuantity,
-		ImagesPathMn:    request.ImagesPathMn,
+		ProductNameMn:         request.ProductNameMn,
+		SubCategoryIDMn:       request.SubCategoryMnID,
+		PriceMn:               price.String(),
+		StockQuantity:         request.StockQuantity,
+		ImagesPathMn:          request.ImagesPathMn,
+		DescriptionMn:         request.DescriptionMn,
+		BrandMn:               request.BrandMn,
+		ManufacturedCountryMn: request.ManufacturedCountryMn,
+		ColorMn:               request.ColorMn,
+		SizeMn:                request.SizeMn,
+		PenOutputMn:           request.PenOutputMn,
+		FeaturesMn:            request.FeaturesMn,
+		MaterialMn:            request.MaterialMn,
+		StapleSizeMn:          request.StapleSizeMn,
+		CapacityMn:            request.CapacityMn,
+		WeightMn:              request.WeightMn,
+		ThicknessMn:           request.ThicknessMn,
+		PackagingMn:           request.PackagingMn,
+		ProductCodeMn:         request.ProductCodeMn,
+		CostPriceMn:           costPrice.String(),
+		RetailPriceMn:         request.RetailPriceMn,
+		WarehouseStockMn:      request.WarehouseStockMn,
 	})
 	if err != nil {
 		slog.Error("unable to create product request", slog.Any("err", err))
