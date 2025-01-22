@@ -202,7 +202,7 @@ func (hd *Handlers) GetCategoriesWithSubCategoriesEn(ctx *fiber.Ctx) error {
 
 		if row.SubCategoryIDEn.Valid {
 			subCategory := models.SubCategoryEn{
-				SubCategoryIdEN:   row.SubCategoryIDEn.Int32,
+				SubCategoryIDEn:   row.SubCategoryIDEn.Int32,
 				SubCategoryNameEN: row.SubCategoryNameEn.String,
 				CategoryEnID:      row.CategoryEnID,
 			}
@@ -243,7 +243,7 @@ func (hd *Handlers) GetCategoriesWithSubCategoriesMn(ctx *fiber.Ctx) error {
 
 		if row.SubCategoryIDMn.Valid {
 			subCategory := models.SubCategoryMn{
-				SubCategoryIdMn:   row.SubCategoryIDMn.Int32,
+				SubCategoryIDMn:   row.SubCategoryIDMn.Int32,
 				SubCategoryNameMn: row.SubCategoryNameMn.String,
 				CategoryMnID:      row.CategoryMnID,
 			}

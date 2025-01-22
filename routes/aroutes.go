@@ -44,7 +44,7 @@ func superAdminRoutes(app *fiber.App, hd *handlers.Handlers) {
 	subCategory := api.Group("/subCategory")
 	subCategory.Post("/createEn", hd.CreateSubCategoryEn)
 	subCategory.Post("/createMn", hd.CreateSubCategoryMn)
-	subCategory.Get("/list/:subCategoryIDEn", hd.GetProductsBySubCategoryEn)
+	subCategory.Get("/list/:SubCategoryIDEn", hd.GetProductsBySubCategoryEn)
 	subCategory.Get("/listEn", hd.GetSubCategoryEn)
 	subCategory.Get("/listMn", hd.GetSubCategoryMn)
 
@@ -131,7 +131,7 @@ func adminRoutes(app *fiber.App, hd *handlers.Handlers) {
 	subCategory := api.Group("/subCategory")
 	subCategory.Post("/createEn", hd.CreateSubCategoryEn)
 	subCategory.Post("/createMn", hd.CreateSubCategoryMn)
-	subCategory.Get("/list/:subCategoryIDEn", hd.GetProductsBySubCategoryEn)
+	subCategory.Get("/list/:SubCategoryIDEn", hd.GetProductsBySubCategoryEn)
 
 	//Product
 	product := api.Group("/product")

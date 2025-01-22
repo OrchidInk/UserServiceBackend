@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"database/sql"
 	"log/slog"
 	"strconv"
 
@@ -106,7 +105,7 @@ func (hd *Handlers) DeleteProductEn(ctx *fiber.Ctx) error {
 		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"err": err})
 	}
 
-	_, err = queries.FindByProductEnID(ctx.Context(), int32(ProductID))
+	_, err = queries.FindByProductIdEn(ctx.Context(), int32(ProductID))
 	if err != nil {
 		slog.Error("unable to find product", slog.Any("err", err))
 		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"err": "invalid find product id"})
@@ -159,7 +158,7 @@ func (hd *Handlers) DeductProductStockEn(ctx *fiber.Ctx) error {
 		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"message": "Invalid quantity"})
 	}
 
-	updatedProduct, err := queries.DeductStockQuantityByProductEnID(ctx.Context(), db.DeductStockQuantityByProductEnIDParams{
+	updatedProduct, err := queries.DeductSockQuantityByProductEnID(ctx.Context(), db.DeductSockQuantityByProductEnIDParams{
 		ProductEnID:       int32(ProductID),
 		QuantityPurchased: request.QuantityPurchased,
 	})
@@ -231,194 +230,194 @@ func (hd *Handlers) GetProductMn(ctx *fiber.Ctx) error {
 	return ctx.Status(fiber.StatusOK).JSON(Product)
 }
 
-func (hd *Handlers) GetProductWithDetailsEn(ctx *fiber.Ctx) error {
-	queries, _, _ := hd.queries()
+// func (hd *Handlers) GetProductWithDetailsEn(ctx *fiber.Ctx) error {
+// 	queries, _, _ := hd.queries()
 
-	// Fetch product data with associated details
-	rows, err := queries.GetProductWithDetailsEn(ctx.Context())
-	if err != nil {
-		slog.Error("Unable to fetch products with details", slog.Any("err", err))
-		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to fetch product details"})
-	}
+// 	// Fetch product data with associated details
+// 	rows, err := queries.GetProductWithDetailsEn(ctx.Context())
+// 	if err != nil {
+// 		slog.Error("Unable to fetch products with details", slog.Any("err", err))
+// 		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to fetch product details"})
+// 	}
 
-	// Map products with details
-	productMap := make(map[int32]*models.ProductWithDetailsEn)
-	for _, row := range rows {
-		if _, exists := productMap[row.ProductEnID]; !exists {
-			// Add product if not already in the map
-			productMap[row.ProductEnID] = &models.ProductWithDetailsEn{
-				ProductEnID:     row.ProductEnID,
-				ProductNameEn:   row.ProductNameEn,
-				SubCategoryIDEn: row.SubCategoryIDEn,
-				PriceEn:         row.PriceEn,
-				StockQuantity:   row.StockQuantity,
-				ImagesPathEn:    row.ImagesPathEn,
-				CreatedAt:       row.CreatedAt.Time,
-				UpdatedAt:       row.UpdatedAt.Time,
-				Details:         []models.DetailEn{},
-			}
-		}
+// 	// Map products with details
+// 	productMap := make(map[int32]*models.ProductWithDetailsEn)
+// 	for _, row := range rows {
+// 		if _, exists := productMap[row.ProductEnID]; !exists {
+// 			// Add product if not already in the map
+// 			productMap[row.ProductEnID] = &models.ProductWithDetailsEn{
+// 				ProductEnID:     row.ProductEnID,
+// 				ProductNameEn:   row.ProductNameEn,
+// 				SubCategoryIDEn: row.SubCategoryIDEn,
+// 				PriceEn:         row.PriceEn,
+// 				StockQuantity:   row.StockQuantity,
+// 				ImagesPathEn:    row.ImagesPathEn,
+// 				CreatedAt:       row.CreatedAt.Time,
+// 				UpdatedAt:       row.UpdatedAt.Time,
+// 				Details:         []models.DetailEn{},
+// 			}
+// 		}
 
-		if row.DetailEnId.Valid {
-			productMap[row.ProductEnID].Details = append(productMap[row.ProductEnID].Details, models.DetailEn{
-				DetailEnID:  row.DetailEnId.Int32,
-				ChoiceName:  row.ChoiceName.String,
-				ChoiceValue: row.ChoiceValue.String,
-			})
-		}
-	}
+// 		if row.DetailEnId.Valid {
+// 			productMap[row.ProductEnID].Details = append(productMap[row.ProductEnID].Details, models.DetailEn{
+// 				DetailEnID:  row.DetailEnId.Int32,
+// 				ChoiceName:  row.ChoiceName.String,
+// 				ChoiceValue: row.ChoiceValue.String,
+// 			})
+// 		}
+// 	}
 
-	// Convert map to slice for response
-	products := make([]models.ProductWithDetailsEn, 0, len(productMap))
-	for _, product := range productMap {
-		products = append(products, *product)
-	}
+// 	// Convert map to slice for response
+// 	products := make([]models.ProductWithDetailsEn, 0, len(productMap))
+// 	for _, product := range productMap {
+// 		products = append(products, *product)
+// 	}
 
-	return ctx.Status(fiber.StatusOK).JSON(products)
-}
+// 	return ctx.Status(fiber.StatusOK).JSON(products)
+// }
 
-func (hd *Handlers) GetProductWithDetailsMn(ctx *fiber.Ctx) error {
-	queries, _, _ := hd.queries()
+// func (hd *Handlers) GetProductWithDetailsMn(ctx *fiber.Ctx) error {
+// 	queries, _, _ := hd.queries()
 
-	rows, err := queries.GetProductWithDetailMn(ctx.Context())
-	if err != nil {
-		slog.Error("unable to fetch products with details", slog.Any("err", err))
-		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"err": "Failed to fetch product with details"})
-	}
+// 	rows, err := queries.GetProductWithDetailMn(ctx.Context())
+// 	if err != nil {
+// 		slog.Error("unable to fetch products with details", slog.Any("err", err))
+// 		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"err": "Failed to fetch product with details"})
+// 	}
 
-	productMap := make(map[int32]*models.ProductWithDetailsMn)
-	for _, row := range rows {
-		if _, exists := productMap[row.ProductMnID]; !exists {
-			productMap[row.ProductMnID] = &models.ProductWithDetailsMn{
-				ProductMnID:     row.ProductMnID,
-				ProductNameMn:   row.ProductNameMn,
-				SubCategoryIDMn: row.SubCategoryIDMn,
-				PriceMn:         row.PriceMn,
-				StockQuantity:   row.StockQuantity,
-				ImagesPathMn:    row.ImagesPathMn,
-				CreatedAt:       row.CreatedAt.Time,
-				UpdatedAt:       row.UpdatedAt.Time,
-				Details:         []models.DetailMn{},
-			}
-		}
-		if row.DetailMnId.Valid {
-			productMap[row.ProductMnID].Details = append(productMap[row.ProductMnID].Details, models.DetailMn{
-				DetailMnID:  row.DetailMnId.Int32,
-				ChoiceName:  row.ChoiceName.String,
-				ChoiceValue: row.ChoiceValue.String,
-			})
-		}
-	}
+// 	productMap := make(map[int32]*models.ProductWithDetailsMn)
+// 	for _, row := range rows {
+// 		if _, exists := productMap[row.ProductMnID]; !exists {
+// 			productMap[row.ProductMnID] = &models.ProductWithDetailsMn{
+// 				ProductMnID:     row.ProductMnID,
+// 				ProductNameMn:   row.ProductNameMn,
+// 				SubCategoryIDMn: row.SubCategoryIDMn,
+// 				PriceMn:         row.PriceMn,
+// 				StockQuantity:   row.StockQuantity,
+// 				ImagesPathMn:    row.ImagesPathMn,
+// 				CreatedAt:       row.CreatedAt.Time,
+// 				UpdatedAt:       row.UpdatedAt.Time,
+// 				Details:         []models.DetailMn{},
+// 			}
+// 		}
+// 		if row.DetailMnId.Valid {
+// 			productMap[row.ProductMnID].Details = append(productMap[row.ProductMnID].Details, models.DetailMn{
+// 				DetailMnID:  row.DetailMnId.Int32,
+// 				ChoiceName:  row.ChoiceName.String,
+// 				ChoiceValue: row.ChoiceValue.String,
+// 			})
+// 		}
+// 	}
 
-	products := make([]models.ProductWithDetailsMn, 0, len(productMap))
-	for _, product := range productMap {
-		products = append(products, *product)
-	}
+// 	products := make([]models.ProductWithDetailsMn, 0, len(productMap))
+// 	for _, product := range productMap {
+// 		products = append(products, *product)
+// 	}
 
-	return ctx.Status(fiber.StatusOK).JSON(products)
-}
+// 	return ctx.Status(fiber.StatusOK).JSON(products)
+// }
 
-func (hd *Handlers) FindByProductWithDetailsByIDEn(ctx *fiber.Ctx) error {
-	queries, _, _ := hd.queries()
+// func (hd *Handlers) FindByProductWithDetailsByIDEn(ctx *fiber.Ctx) error {
+// 	queries, _, _ := hd.queries()
 
-	productIDStr := ctx.Params("id")
-	productID, err := strconv.Atoi(productIDStr)
-	if err != nil {
-		slog.Error("Invalid product ID", slog.Any("err", err))
-		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid product ID"})
-	}
+// 	productIDStr := ctx.Params("id")
+// 	productID, err := strconv.Atoi(productIDStr)
+// 	if err != nil {
+// 		slog.Error("Invalid product ID", slog.Any("err", err))
+// 		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid product ID"})
+// 	}
 
-	rows, err := queries.FindProductWithDetailsByIDEn(ctx.Context(), int32(productID))
-	if err != nil {
-		if err == sql.ErrNoRows {
-			slog.Error("Product not found", slog.Int("ProductID", productID))
-			return ctx.Status(fiber.StatusNotFound).JSON(fiber.Map{"error": "Product not found"})
-		}
-		slog.Error("Database error while finding product", slog.Any("err", err))
-		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to fetch product details"})
-	}
+// 	rows, err := queries.FindProductWithDetailsByIDEn(ctx.Context(), int32(productID))
+// 	if err != nil {
+// 		if err == sql.ErrNoRows {
+// 			slog.Error("Product not found", slog.Int("ProductID", productID))
+// 			return ctx.Status(fiber.StatusNotFound).JSON(fiber.Map{"error": "Product not found"})
+// 		}
+// 		slog.Error("Database error while finding product", slog.Any("err", err))
+// 		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to fetch product details"})
+// 	}
 
-	var product *models.ProductWithDetailsEn
-	for _, row := range rows {
-		if product == nil {
-			product = &models.ProductWithDetailsEn{
-				ProductEnID:     row.ProductEnID,
-				ProductNameEn:   row.ProductNameEn,
-				SubCategoryIDEn: row.SubCategoryIDEn,
-				PriceEn:         row.PriceEn,
-				StockQuantity:   row.StockQuantity,
-				ImagesPathEn:    row.ImagesPathEn,
-				CreatedAt:       row.CreatedAt.Time,
-				UpdatedAt:       row.UpdatedAt.Time,
-				Details:         []models.DetailEn{},
-			}
-		}
+// 	var product *models.ProductWithDetailsEn
+// 	for _, row := range rows {
+// 		if product == nil {
+// 			product = &models.ProductWithDetailsEn{
+// 				ProductEnID:     row.ProductEnID,
+// 				ProductNameEn:   row.ProductNameEn,
+// 				SubCategoryIDEn: row.SubCategoryIDEn,
+// 				PriceEn:         row.PriceEn,
+// 				StockQuantity:   row.StockQuantity,
+// 				ImagesPathEn:    row.ImagesPathEn,
+// 				CreatedAt:       row.CreatedAt.Time,
+// 				UpdatedAt:       row.UpdatedAt.Time,
+// 				Details:         []models.DetailEn{},
+// 			}
+// 		}
 
-		if row.DetailEnId.Valid { // Ensure the detail is not null
-			product.Details = append(product.Details, models.DetailEn{
-				DetailEnID:  row.DetailEnId.Int32,
-				ChoiceName:  row.ChoiceName.String,
-				ChoiceValue: row.ChoiceValue.String,
-			})
-		}
-	}
+// 		if row.DetailEnId.Valid { // Ensure the detail is not null
+// 			product.Details = append(product.Details, models.DetailEn{
+// 				DetailEnID:  row.DetailEnId.Int32,
+// 				ChoiceName:  row.ChoiceName.String,
+// 				ChoiceValue: row.ChoiceValue.String,
+// 			})
+// 		}
+// 	}
 
-	if product == nil {
-		return ctx.Status(fiber.StatusNotFound).JSON(fiber.Map{"error": "Product not found"})
-	}
+// 	if product == nil {
+// 		return ctx.Status(fiber.StatusNotFound).JSON(fiber.Map{"error": "Product not found"})
+// 	}
 
-	return ctx.Status(fiber.StatusOK).JSON(product)
-}
+// 	return ctx.Status(fiber.StatusOK).JSON(product)
+// }
 
-func (hd *Handlers) FindByProductWithDetailsByIDMn(ctx *fiber.Ctx) error {
-	queries, _, _ := hd.queries()
+// func (hd *Handlers) FindByProductWithDetailsByIDMn(ctx *fiber.Ctx) error {
+// 	queries, _, _ := hd.queries()
 
-	// Parse the product ID from URL
-	productIDSTR := ctx.Params("id")
-	productID, err := strconv.Atoi(productIDSTR)
-	if err != nil {
-		slog.Error("Unable to parse product ID", slog.Any("err", err))
-		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"err": "Invalid product ID"})
-	}
+// 	// Parse the product ID from URL
+// 	productIDSTR := ctx.Params("id")
+// 	productID, err := strconv.Atoi(productIDSTR)
+// 	if err != nil {
+// 		slog.Error("Unable to parse product ID", slog.Any("err", err))
+// 		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"err": "Invalid product ID"})
+// 	}
 
-	// Query the product and its details
-	rows, err := queries.FindProductWithDetailsByIDMn(ctx.Context(), int32(productID))
-	if err != nil {
-		slog.Error("Database query error", slog.Any("err", err))
-		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"err": err.Error()})
-	}
+// 	// Query the product and its details
+// 	rows, err := queries.FindProductWithDetailsByIDMn(ctx.Context(), int32(productID))
+// 	if err != nil {
+// 		slog.Error("Database query error", slog.Any("err", err))
+// 		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"err": err.Error()})
+// 	}
 
-	// Build the product response
-	var product *models.ProductWithDetailsMn
-	for _, row := range rows {
-		if product == nil {
-			product = &models.ProductWithDetailsMn{
-				ProductMnID:     row.ProductMnID,
-				ProductNameMn:   row.ProductNameMn,
-				SubCategoryIDMn: row.SubCategoryIDMn,
-				PriceMn:         row.PriceMn,
-				StockQuantity:   row.StockQuantity,
-				ImagesPathMn:    row.ImagesPathMn,
-				CreatedAt:       row.CreatedAt.Time,
-				UpdatedAt:       row.UpdatedAt.Time,
-				Details:         []models.DetailMn{},
-			}
-		}
+// 	// Build the product response
+// 	var product *models.ProductWithDetailsMn
+// 	for _, row := range rows {
+// 		if product == nil {
+// 			product = &models.ProductWithDetailsMn{
+// 				ProductMnID:     row.ProductMnID,
+// 				ProductNameMn:   row.ProductNameMn,
+// 				SubCategoryIDMn: row.SubCategoryIDMn,
+// 				PriceMn:         row.PriceMn,
+// 				StockQuantity:   row.StockQuantity,
+// 				ImagesPathMn:    row.ImagesPathMn,
+// 				CreatedAt:       row.CreatedAt.Time,
+// 				UpdatedAt:       row.UpdatedAt.Time,
+// 				Details:         []models.DetailMn{},
+// 			}
+// 		}
 
-		if row.DetailMnId.Valid {
-			product.Details = append(product.Details, models.DetailMn{
-				DetailMnID:  row.DetailMnId.Int32,
-				ChoiceName:  row.ChoiceName.String,
-				ChoiceValue: row.ChoiceValue.String,
-			})
-		}
-	}
+// 		if row.DetailMnId.Valid {
+// 			product.Details = append(product.Details, models.DetailMn{
+// 				DetailMnID:  row.DetailMnId.Int32,
+// 				ChoiceName:  row.ChoiceName.String,
+// 				ChoiceValue: row.ChoiceValue.String,
+// 			})
+// 		}
+// 	}
 
-	// Handle product not found
-	if product == nil {
-		return ctx.Status(fiber.StatusNotFound).JSON(fiber.Map{"error": "Product not found"})
-	}
+// 	// Handle product not found
+// 	if product == nil {
+// 		return ctx.Status(fiber.StatusNotFound).JSON(fiber.Map{"error": "Product not found"})
+// 	}
 
-	// Return the product with details
-	return ctx.Status(fiber.StatusOK).JSON(product)
-}
+// 	// Return the product with details
+// 	return ctx.Status(fiber.StatusOK).JSON(product)
+// }

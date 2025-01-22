@@ -94,7 +94,7 @@ const findSubCategoriesAndProductsByCategoryIDEn = `-- name: FindSubCategoriesAn
 SELECT
     c."CategoryEnID",
     c."CategoryNameEn",
-    sc."subCategoryIDEn",
+    sc."SubCategoryIDEn",
     sc."subCategoryNameEn",
     p."ProductEnID",
     p."ProductNameEn",
@@ -106,11 +106,11 @@ FROM
 LEFT JOIN
     "subCategoryEn" sc ON c."CategoryEnID" = sc."CategoryEnID"
 LEFT JOIN
-    "productEn" p ON sc."subCategoryIDEn" = p."subCategoryIDEn"
+    "productEn" p ON sc."SubCategoryIDEn" = p."SubCategoryIDEn"
 WHERE
     c."CategoryEnID" = $1
 ORDER BY
-    sc."subCategoryIDEn",
+    sc."SubCategoryIDEn",
     p."ProductEnID"
 `
 
@@ -163,7 +163,7 @@ const getCategoriesWithSubCategories = `-- name: GetCategoriesWithSubCategories 
 SELECT
     c."CategoryEnID",
     c."CategoryNameEn",
-    sc."subCategoryIDEn",
+    sc."SubCategoryIDEn",
     sc."subCategoryNameEn"
 FROM
     "categoryEn" c
@@ -212,7 +212,7 @@ const getCategoriesWithSubCategoriesAndProductsEn = `-- name: GetCategoriesWithS
 SELECT
     c."CategoryEnID",
     c."CategoryNameEn",
-    sc."subCategoryIDEn",
+    sc."SubCategoryIDEn",
     sc."subCategoryNameEn",
     p."ProductEnID",
     p."ProductNameEn",
@@ -224,10 +224,10 @@ FROM
 LEFT JOIN
     "subCategoryEn" sc ON c."CategoryEnID" = sc."CategoryEnID"
 LEFT JOIN
-    "productEn" p ON sc."subCategoryIDEn" = p."subCategoryIDEn"
+    "productEn" p ON sc."SubCategoryIDEn" = p."SubCategoryIDEn"
 ORDER BY
     c."CategoryEnID",
-    sc."subCategoryIDEn",
+    sc."SubCategoryIDEn",
     p."ProductEnID"
 `
 

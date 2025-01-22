@@ -19,7 +19,7 @@ VALUES
     (
         $1 :: VARCHAR(100),
         $2 :: INT
-    ) RETURNING "subCategoryIDMn", "subCategoryNameMn", "CategoryMnID"
+    ) RETURNING "SubCategoryIDMn", "subCategoryNameMn", "CategoryMnID"
 `
 
 type CreateSubCategoryMnParams struct {
@@ -38,17 +38,17 @@ const deleteBySubCategoryMn = `-- name: DeleteBySubCategoryMn :exec
 DELETE FROM
     "subCategoryMn"
 WHERE
-    "subCategoryIDMn" = $1
+    "SubCategoryIDMn" = $1
 `
 
-func (q *Queries) DeleteBySubCategoryMn(ctx context.Context, subcategoryidmn int32) error {
-	_, err := q.db.ExecContext(ctx, deleteBySubCategoryMn, subcategoryidmn)
+func (q *Queries) DeleteBySubCategoryMn(ctx context.Context, SubCategoryIDMn int32) error {
+	_, err := q.db.ExecContext(ctx, deleteBySubCategoryMn, SubCategoryIDMn)
 	return err
 }
 
 const findByNameSubCategoryMn = `-- name: FindByNameSubCategoryMn :one
 SELECT
-    "subCategoryIDMn", "subCategoryNameMn", "CategoryMnID"
+    "SubCategoryIDMn", "subCategoryNameMn", "CategoryMnID"
 FROM
     "subCategoryMn"
 WHERE
@@ -66,17 +66,17 @@ func (q *Queries) FindByNameSubCategoryMn(ctx context.Context, subcategorynamemn
 
 const findBySubCategoryID = `-- name: FindBySubCategoryID :one
 SELECT
-    "subCategoryIDMn", "subCategoryNameMn", "CategoryMnID"
+    "SubCategoryIDMn", "subCategoryNameMn", "CategoryMnID"
 FROM
     "subCategoryMn"
 WHERE
-    "subCategoryIDMn" = $1
+    "SubCategoryIDMn" = $1
 LIMIT
     1
 `
 
-func (q *Queries) FindBySubCategoryID(ctx context.Context, subcategoryidmn int32) (SubCategoryMn, error) {
-	row := q.db.QueryRowContext(ctx, findBySubCategoryID, subcategoryidmn)
+func (q *Queries) FindBySubCategoryID(ctx context.Context, SubCategoryIDMn int32) (SubCategoryMn, error) {
+	row := q.db.QueryRowContext(ctx, findBySubCategoryID, SubCategoryIDMn)
 	var i SubCategoryMn
 	err := row.Scan(&i.SubCategoryIDMn, &i.SubCategoryNameMn, &i.CategoryMnID)
 	return i, err
@@ -84,7 +84,7 @@ func (q *Queries) FindBySubCategoryID(ctx context.Context, subcategoryidmn int32
 
 const getListAllSubCategoryMn = `-- name: GetListAllSubCategoryMn :many
 SELECT
-    "subCategoryIDMn", "subCategoryNameMn", "CategoryMnID"
+    "SubCategoryIDMn", "subCategoryNameMn", "CategoryMnID"
 FROM
     "subCategoryMn"
 `
@@ -121,9 +121,9 @@ SELECT
     p."ImagesPathMn"
 FROM
     "subCategoryMn" sc
-    JOIN "productMn" p ON sc."subCategoryIDMn" = p."subCategoryIDMn"
+    JOIN "productMn" p ON sc."SubCategoryIDMn" = p."SubCategoryIDMn"
 WHERE
-    sc."subCategoryIDMn" = $1
+    sc."SubCategoryIDMn" = $1
 `
 
 type GetProductsBySubCategoryMnRow struct {
@@ -134,8 +134,8 @@ type GetProductsBySubCategoryMnRow struct {
 	ImagesPathMn  string
 }
 
-func (q *Queries) GetProductsBySubCategoryMn(ctx context.Context, subcategoryidmn int32) ([]GetProductsBySubCategoryMnRow, error) {
-	rows, err := q.db.QueryContext(ctx, getProductsBySubCategoryMn, subcategoryidmn)
+func (q *Queries) GetProductsBySubCategoryMn(ctx context.Context, SubCategoryIDMn int32) ([]GetProductsBySubCategoryMnRow, error) {
+	rows, err := q.db.QueryContext(ctx, getProductsBySubCategoryMn, SubCategoryIDMn)
 	if err != nil {
 		return nil, err
 	}
@@ -167,7 +167,7 @@ const updateByCategoryIDMn = `-- name: UpdateByCategoryIDMn :one
 UPDATE
     "subCategoryMn"
 SET
-    "CategoryMnID" = $1 RETURNING "subCategoryIDMn", "subCategoryNameMn", "CategoryMnID"
+    "CategoryMnID" = $1 RETURNING "SubCategoryIDMn", "subCategoryNameMn", "CategoryMnID"
 `
 
 func (q *Queries) UpdateByCategoryIDMn(ctx context.Context, categorymnid int32) (SubCategoryMn, error) {
@@ -183,7 +183,7 @@ UPDATE
 SET
     "subCategoryNameMn" = $1 :: VARCHAR(100)
 WHERE
-    "subCategoryIDMn" = $2 RETURNING "subCategoryIDMn", "subCategoryNameMn", "CategoryMnID"
+    "SubCategoryIDMn" = $2 RETURNING "SubCategoryIDMn", "subCategoryNameMn", "CategoryMnID"
 `
 
 type UpdateBySubCategoryNameMnParams struct {
@@ -205,7 +205,7 @@ SET
     "subCategoryNameMn" = $1,
     "CategoryMnID" = $2
 WHERE
-    "subCategoryIDMn" = $3 RETURNING "subCategoryIDMn", "subCategoryNameMn", "CategoryMnID"
+    "SubCategoryIDMn" = $3 RETURNING "SubCategoryIDMn", "subCategoryNameMn", "CategoryMnID"
 `
 
 type UpdateSubCategoryByIDMnParams struct {

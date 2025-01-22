@@ -23,13 +23,13 @@ UPDATE
 SET
     "subCategoryNameEn" = sqlc.arg('subCategoryNameEn') :: VARCHAR(100)
 WHERE
-    "subCategoryIDEn" = sqlc.arg('subCategoryIDEn') RETURNING *;
+    "SubCategoryIDEn" = sqlc.arg('SubCategoryIDEn') RETURNING *;
 
 -- name: DeleteSubCategoryEn :exec
 DELETE FROM
     "subCategoryEn"
 WHERE
-    "subCategoryIDEn" = sqlc.arg('subCategoryIDEn');
+    "SubCategoryIDEn" = sqlc.arg('SubCategoryIDEn');
 
 -- name: FindBySubCategoryIDEn :one
 SELECT
@@ -37,7 +37,7 @@ SELECT
 FROM
     "subCategoryEn"
 WHERE
-    "subCategoryIDEn" = sqlc.arg('subCategoryIDEn')
+    "SubCategoryIDEn" = sqlc.arg('SubCategoryIDEn')
 LIMIT
     1;
 
@@ -60,9 +60,9 @@ SELECT
     p."ImagesPathEn"
 FROM
     "subCategoryEn" sc
-    JOIN "productEn" p ON sc."subCategoryIDEn" = p."subCategoryIDEn"
+    JOIN "productEn" p ON sc."SubCategoryIDEn" = p."SubCategoryIDEn"
 WHERE
-    sc."subCategoryIDEn" = sqlc.arg('subCategoryIDEn');
+    sc."SubCategoryIDEn" = sqlc.arg('SubCategoryIDEn');
 
 -- name: UpdateSubCategoryByIDEn :one
 UPDATE
@@ -71,4 +71,4 @@ SET
     "subCategoryNameEn" = sqlc.arg('subCategoryNameEn'),
     "CategoryEnID" = sqlc.arg('CategoryEnID')
 WHERE
-    "subCategoryIDEn" = sqlc.arg('subCategoryIDEn') RETURNING *;
+    "SubCategoryIDEn" = sqlc.arg('SubCategoryIDEn') RETURNING *;

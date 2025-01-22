@@ -46,7 +46,7 @@ type PurchaseProductMnRequest struct {
 type ProductWithDetailsEn struct {
 	ProductEnID     int32      `json:"productEnId"`
 	ProductNameEn   string     `json:"productNameEn"`
-	SubCategoryIDEn int32      `json:"subCategoryIdEn"`
+	SubCategoryIDEn int32      `json:"SubCategoryIDEn"`
 	PriceEn         string     `json:"priceEn"`
 	StockQuantity   int32      `json:"stockQuantity"`
 	ImagesPathEn    string     `json:"imagesPathEn"`
@@ -58,7 +58,7 @@ type ProductWithDetailsEn struct {
 type ProductWithDetailsMn struct {
 	ProductMnID     int32      `json:"productMnId"`
 	ProductNameMn   string     `json:"productNameMn"`
-	SubCategoryIDMn int32      `json:"subCategoryIdMn"`
+	SubCategoryIDMn int32      `json:"SubCategoryIDMn"`
 	PriceMn         string     `json:"priceMn"`
 	StockQuantity   int32      `json:" stockQuantity"`
 	ImagesPathMn    string     `json:"imagesPathMn"`
