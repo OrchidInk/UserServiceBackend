@@ -84,6 +84,8 @@ func superAdminRoutes(app *fiber.App, hd *handlers.Handlers) {
 	banner := api.Group("/banner")
 	banner.Post("/create", hd.CreateBanner)
 	banner.Get("/list", hd.GetListBanner)
+	banner.Put("/update", hd.UpdateBanner)
+	banner.Delete("/delete/:id", hd.DeleteBanner)
 
 	// Customer
 	customer := api.Group("/customer")
