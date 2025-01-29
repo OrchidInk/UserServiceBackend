@@ -323,6 +323,25 @@ func (hd *Handlers) FindProductId(ctx *fiber.Ctx) error {
 	return ctx.Status(fiber.StatusOK).JSON(Product)
 }
 
+func (hd *Handlers) FindProductIdMn(ctx *fiber.Ctx) error {
+	queries, _, _ := hd.queries()
+
+	ProductIdStr := ctx.Params("id")
+	ProductId, err := strconv.Atoi(ProductIdStr)
+	if err != nil {
+		slog.Error("unable to product Id", slog.Any("err", err))
+		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"err": err})
+	}
+
+	Product, err := queries.FindByProductIdMn(ctx.Context(), int32(ProductId))
+	if err != nil {
+		slog.Error("unable to find product Id", slog.Any("Err", err))
+		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"err": err})
+	}
+
+	return ctx.Status(fiber.StatusOK).JSON(Product)
+}
+
 // func (hd *Handlers) GetProductWithDetailsEn(ctx *fiber.Ctx) error {
 // 	queries, _, _ := hd.queries()
 
