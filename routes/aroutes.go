@@ -67,7 +67,7 @@ func superAdminRoutes(app *fiber.App, hd *handlers.Handlers) {
 
 	// product.Get("/listdetailen", hd.GetProductWithDetailsEn)
 	// product.Get("/listdetailmn", hd.GetProductWithDetailsMn)
-	// product.Get("/findEn/:id", hd.FindByProductWithDetailsByIDEn)
+	product.Get("/findEn/:id", hd.FindProductId)
 	// product.Get("/findMn/:id", hd.FindByProductWithDetailsByIDMn)
 
 	// Product Update
