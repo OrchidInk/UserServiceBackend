@@ -104,7 +104,7 @@ func (hd *Handlers) CreateProductMn(ctx *fiber.Ctx) error {
 	_, err := queries.FindBySubCategoryID(ctx.Context(), request.SubCategoryMnID)
 	if err != nil {
 		slog.Error("subCategory does not exist", slog.Any("Err", err))
-		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"err": "invalid subCategoryENID"})
+		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"err": "invalid subCategoryMNID"})
 	}
 
 	price, err := decimal.NewFromString(request.PriceMn)
@@ -300,6 +300,42 @@ func (hd *Handlers) GetProductMn(ctx *fiber.Ctx) error {
 	Product, err := queries.GetListProductMn(ctx.Context())
 	if err != nil {
 		slog.Error("unable to product get list")
+		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"err": err})
+	}
+
+	return ctx.Status(fiber.StatusOK).JSON(Product)
+}
+
+func (hd *Handlers) FindProductId(ctx *fiber.Ctx) error {
+	queries, _, _ := hd.queries()
+	ProductIdSTR := ctx.Params("id")
+	ProductId, err := strconv.Atoi(ProductIdSTR)
+	if err != nil {
+		slog.Error("unable to find product id", slog.Any("Err", err))
+		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"err": err})
+	}
+
+	Product, err := queries.FindByProductIdEn(ctx.Context(), int32(ProductId))
+	if err != nil {
+		slog.Error("unable to find id", slog.Any("err", err))
+		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"err": err})
+	}
+	return ctx.Status(fiber.StatusOK).JSON(Product)
+}
+
+func (hd *Handlers) FindProductIdMn(ctx *fiber.Ctx) error {
+	queries, _, _ := hd.queries()
+
+	ProductIdStr := ctx.Params("id")
+	ProductId, err := strconv.Atoi(ProductIdStr)
+	if err != nil {
+		slog.Error("unable to product Id", slog.Any("err", err))
+		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"err": err})
+	}
+
+	Product, err := queries.FindByProductIdMn(ctx.Context(), int32(ProductId))
+	if err != nil {
+		slog.Error("unable to find product Id", slog.Any("Err", err))
 		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"err": err})
 	}
 
