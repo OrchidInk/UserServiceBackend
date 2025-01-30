@@ -342,6 +342,59 @@ func (hd *Handlers) FindProductIdMn(ctx *fiber.Ctx) error {
 	return ctx.Status(fiber.StatusOK).JSON(Product)
 }
 
+func (hd *Handlers) UpdateProductEn(ctx *fiber.Ctx) error {
+	queries, _, _ := hd.queries()
+	ProductIdSTR := ctx.Params("id")
+	ProductId, err := strconv.Atoi(ProductIdSTR)
+	if err != nil {
+		slog.Error("unable to convert id", slog.Any("Err", err))
+		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "invalid product id"})
+	}
+
+	var req db.UpdateProductEnParams
+	if err := ctx.BodyParser(&req); err != nil {
+		slog.Error("failed to parse request body", slog.Any("Err", err))
+		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "invalid request body"})
+	}
+
+	req.ProductEnID = int32(ProductId)
+
+	UpdatedProduct, err := queries.UpdateProductEn(ctx.Context(), req)
+	if err != nil {
+		slog.Error("failed to update product", slog.Any("Err", err))
+		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "failed to update product", "details": err.Error()})
+	}
+
+	return ctx.Status(fiber.StatusOK).JSON(UpdatedProduct)
+}
+
+func (hd *Handlers) UpdateProductMn(ctx *fiber.Ctx) error {
+	queries, _, _ := hd.queries()
+	ProductIdStr := ctx.Params("id")
+	ProductId, err := strconv.Atoi(ProductIdStr)
+	if err != nil {
+		slog.Error("unable to convert id", slog.Any("Err", err))
+		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "invalid product id"})
+	}
+
+	var req db.UpdateProductMnParams
+	if err := ctx.BodyParser(&req); err != nil {
+		slog.Error("failed to parse request body", slog.Any("Err", err))
+		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "invalid request body"})
+	}
+
+	req.ProductMnID = int32(ProductId)
+
+	UpdatedProduct, err := queries.UpdateProductMn(ctx.Context(), req)
+	if err != nil {
+		slog.Error("failed to update product", slog.Any("Err", err))
+		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "failed to update product", "details": err.Error()})
+	}
+
+	return ctx.Status(fiber.StatusOK).JSON(UpdatedProduct)
+
+}
+
 // func (hd *Handlers) GetProductWithDetailsEn(ctx *fiber.Ctx) error {
 // 	queries, _, _ := hd.queries()
 

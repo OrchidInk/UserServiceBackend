@@ -124,3 +124,34 @@ SET
     "SubCategoryIDMn" = sqlc.arg('SubCategoryIDMn')
 WHERE
     "ProductMnID" = sqlc.arg('ProductMnID') RETURNING *;
+
+
+-- name: UpdateProductMn :one
+UPDATE
+    "productMn"
+SET
+    "ProductNameMn" = sqlc.arg('ProductNameMn'),
+    "SubCategoryIDMn" = sqlc.arg('SubCategoryIDMn'),
+    "PriceMn" = sqlc.arg('PriceMn'),
+    "StockQuantity" = sqlc.arg('StockQuantity'),
+    "ImagesPathMn" = sqlc.arg('ImagesPathMn'),
+    "DescriptionMn" = sqlc.arg('DescriptionMn'),
+    "BrandMn" = sqlc.arg('BrandMn'),
+    "ManufacturedCountryMn" = sqlc.arg('ManufacturedCountryMn'),
+    "ColorMn" = sqlc.arg('ColorMn'),
+    "SizeMn" = sqlc.arg('SizeMn'),
+    "PenOutputMn" = sqlc.arg('PenOutputMn'),
+    "FeaturesMn" = sqlc.arg('FeaturesMn'),
+    "StapleSizeMn" = sqlc.arg('StapleSizeMn'),
+    "CapacityMn" = sqlc.arg('CapacityMn'),
+    "WeightMn" = sqlc.arg('WeightMn'),
+    "ThicknessMn" = sqlc.arg('ThicknessMn'),
+    "PackagingMn" = sqlc.arg('PackagingMn'),
+    "UsageMn" = sqlc.arg('UsageMn'),
+    "InstructionsMn" = sqlc.arg('InstructionsMn'),
+    "ProductCodeMn" = sqlc.arg('ProductCodeMn'),
+    "CostPriceMn" = sqlc.arg('CostPriceMn'),
+    "RetailPriceMn" = sqlc.arg('RetailPriceMn'),
+    "WarehouseStockMn" = sqlc.arg('WarehouseStockMn')
+WHERE
+    "ProductMnID" = sqlc.arg('ProductMnID') RETURNING *;

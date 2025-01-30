@@ -523,6 +523,127 @@ func (q *Queries) UpdateByProductEnStockQuantity(ctx context.Context, arg Update
 	return i, err
 }
 
+const updateProductEn = `-- name: UpdateProductEn :one
+UPDATE 
+    "productEn"
+SET
+    "ProductNameEn" = $1,
+    "SubCategoryIDEn" = $2,
+    "PriceEn" = $3,
+    "StockQuantity" = $4,
+    "ImagesPathEn" = $5,
+    "DescriptionEn" = $6,
+    "BrandEn" = $7,
+    "ManufacturedCountryEn" = $8,
+    "ColorEn" = $9,
+    "SizeEn" = $10,
+    "PenOutputEn" = $11,
+    "FeaturesEn" = $12,
+    "MaterialEn" = $13,
+    "StapleSizeEn" = $14,
+    "CapacityEn" = $15,
+    "WeightEn" = $16,
+    "ThicknessEn" = $17,
+    "PackagingEn" = $18,
+    "UsageEn" = $19,
+    "InstructionsEn" = $20,
+    "ProductCodeEn" = $21,
+    "CostPriceEn" = $22,
+    "RetailPriceEn" = $23,
+    "WarehouseStockEn" = $24
+    WHERE
+    "ProductEnID" = $25 RETURNING "ProductEnID", "ProductNameEn", "SubCategoryIDEn", "PriceEn", "StockQuantity", "ImagesPathEn", "DescriptionEn", "BrandEn", "ManufacturedCountryEn", "ColorEn", "SizeEn", "PenOutputEn", "FeaturesEn", "MaterialEn", "StapleSizeEn", "CapacityEn", "WeightEn", "ThicknessEn", "PackagingEn", "UsageEn", "InstructionsEn", "ProductCodeEn", "CostPriceEn", "RetailPriceEn", "WarehouseStockEn", "Created_At", "Updated_At"
+`
+
+type UpdateProductEnParams struct {
+	ProductNameEn         string
+	SubCategoryIDEn       int32
+	PriceEn               string
+	StockQuantity         int32
+	ImagesPathEn          string
+	DescriptionEn         string
+	BrandEn               string
+	ManufacturedCountryEn string
+	ColorEn               string
+	SizeEn                string
+	PenOutputEn           string
+	FeaturesEn            string
+	MaterialEn            string
+	StapleSizeEn          string
+	CapacityEn            string
+	WeightEn              string
+	ThicknessEn           string
+	PackagingEn           string
+	UsageEn               string
+	InstructionsEn        string
+	ProductCodeEn         string
+	CostPriceEn           string
+	RetailPriceEn         string
+	WarehouseStockEn      int32
+	ProductEnID           int32
+}
+
+func (q *Queries) UpdateProductEn(ctx context.Context, arg UpdateProductEnParams) (ProductEn, error) {
+	row := q.db.QueryRowContext(ctx, updateProductEn,
+		arg.ProductNameEn,
+		arg.SubCategoryIDEn,
+		arg.PriceEn,
+		arg.StockQuantity,
+		arg.ImagesPathEn,
+		arg.DescriptionEn,
+		arg.BrandEn,
+		arg.ManufacturedCountryEn,
+		arg.ColorEn,
+		arg.SizeEn,
+		arg.PenOutputEn,
+		arg.FeaturesEn,
+		arg.MaterialEn,
+		arg.StapleSizeEn,
+		arg.CapacityEn,
+		arg.WeightEn,
+		arg.ThicknessEn,
+		arg.PackagingEn,
+		arg.UsageEn,
+		arg.InstructionsEn,
+		arg.ProductCodeEn,
+		arg.CostPriceEn,
+		arg.RetailPriceEn,
+		arg.WarehouseStockEn,
+		arg.ProductEnID,
+	)
+	var i ProductEn
+	err := row.Scan(
+		&i.ProductEnID,
+		&i.ProductNameEn,
+		&i.SubCategoryIDEn,
+		&i.PriceEn,
+		&i.StockQuantity,
+		&i.ImagesPathEn,
+		&i.DescriptionEn,
+		&i.BrandEn,
+		&i.ManufacturedCountryEn,
+		&i.ColorEn,
+		&i.SizeEn,
+		&i.PenOutputEn,
+		&i.FeaturesEn,
+		&i.MaterialEn,
+		&i.StapleSizeEn,
+		&i.CapacityEn,
+		&i.WeightEn,
+		&i.ThicknessEn,
+		&i.PackagingEn,
+		&i.UsageEn,
+		&i.InstructionsEn,
+		&i.ProductCodeEn,
+		&i.CostPriceEn,
+		&i.RetailPriceEn,
+		&i.WarehouseStockEn,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+	)
+	return i, err
+}
+
 const updateProductEnSubCategory = `-- name: UpdateProductEnSubCategory :one
 UPDATE
     "productEn"
