@@ -29,8 +29,8 @@ func superAdminRoutes(app *fiber.App, hd *handlers.Handlers) {
 	category.Get("/listEn", hd.GetCategoriesWithSubCategoriesEn)
 	category.Get("/listMn", hd.GetCategoriesWithSubCategoriesMn)
 
-	category.Put("/updateEn", hd.UpdateCategoryEn)
-	category.Put("/updateMn", hd.UpdateCategoryMn)
+	category.Patch("/updateEn", hd.UpdateCategoryEn)
+	category.Patch("/updateMn", hd.UpdateCategoryMn)
 
 	category.Delete("/deleteEn/:id", hd.DeleteCategoryEn)
 	category.Delete("/deleteMn/:id", hd.DeleteCategoryMn)

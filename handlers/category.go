@@ -61,19 +61,26 @@ func (hd *Handlers) CreateCategoryMn(ctx *fiber.Ctx) error {
 
 func (hd *Handlers) UpdateCategoryEn(ctx *fiber.Ctx) error {
 	queries, _, _ := hd.queries()
+	CategoryIDSTR := ctx.Params("id")
+	CategoryId, err := strconv.Atoi(CategoryIDSTR)
+	if err != nil {
+		slog.Error("unable to parse id", slog.Any("err", err))
+		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"err": err})
+	}
+
 	var request models.UpdateCategoryEn
 	if err := ctx.BodyParser(&request); err != nil {
 		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"message": "invalid request"})
 	}
 
-	category, err := queries.FindByCategoryEnId(ctx.Context(), request.CategoryEnId)
+	_, err = queries.FindByCategoryEnId(ctx.Context(), int32(CategoryId))
 	if err != nil {
 		return ctx.Status(fiber.StatusNotFound).JSON(fiber.Map{"message": "Category not found"})
 	}
 
 	updatedCategory, err := queries.UpdateCategoryEn(ctx.Context(), db.UpdateCategoryEnParams{
 		CategoryNameEn: request.CategoryNameEn,
-		CategoryEnID:   category.CategoryEnID,
+		CategoryEnID:   int32(CategoryId),
 	})
 	if err != nil {
 		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"message": "Failed to update category"})
@@ -88,20 +95,22 @@ func (hd *Handlers) UpdateCategoryEn(ctx *fiber.Ctx) error {
 
 func (hd *Handlers) UpdateCategoryMn(ctx *fiber.Ctx) error {
 	queries, _, _ := hd.queries()
+	CategoryID := ctx.Params("id")
+	CategoryId, err := strconv.Atoi(CategoryID)
 
 	var request models.UpdateCategoryMn
 	if err := ctx.BodyParser(&request); err != nil {
 		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"message": "invalid request"})
 	}
 
-	category, err := queries.FindByCategoryMnId(ctx.Context(), request.CategoryMnId)
+	_, err = queries.FindByCategoryMnId(ctx.Context(), int32(CategoryId))
 	if err != nil {
 		return ctx.Status(fiber.StatusNotFound).JSON(fiber.Map{"message": "category not found"})
 	}
 
 	updatedCategory, err := queries.UpdateCategoryMn(ctx.Context(), db.UpdateCategoryMnParams{
 		CategoryNameMn: request.CategoryNameMn,
-		CategoryMnID:   category.CategoryMnID,
+		CategoryMnID:   int32(CategoryId),
 	})
 	if err != nil {
 		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"message": "Failed to updated"})
