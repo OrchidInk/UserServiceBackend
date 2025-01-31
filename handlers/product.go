@@ -392,7 +392,6 @@ func (hd *Handlers) UpdateProductMn(ctx *fiber.Ctx) error {
 	}
 
 	return ctx.Status(fiber.StatusOK).JSON(UpdatedProduct)
-
 }
 
 // func (hd *Handlers) GetProductWithDetailsEn(ctx *fiber.Ctx) error {
