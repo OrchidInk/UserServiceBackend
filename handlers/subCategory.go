@@ -80,13 +80,19 @@ func (hd *Handlers) CreateSubCategoryMn(ctx *fiber.Ctx) error {
 
 func (hd *Handlers) UpdateSubCategoryEn(ctx *fiber.Ctx) error {
 	queries, _, _ := hd.queries()
+	subCategoryIDSTR := ctx.Params("id")
+	subCategoryID, err := strconv.Atoi(subCategoryIDSTR)
+	if err != nil {
+		slog.Error("unable to convert sub category id", slog.Any("Err", err))
+		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"err": err})
+	}
 
 	var request models.UpdateSubCategoryEn
 	if err := ctx.BodyParser(&request); err != nil {
 		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"err": "invalid message request"})
 	}
 
-	subCategoryID, err := queries.FindBySubCategoryIDEn(ctx.Context(), request.SubCategoryEnId)
+	_, err = queries.FindBySubCategoryIDEn(ctx.Context(), int32(subCategoryID))
 	if err != nil {
 		slog.Error("unable to find sub category ID", slog.Any("err", err))
 		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"err": err})
@@ -94,7 +100,6 @@ func (hd *Handlers) UpdateSubCategoryEn(ctx *fiber.Ctx) error {
 
 	updateSubCategory, err := queries.UpdateSubCategoryNameEn(ctx.Context(), db.UpdateSubCategoryNameEnParams{
 		SubCategoryNameEn: request.SubCategoryNameEn,
-		SubCategoryIDEn:   subCategoryID.SubCategoryIDEn,
 	})
 	if err != nil {
 		slog.Error("unable to update request", slog.Any("Err", err))
@@ -106,20 +111,25 @@ func (hd *Handlers) UpdateSubCategoryEn(ctx *fiber.Ctx) error {
 
 func (hd *Handlers) UpdateSubCategoryMn(ctx *fiber.Ctx) error {
 	queries, _, _ := hd.queries()
-
-	var request models.UpdateSubCategoryMn
-	if err := ctx.BodyParser(&request); err != nil {
+	subCategoryIDSTR := ctx.Params("id")
+	subCategoryID, err := strconv.Atoi(subCategoryIDSTR)
+	if err != nil {
+		slog.Error("unable to convert sub category id", slog.Any("Err", err))
 		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"err": err})
 	}
 
-	subCategory, err := queries.FindBySubCategoryID(ctx.Context(), request.SubCategoryMnID)
+	var request models.UpdateSubCategoryMn
+	if err := ctx.BodyParser(&request); err != nil {
+		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"err": "invalid message request"})
+	}
+
+	_, err = queries.FindBySubCategoryID(ctx.Context(), int32(subCategoryID))
 	if err != nil {
 		return ctx.Status(fiber.StatusNotFound).JSON(fiber.Map{"err": "unable to find id"})
 	}
 
 	updateSubCategory, err := queries.UpdateBySubCategoryNameMn(ctx.Context(), db.UpdateBySubCategoryNameMnParams{
 		SubCategoryNameMn: request.SubCategoryNameMn,
-		SubCategoryIDMn:   subCategory.SubCategoryIDMn,
 	})
 	if err != nil {
 		slog.Error("unable to update subCategory", slog.Any("err", err))
