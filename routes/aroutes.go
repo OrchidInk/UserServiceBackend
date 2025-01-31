@@ -139,6 +139,8 @@ func adminRoutes(app *fiber.App, hd *handlers.Handlers) {
 	subCategory.Post("/createEn", hd.CreateSubCategoryEn)
 	subCategory.Post("/createMn", hd.CreateSubCategoryMn)
 	subCategory.Get("/list/:SubCategoryIDEn", hd.GetProductsBySubCategoryEn)
+	subCategory.Patch("/updateMn/:id", hd.UpdateSubCategoryMn)
+	subCategory.Patch("/updateEn/:id", hd.UpdateSubCategoryEn)
 
 	//Product
 	product := api.Group("/product")
