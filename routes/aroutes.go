@@ -7,7 +7,7 @@ import (
 
 func superAdminRoutes(app *fiber.App, hd *handlers.Handlers) {
 	api := app.Group("/api/v1/superadmin")
-
+	//
 	// SuperAdmin registration and login routes
 	api.Post("/register", hd.RegisterSuperAdmin, hd.SuperAdminOnly)
 	api.Post("/login", hd.SuperAdminLogin)
