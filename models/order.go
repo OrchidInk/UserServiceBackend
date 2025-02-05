@@ -5,6 +5,7 @@ type OrderItem struct {
 	CustomerOrderID int32  `json:"customerOrderId"`
 	ProductMnID     int32  `json:"productMnId"`
 	ProductEnID     int32  `json:"productEnId"`
+	PhoneNumber     string `json:"phoneNumber"`
 	Quantity        int32  `json:"quantity"`
 	PriceAtOrder    string `json:"priceAtOrder"`
 }
@@ -13,6 +14,7 @@ type CreateOrderItemRequest struct {
 	CustomerOrderID int32  `json:"customerOrderId" validate:"required"`
 	ProductMnID     int32  `json:"productMnId"`
 	ProductEnID     int32  `json:"productEnId"`
+	PhoneNumber     string `json:"phoneNumber"`
 	Quantity        int32  `json:"quantity" validate:"required"`
 	PriceAtOrder    string `json:"priceAtOrder" validate:"required"`
 }

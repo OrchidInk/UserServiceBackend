@@ -3,12 +3,14 @@ INSERT INTO "OrderItems" (
     "CustomerOrderId",
     "ProductMnID",
     "ProductEnID",
+    "PhoneNumber",
     "Quantity",
     "PriceAtOrder"
 ) VALUES (
     sqlc.arg('CustomerOrderID'),
     sqlc.arg('ProductMnID'),
     sqlc.arg('ProductEnID'),
+    sqlc.arg('PhoneNumber'),
     sqlc.arg('Quantity'),
     sqlc.arg('PriceAtOrder')
 ) RETURNING *;
