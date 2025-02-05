@@ -230,3 +230,26 @@ func (hd *Handlers) GetSubCategoryMn(ctx *fiber.Ctx) error {
 	}
 	return ctx.Status(fiber.StatusOK).JSON(cat)
 }
+
+func (hd *Handlers) UpdateSubCategoryWithCateogoryEn(ctx *fiber.Ctx) error {
+	queries, _, _ := hd.queries()
+	SubCatIdStr := ctx.Params("id")
+	SubCatId, err := strconv.Atoi(SubCatIdStr)
+	if err != nil {
+		slog.Error("unable to parse convert parse id", slog.Any("err", err))
+		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"err": err})
+	}
+
+	var req models.UpdateSubCatogoryWithCategoryEn
+	if err := ctx.BodyParser(&req); err != nil {
+		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"err": err})
+	}
+
+	_, err = queries.FindBySubCategoryIDEn(ctx.Context(), int32(SubCatId))
+	if err != nil {
+		slog.Error("unable to find subCategoryId")
+		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"err": err})
+	}
+
+	return nil
+}

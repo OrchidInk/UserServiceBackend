@@ -91,3 +91,7 @@ type ProductMn struct {
 	StockQuantity int32  `json:"stockQuantity"`
 	ImagesPathMn  string `json:"imagesPathMn"`
 }
+
+type UpdateSubCatogoryWithCategoryEn struct {
+	CategoryEnID int32 `json:"categoryEnId"`
+}

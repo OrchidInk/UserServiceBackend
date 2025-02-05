@@ -22,6 +22,7 @@ func (hd *Handlers) CreateOrderItem(ctx *fiber.Ctx) error {
 		CustomerOrderID: request.CustomerOrderID,
 		ProductMnID:     request.ProductMnID,
 		ProductEnID:     request.ProductEnID,
+		PhoneNumber:     request.PhoneNumber,
 		Quantity:        request.Quantity,
 		PriceAtOrder:    request.PriceAtOrder,
 	})
