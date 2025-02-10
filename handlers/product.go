@@ -20,7 +20,7 @@ func (hd *Handlers) CreateProductEn(ctx *fiber.Ctx) error {
 	}
 
 	// Check if the subCategoryEnID exists
-	_, err := queries.FindBySubCategoryIDEn(ctx.Context(), request.SubCategoryEnID)
+	_, err := queries.FindBySubCategoryIDEn(ctx.Context(), request.SCategoryEnID)
 	if err != nil {
 		slog.Error("subcategory does not exist", slog.Any("err", err))
 		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"err": "Invalid subCategoryEnID"})
@@ -60,7 +60,7 @@ func (hd *Handlers) CreateProductEn(ctx *fiber.Ctx) error {
 	// Insert product
 	createProduct, err := queries.CreateProductEn(ctx.Context(), db.CreateProductEnParams{
 		ProductNameEn:         request.ProductNameEn,
-		SubCategoryIDEn:       request.SubCategoryEnID,
+		SCategoryIdEn:         request.SCategoryEnID,
 		PriceEn:               price.String(),
 		StockQuantity:         request.StockQuantity,
 		ImagesPathEn:          request.ImagesPathEn,
@@ -101,7 +101,7 @@ func (hd *Handlers) CreateProductMn(ctx *fiber.Ctx) error {
 		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"err": err})
 	}
 
-	_, err := queries.FindBySubCategoryID(ctx.Context(), request.SubCategoryMnID)
+	_, err := queries.FindBySubCategoryID(ctx.Context(), request.SCategoryMnID)
 	if err != nil {
 		slog.Error("subCategory does not exist", slog.Any("Err", err))
 		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"err": "invalid subCategoryMNID"})
@@ -142,7 +142,7 @@ func (hd *Handlers) CreateProductMn(ctx *fiber.Ctx) error {
 
 	createProduct, err := queries.CreateProductMn(ctx.Context(), db.CreateProductMnParams{
 		ProductNameMn:         request.ProductNameMn,
-		SubCategoryIDMn:       request.SubCategoryMnID,
+		SCategoryIdMn:         request.SCategoryMnID,
 		PriceMn:               price.String(),
 		StockQuantity:         request.StockQuantity,
 		ImagesPathMn:          request.ImagesPathMn,

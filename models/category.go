@@ -36,10 +36,22 @@ type SubCategoryEn struct {
 	CategoryEnID      int32  `json:"categoryEnId"`
 }
 
+type SCategoryEn struct {
+	SCategoryIdEn   int32  `json:"sCategoryIdEn"`
+	SCategoryNameEn string `json:"sCategoryNameEn"`
+	SubCategoryIDEn int32  `json:"subCategoryIDEn"`
+}
+
 type SubCategoryMn struct {
 	SubCategoryIDMn   int32  `json:"SubCategoryIDMn"`
 	SubCategoryNameMn string `json:"SubCategoryNameMN"`
 	CategoryMnID      int32  `json:"categoryMnId"`
+}
+
+type SCategoryMn struct {
+	SCategoryIdMn   int32  `json:"sCategoryIdMn"`
+	SCategoryName   string `json:"sCategoryName"`
+	SubCategoryIDMn int32  `json:"subCategoryIDMn"`
 }
 
 type UpdateSubCategoryEn struct {
@@ -47,9 +59,19 @@ type UpdateSubCategoryEn struct {
 	SubCategoryEnId   int32  `json:"subCategoryENID"`
 }
 
+type UpdateSCategoryEn struct {
+	SCategoryNameEn string `json:"sCategoryNameEn"`
+	SCategoryIdEn   int32  `json:"sCategoryIdEn"`
+}
+
 type UpdateSubCategoryMn struct {
 	SubCategoryNameMn string `json:"subCategoryNameMn"`
 	SubCategoryMnID   int32  `json:"subCategoryMNID"`
+}
+
+type UpdateSCategoryMn struct {
+	SCategoryName string `json:"sCategoryName"`
+	SCategoryIdMn int32  `json:"sCategoryIdMn"`
 }
 
 type SubCategoryWithProductsEn struct {

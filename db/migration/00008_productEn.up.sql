@@ -4,7 +4,7 @@ BEGIN;
 CREATE TABLE "productEn" (
     "ProductEnID" SERIAL PRIMARY KEY,
     "ProductNameEn" TEXT NOT NULL,
-    "SubCategoryIDEn" INT NOT NULL,
+    "sCategoryIdEn" INT NOT NULL,
     "PriceEn" DECIMAL(10, 2) NOT NULL,
     "StockQuantity" INT NOT NULL DEFAULT 0,
     "ImagesPathEn" TEXT NOT NULL DEFAULT '',
@@ -29,7 +29,7 @@ CREATE TABLE "productEn" (
     "WarehouseStockEn" INT NOT NULL DEFAULT 0,
     "Created_At" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     "Updated_At" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT "FK_Product_SubCategoryIDEn" FOREIGN KEY ("SubCategoryIDEn") REFERENCES "subCategoryEn" ("SubCategoryIDEn") ON DELETE CASCADE
+    CONSTRAINT "FK_Product_sCategoryIDEn" FOREIGN KEY ("sCategoryIdEn") REFERENCES "sCategoryEn" ("sCategoryIdEn") ON DELETE CASCADE
 ) TABLESPACE pg_default;
 
 COMMIT;

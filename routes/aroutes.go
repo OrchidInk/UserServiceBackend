@@ -52,22 +52,26 @@ func superAdminRoutes(app *fiber.App, hd *handlers.Handlers) {
 	subCategory.Delete("/deleteMn/:id", hd.DeleteSubCategoryMn)
 	subCategory.Delete("/deleteEn/:id", hd.DeleteSubCategoryEn)
 
+	// sCategory
+	sCategory := api.Group("/sCategory")
+	sCategory.Post("/createEn", hd.CreateSCategoryEn)
+	sCategory.Post("/createMn", hd.CreateSCategoryMn)
+	sCategory.Get("/listEn", hd.GetAllSCategoryEn)
+	sCategory.Get("/listMn", hd.GetAllSCategoryMn)
+	sCategory.Patch("/updateEn/:id", hd.UpdateSCategoryEn)
+	sCategory.Patch("/updateMn/:id", hd.UpdateSCategoryMn)
+	sCategory.Delete("/deleteEn/:id", hd.DeleteBySCategoryEn)
+	sCategory.Delete("/deleteMn/:id", hd.DeleteBySCategoryMn)
+
+	sCategory.Get("/listEn/:id", hd.GetProductWithSCategoriesEn)
+	sCategory.Get("/listMn/:id", hd.GetProductWithSCategoriesMn)
+
 	//Product
 	product := api.Group("/product")
 	product.Get("/listEn", hd.GetProductEn)
 	product.Get("/listMn", hd.GetProductMn)
 	product.Post("/createEn", hd.CreateProductEn)
 	product.Post("/createMn", hd.CreateProductMn)
-
-	// ProductDetail
-	product.Post("/createDetailEn", hd.CreateDetailEn)
-	product.Post("/createDetailMn", hd.CreateDetailMn)
-
-	product.Patch("/updateDetailEn", hd.UpdateDetailEn)
-	product.Patch("/updateDetailMn", hd.UpdateDetailMn)
-
-	product.Delete("/deleteDetailEn/:id", hd.DeleteDetailEn)
-	product.Delete("/deleteDetailMn/:id", hd.DeleteDetailMn)
 
 	// product.Get("/listdetailen", hd.GetProductWithDetailsEn)
 	// product.Get("/listdetailmn", hd.GetProductWithDetailsMn)
