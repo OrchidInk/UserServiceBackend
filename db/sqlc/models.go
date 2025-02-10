@@ -71,20 +71,6 @@ type Deliveryaddress struct {
 	CreatedAt  sql.NullTime
 }
 
-type DetailEn struct {
-	DetailEnId  int32
-	ProductEnID int32
-	ChoiceName  string
-	ChoiceValue string
-}
-
-type DetailMn struct {
-	DetailMnId  int32
-	ProductMnID int32
-	ChoiceName  string
-	ChoiceValue string
-}
-
 type OrderItem struct {
 	OrderItemId     int32
 	CustomerOrderId int32
@@ -109,7 +95,7 @@ type Payment struct {
 type ProductEn struct {
 	ProductEnID           int32
 	ProductNameEn         string
-	SubCategoryIDEn       int32
+	SCategoryIdEn         int32
 	PriceEn               string
 	StockQuantity         int32
 	ImagesPathEn          string
@@ -145,7 +131,7 @@ type ProductImage struct {
 type ProductMn struct {
 	ProductMnID           int32
 	ProductNameMn         string
-	SubCategoryIDMn       int32
+	SCategoryIdMn         int32
 	PriceMn               string
 	StockQuantity         int32
 	ImagesPathMn          string
@@ -196,6 +182,18 @@ type ProductTranslationsMn struct {
 	LanguageCode           string
 	ProductMnName          string
 	ProductDescription     sql.NullString
+}
+
+type SCategoryEn struct {
+	SCategoryIdEn   int32
+	SCategoryNameEn string
+	SubCategoryIDEn int32
+}
+
+type SCategoryMn struct {
+	SCategoryIdMn   int32
+	SCategoryName   string
+	SubCategoryIDMn int32
 }
 
 type SubCategoryEn struct {

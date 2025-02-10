@@ -2,7 +2,7 @@
 INSERT INTO
     "productMn" (
         "ProductNameMn",
-        "SubCategoryIDMn",
+        "sCategoryIdMn",
         "PriceMn",
         "StockQuantity",
         "ImagesPathMn",
@@ -27,7 +27,7 @@ INSERT INTO
 VALUES
     (
         sqlc.arg('ProductNameMn'),
-        sqlc.arg('SubCategoryIDMn'),
+        sqlc.arg('sCategoryIdMn'),
         sqlc.arg('PriceMn'),
         sqlc.arg('StockQuantity'),
         sqlc.arg('ImagesPathMn'),
@@ -121,7 +121,7 @@ WHERE
 UPDATE
     "productMn"
 SET
-    "SubCategoryIDMn" = sqlc.arg('SubCategoryIDMn')
+    "sCategoryIdMn" = sqlc.arg('sCategoryIdMn')
 WHERE
     "ProductMnID" = sqlc.arg('ProductMnID') RETURNING *;
 
@@ -131,7 +131,7 @@ UPDATE
     "productMn"
 SET
     "ProductNameMn" = sqlc.arg('ProductNameMn'),
-    "SubCategoryIDMn" = sqlc.arg('SubCategoryIDMn'),
+    "sCategoryIdMn" = sqlc.arg('sCategoryIdMn'),
     "PriceMn" = sqlc.arg('PriceMn'),
     "StockQuantity" = sqlc.arg('StockQuantity'),
     "ImagesPathMn" = sqlc.arg('ImagesPathMn'),
