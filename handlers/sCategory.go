@@ -207,3 +207,35 @@ func (hd *Handlers) GetAllSCategoryMn(ctx *fiber.Ctx) error {
 
 	return ctx.Status(fiber.StatusOK).JSON(cat)
 }
+
+func (hd *Handlers) GetProductWithSCategoriesEn(ctx *fiber.Ctx) error {
+	queries, _, _ := hd.queries()
+	sCategoryIdStr := ctx.Params("id")
+	sCategoryId, err := strconv.Atoi(sCategoryIdStr)
+	if err != nil {
+		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"err": err})
+	}
+
+	products, err := queries.GetProductBySCategoryEn(ctx.Context(), int32(sCategoryId))
+	if err != nil {
+		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"message": "Failed to fetch products"})
+	}
+
+	return ctx.Status(fiber.StatusOK).JSON(products)
+}
+
+func (hd *Handlers) GetProductWithSCategoriesMn(ctx *fiber.Ctx) error {
+	queries, _, _ := hd.queries()
+	sCategoryIdStr := ctx.Params("id")
+	sCategoryId, err := strconv.Atoi(sCategoryIdStr)
+	if err != nil {
+		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"err": err})
+	}
+
+	products, err := queries.GetProductBySCategoriesMn(ctx.Context(), int32(sCategoryId))
+	if err != nil {
+		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"message": "Failed to fetch products"})
+	}
+
+	return ctx.Status(fiber.StatusOK).JSON(products)
+}
