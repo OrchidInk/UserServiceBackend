@@ -63,6 +63,9 @@ func superAdminRoutes(app *fiber.App, hd *handlers.Handlers) {
 	sCategory.Delete("/deleteEn/:id", hd.DeleteBySCategoryEn)
 	sCategory.Delete("/deleteMn/:id", hd.DeleteBySCategoryMn)
 
+	sCategory.Get("/listEn/:id", hd.GetProductWithSCategoriesEn)
+	sCategory.Get("/listMn/:id", hd.GetProductWithSCategoriesMn)
+
 	//Product
 	product := api.Group("/product")
 	product.Get("/listEn", hd.GetProductEn)
