@@ -6,8 +6,8 @@ INSERT INTO
     )
 VALUES
     (
-        sqlc.arg('sCategoryName') :: VARCHAR(100),
-        sqlc.arg('SubCategoryIDMn') :: INT
+        sqlc.arg('sCategoryName'),
+        sqlc.arg('SubCategoryIDMn')
     ) RETURNING *;
 
 -- name: GetAllSCategoriesMn :many

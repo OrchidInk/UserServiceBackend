@@ -17,8 +17,8 @@ INSERT INTO
     )
 VALUES
     (
-        $1 :: VARCHAR(100),
-        $2 :: INT
+        $1,
+        $2
     ) RETURNING "sCategoryIdMn", "sCategoryName", "SubCategoryIDMn"
 `
 

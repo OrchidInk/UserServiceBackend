@@ -46,23 +46,16 @@ func (hd *Handlers) CreateSCategoryMn(ctx *fiber.Ctx) error {
 
 	var rqst models.SCategoryMn
 	if err := ctx.BodyParser(&rqst); err != nil {
-		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"err": "invalid rqst body"})
+		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"err": "invalid request body"})
 	}
 
-	// _, err := queries.FindBySCategoryNameMn(ctx.Context(), rqst.SCategoryName)
-	// if err != nil {
-	// 	slog.Error("this sCategory already created", slog.Any("Err", err))
-	// 	return ctx.Status(fiber.StatusConflict).JSON(fiber.Map{"err": err})
-	// } else if err != sql.ErrNoRows {
-	// 	return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"err": err})
-	// }
-
 	createSCategory, err := queries.CreateSCategoryMn(ctx.Context(), db.CreateSCategoryMnParams{
-		SCategoryName:   rqst.SCategoryName,
-		SubCategoryIDMn: rqst.SCategoryIdMn,
+		SCategoryName:   rqst.SCategoryName,   // This should now have the value "Харандаа"
+		SubCategoryIDMn: rqst.SubCategoryIDMn, // This should now be 1
 	})
 	if err != nil {
 		slog.Error("unable to create sCategory", slog.Any("err", err))
+		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"err": "unable to create sCategory"})
 	}
 
 	return ctx.Status(fiber.StatusOK).JSON(fiber.Map{
