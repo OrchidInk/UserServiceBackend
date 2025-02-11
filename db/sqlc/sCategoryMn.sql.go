@@ -12,25 +12,25 @@ import (
 const createSCategoryMn = `-- name: CreateSCategoryMn :one
 INSERT INTO
     "sCategoryMn" (
-        "sCategoryName",
+        "sCategoryNameMn",
         "SubCategoryIDMn"
     )
 VALUES
     (
-        $1 :: VARCHAR(100),
-        $2 :: INT
-    ) RETURNING "sCategoryIdMn", "sCategoryName", "SubCategoryIDMn"
+        $1,
+        $2
+    ) RETURNING "sCategoryIdMn", "sCategoryNameMn", "SubCategoryIDMn"
 `
 
 type CreateSCategoryMnParams struct {
-	SCategoryName   string
+	SCategoryNameMn string
 	SubCategoryIDMn int32
 }
 
 func (q *Queries) CreateSCategoryMn(ctx context.Context, arg CreateSCategoryMnParams) (SCategoryMn, error) {
-	row := q.db.QueryRowContext(ctx, createSCategoryMn, arg.SCategoryName, arg.SubCategoryIDMn)
+	row := q.db.QueryRowContext(ctx, createSCategoryMn, arg.SCategoryNameMn, arg.SubCategoryIDMn)
 	var i SCategoryMn
-	err := row.Scan(&i.SCategoryIdMn, &i.SCategoryName, &i.SubCategoryIDMn)
+	err := row.Scan(&i.SCategoryIdMn, &i.SCategoryNameMn, &i.SubCategoryIDMn)
 	return i, err
 }
 
@@ -48,7 +48,7 @@ func (q *Queries) DeleteSCategoryMn(ctx context.Context, scategoryidmn int32) er
 
 const findBySCategoryIdMn = `-- name: FindBySCategoryIdMn :one
 SELECT
-    "sCategoryIdMn", "sCategoryName", "SubCategoryIDMn"
+    "sCategoryIdMn", "sCategoryNameMn", "SubCategoryIDMn"
 FROM
     "sCategoryMn"
 WHERE
@@ -59,31 +59,31 @@ LIMIT 1
 func (q *Queries) FindBySCategoryIdMn(ctx context.Context, scategoryidmn int32) (SCategoryMn, error) {
 	row := q.db.QueryRowContext(ctx, findBySCategoryIdMn, scategoryidmn)
 	var i SCategoryMn
-	err := row.Scan(&i.SCategoryIdMn, &i.SCategoryName, &i.SubCategoryIDMn)
+	err := row.Scan(&i.SCategoryIdMn, &i.SCategoryNameMn, &i.SubCategoryIDMn)
 	return i, err
 }
 
 const findBySCategoryNameMn = `-- name: FindBySCategoryNameMn :one
 SELECT  
-    "sCategoryIdMn", "sCategoryName", "SubCategoryIDMn"
+    "sCategoryIdMn", "sCategoryNameMn", "SubCategoryIDMn"
 FROM
     "sCategoryMn"
 WHERE
-    "sCategoryName" = $1
+    "sCategoryNameMn" = $1
 LIMIT
  1
 `
 
-func (q *Queries) FindBySCategoryNameMn(ctx context.Context, scategoryname string) (SCategoryMn, error) {
-	row := q.db.QueryRowContext(ctx, findBySCategoryNameMn, scategoryname)
+func (q *Queries) FindBySCategoryNameMn(ctx context.Context, scategorynamemn string) (SCategoryMn, error) {
+	row := q.db.QueryRowContext(ctx, findBySCategoryNameMn, scategorynamemn)
 	var i SCategoryMn
-	err := row.Scan(&i.SCategoryIdMn, &i.SCategoryName, &i.SubCategoryIDMn)
+	err := row.Scan(&i.SCategoryIdMn, &i.SCategoryNameMn, &i.SubCategoryIDMn)
 	return i, err
 }
 
 const getAllSCategoriesMn = `-- name: GetAllSCategoriesMn :many
 SELECT
-    "sCategoryIdMn", "sCategoryName", "SubCategoryIDMn"
+    "sCategoryIdMn", "sCategoryNameMn", "SubCategoryIDMn"
 FROM
     "sCategoryMn"
 `
@@ -97,7 +97,7 @@ func (q *Queries) GetAllSCategoriesMn(ctx context.Context) ([]SCategoryMn, error
 	var items []SCategoryMn
 	for rows.Next() {
 		var i SCategoryMn
-		if err := rows.Scan(&i.SCategoryIdMn, &i.SCategoryName, &i.SubCategoryIDMn); err != nil {
+		if err := rows.Scan(&i.SCategoryIdMn, &i.SCategoryNameMn, &i.SubCategoryIDMn); err != nil {
 			return nil, err
 		}
 		items = append(items, i)
@@ -166,20 +166,20 @@ const updateSCategoryByIdMn = `-- name: UpdateSCategoryByIdMn :exec
 UPDATE  
     "sCategoryMn"
 SET
-    "sCategoryName" = $1,
+    "sCategoryNameMn" = $1,
     "SubCategoryIDMn" = $2
 WHERE
-    "sCategoryIdMn" = $3 RETURNING "sCategoryIdMn", "sCategoryName", "SubCategoryIDMn"
+    "sCategoryIdMn" = $3 RETURNING "sCategoryIdMn", "sCategoryNameMn", "SubCategoryIDMn"
 `
 
 type UpdateSCategoryByIdMnParams struct {
-	SCategoryName   string
+	SCategoryNameMn string
 	SubCategoryIDMn int32
 	SCategoryIdMn   int32
 }
 
 func (q *Queries) UpdateSCategoryByIdMn(ctx context.Context, arg UpdateSCategoryByIdMnParams) error {
-	_, err := q.db.ExecContext(ctx, updateSCategoryByIdMn, arg.SCategoryName, arg.SubCategoryIDMn, arg.SCategoryIdMn)
+	_, err := q.db.ExecContext(ctx, updateSCategoryByIdMn, arg.SCategoryNameMn, arg.SubCategoryIDMn, arg.SCategoryIdMn)
 	return err
 }
 
@@ -187,19 +187,19 @@ const updateSCategoryNameMn = `-- name: UpdateSCategoryNameMn :one
 UPDATE
     "sCategoryMn"
 SET
-    "sCategoryName" = $1 :: VARCHAR(100)
+    "sCategoryNameMn" = $1 :: VARCHAR(100)
 WHERE
-    "sCategoryIdMn" = $2 RETURNING "sCategoryIdMn", "sCategoryName", "SubCategoryIDMn"
+    "sCategoryIdMn" = $2 RETURNING "sCategoryIdMn", "sCategoryNameMn", "SubCategoryIDMn"
 `
 
 type UpdateSCategoryNameMnParams struct {
-	SCategoryName string
-	SCategoryIdMn int32
+	SCategoryNameMn string
+	SCategoryIdMn   int32
 }
 
 func (q *Queries) UpdateSCategoryNameMn(ctx context.Context, arg UpdateSCategoryNameMnParams) (SCategoryMn, error) {
-	row := q.db.QueryRowContext(ctx, updateSCategoryNameMn, arg.SCategoryName, arg.SCategoryIdMn)
+	row := q.db.QueryRowContext(ctx, updateSCategoryNameMn, arg.SCategoryNameMn, arg.SCategoryIdMn)
 	var i SCategoryMn
-	err := row.Scan(&i.SCategoryIdMn, &i.SCategoryName, &i.SubCategoryIDMn)
+	err := row.Scan(&i.SCategoryIdMn, &i.SCategoryNameMn, &i.SubCategoryIDMn)
 	return i, err
 }

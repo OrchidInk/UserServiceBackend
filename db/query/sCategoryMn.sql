@@ -1,13 +1,13 @@
 -- name: CreateSCategoryMn :one
 INSERT INTO
     "sCategoryMn" (
-        "sCategoryName",
+        "sCategoryNameMn",
         "SubCategoryIDMn"
     )
 VALUES
     (
-        sqlc.arg('sCategoryName') :: VARCHAR(100),
-        sqlc.arg('SubCategoryIDMn') :: INT
+        sqlc.arg('sCategoryNameMn'),
+        sqlc.arg('SubCategoryIDMn')
     ) RETURNING *;
 
 -- name: GetAllSCategoriesMn :many
@@ -20,7 +20,7 @@ FROM
 UPDATE
     "sCategoryMn"
 SET
-    "sCategoryName" = sqlc.arg('sCategoryName') :: VARCHAR(100)
+    "sCategoryNameMn" = sqlc.arg('sCategoryNameMn') :: VARCHAR(100)
 WHERE
     "sCategoryIdMn" = sqlc.arg('sCategoryIdMn') RETURNING *;
 
@@ -45,7 +45,7 @@ SELECT
 FROM
     "sCategoryMn"
 WHERE
-    "sCategoryName" = sqlc.arg('sCategoryName')
+    "sCategoryNameMn" = sqlc.arg('sCategoryNameMn')
 LIMIT
  1;
 
@@ -66,7 +66,7 @@ WHERE
 UPDATE  
     "sCategoryMn"
 SET
-    "sCategoryName" = sqlc.arg('sCategoryName'),
+    "sCategoryNameMn" = sqlc.arg('sCategoryNameMn'),
     "SubCategoryIDMn" = sqlc.arg('SubCategoryIDMn')
 WHERE
     "sCategoryIdMn" = sqlc.arg('sCategoryIdMn') RETURNING *;
