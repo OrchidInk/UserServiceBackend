@@ -20,7 +20,7 @@ func (hd *Handlers) CreateProductEn(ctx *fiber.Ctx) error {
 	}
 
 	// Check if the subCategoryEnID exists
-	_, err := queries.FindBySubCategoryIDEn(ctx.Context(), request.SCategoryEnID)
+	_, err := queries.FindBySCategoryIdEn(ctx.Context(), request.SCategoryEnID)
 	if err != nil {
 		slog.Error("subcategory does not exist", slog.Any("err", err))
 		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"err": "Invalid subCategoryEnID"})
@@ -101,7 +101,7 @@ func (hd *Handlers) CreateProductMn(ctx *fiber.Ctx) error {
 		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"err": err})
 	}
 
-	_, err := queries.FindBySubCategoryID(ctx.Context(), request.SCategoryMnID)
+	_, err := queries.FindBySCategoryIdMn(ctx.Context(), request.SCategoryMnID)
 	if err != nil {
 		slog.Error("subCategory does not exist", slog.Any("Err", err))
 		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"err": "invalid subCategoryMNID"})
