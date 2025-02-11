@@ -50,7 +50,7 @@ func (hd *Handlers) CreateSCategoryMn(ctx *fiber.Ctx) error {
 	}
 
 	createSCategory, err := queries.CreateSCategoryMn(ctx.Context(), db.CreateSCategoryMnParams{
-		SCategoryName:   rqst.SCategoryName,   // This should now have the value "Харандаа"
+		SCategoryNameMn: rqst.SCategoryName,   // This should now have the value "Харандаа"
 		SubCategoryIDMn: rqst.SubCategoryIDMn, // This should now be 1
 	})
 	if err != nil {
@@ -61,7 +61,7 @@ func (hd *Handlers) CreateSCategoryMn(ctx *fiber.Ctx) error {
 	return ctx.Status(fiber.StatusOK).JSON(fiber.Map{
 		"message":         "successfully created",
 		"sCategoryIdMn":   createSCategory.SCategoryIdMn,
-		"sCategoryNameMn": createSCategory.SCategoryName,
+		"sCategoryNameMn": createSCategory.SCategoryNameMn,
 	})
 }
 
