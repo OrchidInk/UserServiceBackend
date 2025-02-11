@@ -50,7 +50,7 @@ type SubCategoryMn struct {
 
 type SCategoryMn struct {
 	SCategoryIdMn   int32  `json:"sCategoryIdMn"`
-	SCategoryName   string `json:"sCategoryName"`
+	SCategoryName   string `json:"sCategoryNameMn"`
 	SubCategoryIDMn int32  `json:"subCategoryIDMn"`
 }
 
