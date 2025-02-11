@@ -2,7 +2,7 @@ package models
 
 type CreateProductEnRequest struct {
 	ProductNameEn         string `json:"productNameEN" validate:"required"`
-	SCategoryEnID         int32  `json:"subCategoryEnId" validate:"required"`
+	SCategoryEnID         int32  `json:"sCategoryEnId" validate:"required"`
 	PriceEn               string `json:"priceEn" validate:"required"`
 	StockQuantity         int32  `json:"stockQuantity" validate:"required"`
 	ImagesPathEn          string `json:"imagesPathEn" validate:"required"`
@@ -29,7 +29,7 @@ type CreateProductEnRequest struct {
 
 type CreateProductMnRequest struct {
 	ProductNameMn         string `json:"productNameMN" validate:"required"`
-	SCategoryMnID         int32  `json:"subCategoryMnId" validate:"required"`
+	SCategoryMnID         int32  `json:"sCategoryMnId" validate:"required"`
 	PriceMn               string `json:"priceMn" validate:"required"`
 	StockQuantity         int32  `json:"stockQuantity" validate:"required"`
 	ImagesPathMn          string `json:"imagesPathMn" validate:"required"`
