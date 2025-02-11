@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"database/sql"
 	"log/slog"
 	"strconv"
 
@@ -18,13 +17,13 @@ func (hd *Handlers) CreateSCategoryEn(ctx *fiber.Ctx) error {
 		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"err": "Invalid rqst body"})
 	}
 
-	_, err := queries.FindByNameSCategoryNameEn(ctx.Context(), rqst.SCategoryNameEn)
-	if err != nil {
-		slog.Error("this sCategory already exists", slog.Any("err", err))
-		return ctx.Status(fiber.StatusConflict).JSON(fiber.Map{"err": err})
-	} else if err != sql.ErrNoRows {
-		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"err": err})
-	}
+	// _, err := queries.FindByNameSCategoryNameEn(ctx.Context(), rqst.SCategoryNameEn)
+	// if err != nil {
+	// 	slog.Error("this sCategory already exists", slog.Any("err", err))
+	// 	return ctx.Status(fiber.StatusConflict).JSON(fiber.Map{"err": err})
+	// } else if err != sql.ErrNoRows {
+	// 	return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"err": err})
+	// }
 
 	createSCategory, err := queries.CreateSCategoryEn(ctx.Context(), db.CreateSCategoryEnParams{
 		SCategoryNameEn: rqst.SCategoryNameEn,
@@ -50,13 +49,13 @@ func (hd *Handlers) CreateSCategoryMn(ctx *fiber.Ctx) error {
 		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"err": "invalid rqst body"})
 	}
 
-	_, err := queries.FindBySCategoryNameMn(ctx.Context(), rqst.SCategoryName)
-	if err != nil {
-		slog.Error("this sCategory already created", slog.Any("Err", err))
-		return ctx.Status(fiber.StatusConflict).JSON(fiber.Map{"err": err})
-	} else if err != sql.ErrNoRows {
-		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"err": err})
-	}
+	// _, err := queries.FindBySCategoryNameMn(ctx.Context(), rqst.SCategoryName)
+	// if err != nil {
+	// 	slog.Error("this sCategory already created", slog.Any("Err", err))
+	// 	return ctx.Status(fiber.StatusConflict).JSON(fiber.Map{"err": err})
+	// } else if err != sql.ErrNoRows {
+	// 	return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"err": err})
+	// }
 
 	createSCategory, err := queries.CreateSCategoryMn(ctx.Context(), db.CreateSCategoryMnParams{
 		SCategoryName:   rqst.SCategoryName,
