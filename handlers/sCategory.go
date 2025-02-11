@@ -120,10 +120,11 @@ func (hd *Handlers) UpdateSCategoryMn(ctx *fiber.Ctx) error {
 		return ctx.Status(fiber.StatusNotFound).JSON(fiber.Map{"err": err})
 	}
 
-	updtSCategory, err := queries.UpdateBySubCategoryNameMn(ctx.Context(), db.UpdateBySubCategoryNameMnParams{
-		SubCategoryNameMn: rqst.SCategoryName,
-		SubCategoryIDMn:   int32(sCategoryId),
+	updtSCategory, err := queries.UpdateSCategoryNameMn(ctx.Context(), db.UpdateSCategoryNameMnParams{
+		SCategoryNameMn: rqst.SCategoryName,
+		SCategoryIdMn:   int32(sCategoryId),
 	})
+
 	if err != nil {
 		slog.Error("unable to updt sCategory", slog.Any("err", err))
 		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"err": err})
@@ -131,8 +132,8 @@ func (hd *Handlers) UpdateSCategoryMn(ctx *fiber.Ctx) error {
 
 	return ctx.Status(fiber.StatusOK).JSON(fiber.Map{
 		"msg":           "successfully created",
-		"sCategoryName": updtSCategory.SubCategoryNameMn,
-		"sCategoryId":   updtSCategory.CategoryMnID,
+		"sCategoryName": updtSCategory.SCategoryNameMn,
+		"sCategoryId":   updtSCategory.SCategoryIdMn,
 	})
 }
 

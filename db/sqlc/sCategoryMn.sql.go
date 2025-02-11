@@ -184,12 +184,9 @@ func (q *Queries) UpdateSCategoryByIdMn(ctx context.Context, arg UpdateSCategory
 }
 
 const updateSCategoryNameMn = `-- name: UpdateSCategoryNameMn :one
-UPDATE
-    "sCategoryMn"
-SET
-    "sCategoryNameMn" = $1 :: VARCHAR(100)
-WHERE
-    "sCategoryIdMn" = $2 RETURNING "sCategoryIdMn", "sCategoryNameMn", "SubCategoryIDMn"
+UPDATE "sCategoryMn"
+SET "sCategoryNameMn" = $1
+WHERE "sCategoryIdMn" = $2 RETURNING "sCategoryIdMn", "sCategoryNameMn", "SubCategoryIDMn"
 `
 
 type UpdateSCategoryNameMnParams struct {
