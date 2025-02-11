@@ -17,12 +17,10 @@ FROM
     "sCategoryMn";
 
 -- name: UpdateSCategoryNameMn :one
-UPDATE
-    "sCategoryMn"
-SET
-    "sCategoryNameMn" = sqlc.arg('sCategoryNameMn') :: VARCHAR(100)
-WHERE
-    "sCategoryIdMn" = sqlc.arg('sCategoryIdMn') RETURNING *;
+UPDATE "sCategoryMn"
+SET "sCategoryNameMn" = sqlc.arg('sCategoryNameMn')
+WHERE "sCategoryIdMn" = sqlc.arg('sCategoryIdMn') RETURNING *;
+
 
 -- name: DeleteSCategoryMn :exec
 DELETE FROM
