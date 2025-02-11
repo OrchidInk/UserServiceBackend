@@ -176,7 +176,7 @@ type SCategoryEn struct {
 
 type SCategoryMn struct {
 	SCategoryIdMn   int32
-	SCategoryName   string
+	SCategoryNameMn string
 	SubCategoryIDMn int32
 }
 
