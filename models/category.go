@@ -70,7 +70,7 @@ type UpdateSubCategoryMn struct {
 }
 
 type UpdateSCategoryMn struct {
-	SCategoryName string `json:"sCategoryName"`
+	SCategoryName string `json:"sCategoryNameMn"`
 	SCategoryIdMn int32  `json:"sCategoryIdMn"`
 }
 
