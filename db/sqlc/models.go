@@ -160,28 +160,12 @@ type ProductMn struct {
 
 type ProductReview struct {
 	ReviewID    int32
-	ProductMnID sql.NullInt32
-	ProductEnID sql.NullInt32
+	ProductMnID int32
+	ProductEnID int32
 	UserID      sql.NullInt32
 	Rating      sql.NullInt32
 	ReviewText  sql.NullString
 	CreatedAt   sql.NullTime
-}
-
-type ProductTranslationsEn struct {
-	ProductTranslationEnID int32
-	ProductEnID            sql.NullInt32
-	LanguageCode           string
-	ProductEnName          string
-	ProductDescription     sql.NullString
-}
-
-type ProductTranslationsMn struct {
-	ProductTranslationMnID int32
-	ProductMnID            sql.NullInt32
-	LanguageCode           string
-	ProductMnName          string
-	ProductDescription     sql.NullString
 }
 
 type SCategoryEn struct {

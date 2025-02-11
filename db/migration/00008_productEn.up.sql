@@ -1,4 +1,4 @@
--- TABLE "productEn"
+-- File: 003_create_productEn.sql
 BEGIN;
 
 CREATE TABLE "productEn" (
@@ -29,7 +29,9 @@ CREATE TABLE "productEn" (
     "WarehouseStockEn" INT NOT NULL DEFAULT 0,
     "Created_At" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     "Updated_At" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT "FK_Product_sCategoryIDEn" FOREIGN KEY ("sCategoryIdEn") REFERENCES "sCategoryEn" ("sCategoryIdEn") ON DELETE CASCADE
+    CONSTRAINT "FK_Product_sCategoryIDEn" 
+        FOREIGN KEY ("sCategoryIdEn")
+        REFERENCES "sCategoryEn" ("sCategoryIdEn") ON DELETE CASCADE
 ) TABLESPACE pg_default;
 
 COMMIT;
