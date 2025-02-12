@@ -119,6 +119,31 @@ func (q *Queries) DeleteOrderItem(ctx context.Context, orderitemid int32) error 
 	return err
 }
 
+const findByOrderItemsId = `-- name: FindByOrderItemsId :one
+SELECT
+    "OrderItemId", "CustomerOrderId", "ProductMnID", "ProductEnID", "UserId", "PhoneNumber", "Quantity", "PriceAtOrder"
+FROM
+    "OrderItems"
+WHERE
+    "OrderItemId" = $1
+`
+
+func (q *Queries) FindByOrderItemsId(ctx context.Context, orderitemid int32) (OrderItem, error) {
+	row := q.db.QueryRowContext(ctx, findByOrderItemsId, orderitemid)
+	var i OrderItem
+	err := row.Scan(
+		&i.OrderItemId,
+		&i.CustomerOrderId,
+		&i.ProductMnID,
+		&i.ProductEnID,
+		&i.UserId,
+		&i.PhoneNumber,
+		&i.Quantity,
+		&i.PriceAtOrder,
+	)
+	return i, err
+}
+
 const getCustomerAnalysisOrder = `-- name: GetCustomerAnalysisOrder :one
 SELECT 
     (SELECT COUNT(*) FROM "Customer") AS total_customers,

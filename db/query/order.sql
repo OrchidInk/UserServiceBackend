@@ -69,3 +69,11 @@ FROM
     JOIN "Customer" c ON cod."CustomerId" = c."CustomerId"
 WHERE
     c."CustomerId" = sqlc.arg('CustomerId');
+
+-- name: FindByOrderItemsId :one
+SELECT
+    *
+FROM
+    "OrderItems"
+WHERE
+    "OrderItemId" = sqlc.arg('OrderItemId');
