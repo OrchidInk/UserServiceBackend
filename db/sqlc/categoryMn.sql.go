@@ -98,6 +98,8 @@ SELECT
     c."CategoryNameMn",
     sc."SubCategoryIDMn",
     sc."subCategoryNameMn",
+    scc."sCategoryIdMn",
+    scc."sCategoryNameMn",
     p."ProductMnID",
     p."ProductNameMn",
     p."PriceMn",
@@ -106,11 +108,12 @@ SELECT
 FROM
     "categoryMn" c
     LEFT JOIN "subCategoryMn" sc ON c."CategoryMnID" = sc."CategoryMnID"
-    LEFT JOIN "productMn" p ON p."SubCategoryIDMn" = sc."SubCategoryIDMn"
+    LEFT JOIN "sCategoryMn" scc ON scc."SubCategoryIDMn" = sc."SubCategoryIDMn"
+    LEFT JOIN "productMn" p ON p."sCategoryIdMn" = scc."sCategoryIdMn"
 WHERE
     c."CategoryMnID" = $1
 ORDER BY
-    sc."SubCategoryIDMn",
+    scc."sCategoryIdMn",
     p."ProductMnID"
 `
 
@@ -119,6 +122,8 @@ type FindSubCategoriesAndProductsByCategoryIDMnRow struct {
 	CategoryNameMn    string
 	SubCategoryIDMn   sql.NullInt32
 	SubCategoryNameMn sql.NullString
+	SCategoryIdMn     sql.NullInt32
+	SCategoryNameMn   sql.NullString
 	ProductMnID       sql.NullInt32
 	ProductNameMn     sql.NullString
 	PriceMn           sql.NullString
@@ -140,6 +145,8 @@ func (q *Queries) FindSubCategoriesAndProductsByCategoryIDMn(ctx context.Context
 			&i.CategoryNameMn,
 			&i.SubCategoryIDMn,
 			&i.SubCategoryNameMn,
+			&i.SCategoryIdMn,
+			&i.SCategoryNameMn,
 			&i.ProductMnID,
 			&i.ProductNameMn,
 			&i.PriceMn,
