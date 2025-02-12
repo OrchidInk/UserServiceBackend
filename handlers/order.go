@@ -56,6 +56,11 @@ func (hd *Handlers) GetOrderItemsByCustomerOrderID(ctx *fiber.Ctx) error {
 
 func (hd *Handlers) UpdateOrderItem(ctx *fiber.Ctx) error {
 	queries, _, _ := hd.queries()
+	OrderIdStr := ctx.Params("id")
+	OrderId, err := strconv.Atoi(OrderIdStr)
+	if err != nil {
+		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"err": err})
+	}
 
 	var request models.UpdateOrderItemRequest
 	if err := ctx.BodyParser(&request); err != nil {
@@ -63,8 +68,13 @@ func (hd *Handlers) UpdateOrderItem(ctx *fiber.Ctx) error {
 		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"err": "Invalid request body"})
 	}
 
+	_, err = queries.FindByOrderItemsId(ctx.Context(), int32(OrderId))
+	if err != nil {
+		return ctx.Status(fiber.StatusNotFound).JSON(fiber.Map{"err": err})
+	}
+
 	updatedOrderItem, err := queries.UpdateOrderItem(ctx.Context(), db.UpdateOrderItemParams{
-		OrderItemID:  request.OrderItemID,
+		OrderItemID:  int32(OrderId),
 		Quantity:     request.Quantity,
 		PriceAtOrder: request.PriceAtOrder,
 	})

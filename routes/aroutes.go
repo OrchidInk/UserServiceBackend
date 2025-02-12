@@ -109,10 +109,12 @@ func superAdminRoutes(app *fiber.App, hd *handlers.Handlers) {
 	delivery.Put("/update/:id", hd.UpdateDelivery)
 	delivery.Delete("/delete/:id", hd.DeleteDelivery)
 
+	// Order
+
 	order := api.Group("/order")
 	order.Post("/create", hd.CreateOrderItem)
 	order.Get("/list", hd.GetOrderItemsByCustomerOrderID)
-	order.Put("/update", hd.UpdateOrderItem)
+	order.Patch("/update/:id", hd.UpdateOrderItem)
 	order.Delete("/delete/:orderItemId", hd.DeleteOrderItem)
 
 	// Payments
