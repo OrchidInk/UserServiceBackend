@@ -114,6 +114,11 @@ func superAdminRoutes(app *fiber.App, hd *handlers.Handlers) {
 	order.Get("/list", hd.GetOrderItemsByCustomerOrderID)
 	order.Put("/update", hd.UpdateOrderItem)
 	order.Delete("/delete/:orderItemId", hd.DeleteOrderItem)
+
+	// Payments
+	payments := api.Group("/payment")
+	payments.Patch("/update/:id", hd.UpdatePaymentStatus)
+	payments.Get("/list", hd.GetListPayment)
 }
 
 func adminRoutes(app *fiber.App, hd *handlers.Handlers) {
@@ -209,4 +214,8 @@ func userRoutes(app *fiber.App, hd *handlers.Handlers) {
 	order.Get("/list", hd.GetOrderItemsByCustomerOrderID)
 	order.Put("/update", hd.UpdateOrderItem)
 	order.Delete("/delete/:orderItemId", hd.DeleteOrderItem)
+
+	// Payments
+	payments := api.Group("/payment")
+	payments.Post("/create", hd.CreatePayment)
 }

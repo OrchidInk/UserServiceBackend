@@ -3,6 +3,7 @@ INSERT INTO "OrderItems" (
     "CustomerOrderId",
     "ProductMnID",
     "ProductEnID",
+    "UserId",
     "PhoneNumber",
     "Quantity",
     "PriceAtOrder"
@@ -10,6 +11,7 @@ INSERT INTO "OrderItems" (
     sqlc.arg('CustomerOrderID'),
     sqlc.arg('ProductMnID'),
     sqlc.arg('ProductEnID'),
+    sqlc.arg('UserId'),
     sqlc.arg('PhoneNumber'),
     sqlc.arg('Quantity'),
     sqlc.arg('PriceAtOrder')

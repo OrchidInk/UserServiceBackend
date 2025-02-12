@@ -199,33 +199,55 @@ func (hd *Handlers) GetCategoriesWithSubCategoriesEn(ctx *fiber.Ctx) error {
 		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"err": "Failed to fetch categories"})
 	}
 
-	categoryMap := make(map[int32]models.CategoryEn)
+	categoryMap := make(map[int32]*models.CategoryEn)
 
 	for _, row := range rows {
-		if _, exists := categoryMap[row.CategoryEnID]; !exists {
-			categoryMap[row.CategoryEnID] = models.CategoryEn{
+		cat, exists := categoryMap[row.CategoryEnID]
+		if !exists {
+			cat = &models.CategoryEn{
 				CategoryEnID:   row.CategoryEnID,
 				CategoryNameEn: row.CategoryNameEn,
+				SubCategories:  []models.SubCategoryEn{},
 			}
+			categoryMap[row.CategoryEnID] = cat
 		}
 
 		if row.SubCategoryIDEn.Valid {
-			subCategory := models.SubCategoryEn{
-				SubCategoryIDEn:   row.SubCategoryIDEn.Int32,
-				SubCategoryNameEN: row.SubCategoryNameEn.String,
-				CategoryEnID:      row.CategoryEnID,
+			var subCat *models.SubCategoryEn
+			for i, sc := range cat.SubCategories {
+				if sc.SubCategoryIDEn == row.SubCategoryIDEn.Int32 {
+					subCat = &cat.SubCategories[i]
+					break
+				}
 			}
-
-			categoryMap[row.CategoryEnID] = appendToSubCategoriesEn(categoryMap[row.CategoryEnID], subCategory)
+			if subCat == nil {
+				newSubCat := models.SubCategoryEn{
+					SubCategoryIDEn:   row.SubCategoryIDEn.Int32,
+					SubCategoryNameEN: row.SubCategoryNameEn.String,
+					CategoryEnID:      row.CategoryEnID,
+					SCategories:       []models.SCategoryEn{},
+				}
+				cat.SubCategories = append(cat.SubCategories, newSubCat)
+				subCat = &cat.SubCategories[len(cat.SubCategories)-1]
+			}
+			if row.SCategoryIdEn.Valid {
+				newSCategory := models.SCategoryEn{
+					SCategoryIdEn:   row.SCategoryIdEn.Int32,
+					SCategoryNameEn: row.SCategoryNameEn.String,
+					SubCategoryIDEn: row.SubCategoryIDEn.Int32,
+				}
+				subCat.SCategories = append(subCat.SCategories, newSCategory)
+			}
 		}
 	}
 
+	// Build a list for the response.
 	var categoryList []fiber.Map
-	for _, category := range categoryMap {
+	for _, cat := range categoryMap {
 		categoryList = append(categoryList, fiber.Map{
-			"categoryEnId":   category.CategoryEnID,
-			"categoryNameEn": category.CategoryNameEn,
-			"subcategories":  category.SubCategories,
+			"categoryEnId":   cat.CategoryEnID,
+			"categoryNameEn": cat.CategoryNameEn,
+			"subcategories":  cat.SubCategories,
 		})
 	}
 
@@ -237,115 +259,175 @@ func (hd *Handlers) GetCategoriesWithSubCategoriesMn(ctx *fiber.Ctx) error {
 
 	rows, err := queries.GetCategoriesWithSubCategoriesMn(ctx.Context())
 	if err != nil {
-		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"err": "Failed to fetch categories"})
+		return ctx.Status(fiber.StatusInternalServerError).
+			JSON(fiber.Map{"err": "Failed to fetch categories"})
 	}
 
-	categoryMap := make(map[int32]models.CategoryMn)
+	categoryMap := make(map[int32]*models.CategoryMn)
 
 	for _, row := range rows {
-		if _, exists := categoryMap[row.CategoryMnID]; !exists {
-			categoryMap[row.CategoryMnID] = models.CategoryMn{
+		cat, exists := categoryMap[row.CategoryMnID]
+		if !exists {
+			cat = &models.CategoryMn{
 				CategoryMnID:   row.CategoryMnID,
 				CategoryNameMn: row.CategoryNameMn,
+				SubCategories:  []models.SubCategoryMn{},
 			}
+			categoryMap[row.CategoryMnID] = cat
 		}
 
 		if row.SubCategoryIDMn.Valid {
-			subCategory := models.SubCategoryMn{
-				SubCategoryIDMn:   row.SubCategoryIDMn.Int32,
-				SubCategoryNameMn: row.SubCategoryNameMn.String,
-				CategoryMnID:      row.CategoryMnID,
+			var subCat *models.SubCategoryMn = nil
+			for i := range cat.SubCategories {
+				if cat.SubCategories[i].SubCategoryIDMn == row.SubCategoryIDMn.Int32 {
+					subCat = &cat.SubCategories[i]
+					break
+				}
 			}
-
-			categoryMap[row.CategoryMnID] = appendToSubCategoriesMn(categoryMap[row.CategoryMnID], subCategory)
+			if subCat == nil {
+				newSubCat := models.SubCategoryMn{
+					SubCategoryIDMn:   row.SubCategoryIDMn.Int32,
+					SubCategoryNameMn: row.SubCategoryNameMn.String,
+					CategoryMnID:      row.CategoryMnID,
+					SCategories:       []models.SCategoryMn{},
+				}
+				cat.SubCategories = append(cat.SubCategories, newSubCat)
+				subCat = &cat.SubCategories[len(cat.SubCategories)-1]
+			}
+			// If the row also contains an sCategory, append it.
+			if row.SCategoryIdMn.Valid {
+				newSCategory := models.SCategoryMn{
+					SCategoryIdMn:   row.SCategoryIdMn.Int32,
+					SCategoryNameMn: row.SCategoryNameMn.String,
+					SubCategoryIDMn: row.SubCategoryIDMn.Int32,
+				}
+				subCat.SCategories = append(subCat.SCategories, newSCategory)
+			}
 		}
 	}
 
+	// Build the response list.
 	var categoryList []fiber.Map
-	for _, category := range categoryMap {
+	for _, cat := range categoryMap {
 		categoryList = append(categoryList, fiber.Map{
-			"categoryMnId":   category.CategoryMnID,
-			"categoryNameMn": category.CategoryNameMn,
-			"subcategories":  category.SubCategories,
+			"categoryMnId":   cat.CategoryMnID,
+			"categoryNameMn": cat.CategoryNameMn,
+			"subcategories":  cat.SubCategories,
 		})
 	}
 
 	return ctx.Status(fiber.StatusOK).JSON(categoryList)
 }
 
-func appendToSubCategoriesEn(category models.CategoryEn, subCategory models.SubCategoryEn) models.CategoryEn {
-	if category.SubCategories == nil {
-		category.SubCategories = []models.SubCategoryEn{}
-	}
-	category.SubCategories = append(category.SubCategories, subCategory)
-	return category
-}
+// func appendToSubCategoriesEn(category models.CategoryEn, subCategory models.SubCategoryEn) models.CategoryEn {
+// 	if category.SubCategories == nil {
+// 		category.SubCategories = []models.SubCategoryEn{}
+// 	}
+// 	category.SubCategories = append(category.SubCategories, subCategory)
+// 	return category
+// }
 
-func appendToSubCategoriesMn(category models.CategoryMn, subcategory models.SubCategoryMn) models.CategoryMn {
-	if category.SubCategories == nil {
-		category.SubCategories = []models.SubCategoryMn{}
-	}
-	category.SubCategories = append(category.SubCategories, subcategory)
-	return category
-}
+// func appendToSubCategoriesMn(category models.CategoryMn, subcategory models.SubCategoryMn) models.CategoryMn {
+// 	if category.SubCategories == nil {
+// 		category.SubCategories = []models.SubCategoryMn{}
+// 	}
+// 	category.SubCategories = append(category.SubCategories, subcategory)
+// 	return category
+// }
 
 func (hd *Handlers) GetCategoriesWithSubCategoriesAndProductsEn(ctx *fiber.Ctx) error {
 	queries, _, _ := hd.queries()
 
-	// Fetch data from the database
 	rows, err := queries.GetCategoriesWithSubCategoriesAndProductsEn(ctx.Context())
 	if err != nil {
 		slog.Error("Error fetching categories with subcategories and products", slog.Any("err", err))
 		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"err": "Database error"})
 	}
 
-	// Organize data into structured models
-	categories := make(map[int32]*models.CategoryWithSubCategoriesAndProductsEn)
-
+	// Use a map to group categories by ID.
+	categoryMap := make(map[int32]*models.CategoryWithSubCategoriesAndProductsEn)
 	for _, row := range rows {
-		// If category does not exist, initialize it
-		if _, exists := categories[row.CategoryEnID]; !exists {
-			categories[row.CategoryEnID] = &models.CategoryWithSubCategoriesAndProductsEn{
+		// Get or create the category.
+		cat, exists := categoryMap[row.CategoryEnID]
+		if !exists {
+			cat = &models.CategoryWithSubCategoriesAndProductsEn{
 				CategoryEnID:    row.CategoryEnID,
 				CategoryNameEn:  row.CategoryNameEn,
 				SubcategoriesEn: []models.SubCategoryWithProductsEn{},
 			}
+			categoryMap[row.CategoryEnID] = cat
 		}
 
-		// Find or create the subcategory
-		subcategories := categories[row.CategoryEnID].SubcategoriesEn
-		var subcategory *models.SubCategoryWithProductsEn
-		for i := range subcategories {
-			if subcategories[i].SubCategoryIDEn == row.SubCategoryIDEn.Int32 {
-				subcategory = &subcategories[i]
-				break
+		// Process subcategory if present.
+		if row.SubCategoryIDEn.Valid {
+			var subcat *models.SubCategoryWithProductsEn
+			// Search for existing subcategory in this category.
+			for i := range cat.SubcategoriesEn {
+				if cat.SubcategoriesEn[i].SubCategoryIDEn == row.SubCategoryIDEn.Int32 {
+					subcat = &cat.SubcategoriesEn[i]
+					break
+				}
 			}
-		}
+			// If not found, create a new subcategory.
+			if subcat == nil {
+				newSubCat := models.SubCategoryWithProductsEn{
+					SubCategoryIDEn:   row.SubCategoryIDEn.Int32,
+					SubCategoryNameEn: row.SubCategoryNameEn.String,
+					// Initialize SCategories with an empty slice.
+					SCategories: []models.SCategoryEn{},
+				}
+				cat.SubcategoriesEn = append(cat.SubcategoriesEn, newSubCat)
+				subcat = &cat.SubcategoriesEn[len(cat.SubcategoriesEn)-1]
+			}
 
-		if subcategory == nil {
-			categories[row.CategoryEnID].SubcategoriesEn = append(categories[row.CategoryEnID].SubcategoriesEn, models.SubCategoryWithProductsEn{
-				SubCategoryIDEn:   row.SubCategoryIDEn.Int32,
-				SubCategoryNameEn: row.SubCategoryNameEn.String,
-				Products:          []models.ProductEn{},
-			})
-			subcategory = &categories[row.CategoryEnID].SubcategoriesEn[len(categories[row.CategoryEnID].SubcategoriesEn)-1]
-		}
-
-		// Add product to the subcategory
-		if row.ProductEnID.Valid {
-			subcategory.Products = append(subcategory.Products, models.ProductEn{
-				ProductEnID:   row.ProductEnID.Int32,
-				ProductNameEn: row.ProductNameEn.String,
-				PriceEn:       row.PriceEn.String,
-				StockQuantity: row.StockQuantity.Int32,
-				ImagesPathEn:  row.ImagesPathEn.String,
-			})
+			// Now, if an sCategory is present in this row, nest the product under that sCategory.
+			if row.SCategoryIdEn.Valid {
+				var sCatPtr *models.SCategoryEn
+				// Search for the sCategory within the subcategory.
+				for i := range subcat.SCategories {
+					if subcat.SCategories[i].SCategoryIdEn == row.SCategoryIdEn.Int32 {
+						sCatPtr = &subcat.SCategories[i]
+						break
+					}
+				}
+				// If not found, create it.
+				if sCatPtr == nil {
+					newSCategory := models.SCategoryEn{
+						SCategoryIdEn:   row.SCategoryIdEn.Int32,
+						SCategoryNameEn: row.SCategoryNameEn.String,
+						SubCategoryIDEn: row.SubCategoryIDEn.Int32,
+						Products:        []models.ProductEn{},
+					}
+					subcat.SCategories = append(subcat.SCategories, newSCategory)
+					sCatPtr = &subcat.SCategories[len(subcat.SCategories)-1]
+				}
+				// If a product is present, add it to the sCategory's Products.
+				if row.ProductEnID.Valid {
+					newProduct := models.ProductEn{
+						ProductEnID:   row.ProductEnID.Int32,
+						ProductNameEn: row.ProductNameEn.String,
+						PriceEn:       row.PriceEn.String,
+						StockQuantity: row.StockQuantity.Int32,
+						ImagesPathEn:  row.ImagesPathEn.String,
+					}
+					sCatPtr.Products = append(sCatPtr.Products, newProduct)
+				}
+			} else {
+				// Optionally, if no sCategory is provided but a product exists,
+				// you might want to add it directly under the subcategory.
+				// For example:
+				// if row.ProductEnID.Valid {
+				//     newProduct := models.ProductEn{...}
+				//     subcat.Products = append(subcat.Products, newProduct)
+				// }
+			}
 		}
 	}
 
-	result := make([]*models.CategoryWithSubCategoriesAndProductsEn, 0, len(categories))
-	for _, category := range categories {
-		result = append(result, category)
+	// Convert categoryMap to a slice.
+	var result []*models.CategoryWithSubCategoriesAndProductsEn
+	for _, cat := range categoryMap {
+		result = append(result, cat)
 	}
 
 	return ctx.Status(fiber.StatusOK).JSON(result)
@@ -360,48 +442,83 @@ func (hd *Handlers) GetCategoriesWithSubCategoriesAndProductsMn(ctx *fiber.Ctx) 
 		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"err": err})
 	}
 
-	categories := make(map[int32]*models.CategoryWithSubCategoriesAndProductsMn)
+	// Create a map to group categories by CategoryMnID.
+	categoryMap := make(map[int32]*models.CategoryWithSubCategoriesAndProductsMn)
+
 	for _, row := range rows {
-		if _, exists := categories[row.CategoryMnID]; !exists {
-			categories[row.CategoryMnID] = &models.CategoryWithSubCategoriesAndProductsMn{
+		// Get or create the category.
+		cat, exists := categoryMap[row.CategoryMnID]
+		if !exists {
+			cat = &models.CategoryWithSubCategoriesAndProductsMn{
 				CategoryMnID:    row.CategoryMnID,
 				CategoryNameMn:  row.CategoryNameMn,
 				SubCategoriesMn: []models.SubCategoryWithProductsMn{},
 			}
+			categoryMap[row.CategoryMnID] = cat
 		}
 
-		subCategories := categories[row.CategoryMnID].SubCategoriesMn
-		var subCategory *models.SubCategoryWithProductsMn
-		for i := range subCategories {
-			if subCategories[i].SubCategoryIDMn == row.SubCategoryIDMn.Int32 {
-				subCategory = &subCategories[i]
-				break
+		// Process subcategory if present.
+		if row.SubCategoryIDMn.Valid {
+			var subcat *models.SubCategoryWithProductsMn
+			// Look for an existing subcategory within the category.
+			for i := range cat.SubCategoriesMn {
+				if cat.SubCategoriesMn[i].SubCategoryIDMn == row.SubCategoryIDMn.Int32 {
+					subcat = &cat.SubCategoriesMn[i]
+					break
+				}
 			}
-		}
+			// If not found, create a new subcategory using the subcategory columns.
+			if subcat == nil {
+				newSubCat := models.SubCategoryWithProductsMn{
+					SubCategoryIDMn:   row.SubCategoryIDMn.Int32,
+					SubCategoryNameMn: row.SubCategoryNameMn.String,
+					SCategories:       []models.SCategoryMn{},
+				}
+				cat.SubCategoriesMn = append(cat.SubCategoriesMn, newSubCat)
+				subcat = &cat.SubCategoriesMn[len(cat.SubCategoriesMn)-1]
+			}
 
-		if subCategory == nil {
-			categories[row.CategoryMnID].SubCategoriesMn = append(categories[row.CategoryMnID].SubCategoriesMn, models.SubCategoryWithProductsMn{
-				SubCategoryIDMn:   row.ProductMnID.Int32,
-				SubCategoryNameMn: row.SubCategoryNameMn.String,
-				Products:          []models.ProductMn{},
-			})
-			subCategory = &categories[row.CategoryMnID].SubCategoriesMn[len(categories[row.CategoryMnID].SubCategoriesMn)-1]
-		}
+			// Process sCategory if present.
+			if row.SCategoryIdMn.Valid {
+				var sCatPtr *models.SCategoryMn
+				// Look for an existing sCategory within this subcategory.
+				for i := range subcat.SCategories {
+					if subcat.SCategories[i].SCategoryIdMn == row.SCategoryIdMn.Int32 {
+						sCatPtr = &subcat.SCategories[i]
+						break
+					}
+				}
+				// If not found, create a new sCategory using the sCategory columns.
+				if sCatPtr == nil {
+					newSCategory := models.SCategoryMn{
+						SCategoryIdMn:   row.SCategoryIdMn.Int32,
+						SCategoryNameMn: row.SCategoryNameMn.String,
+						SubCategoryIDMn: row.SubCategoryIDMn.Int32,
+						Products:        []models.ProductMn{},
+					}
+					subcat.SCategories = append(subcat.SCategories, newSCategory)
+					sCatPtr = &subcat.SCategories[len(subcat.SCategories)-1]
+				}
 
-		if row.ProductMnID.Valid {
-			subCategory.Products = append(subCategory.Products, models.ProductMn{
-				ProductMnID:   row.ProductMnID.Int32,
-				ProductNameMn: row.ProductNameMn.String,
-				PriceMn:       row.PriceMn.String,
-				StockQuantity: row.StockQuantity.Int32,
-				ImagesPathMn:  row.ImagesPathMn.String,
-			})
+				// If a product is present, add it to the sCategory's Products slice.
+				if row.ProductMnID.Valid {
+					newProduct := models.ProductMn{
+						ProductMnID:   row.ProductMnID.Int32,
+						ProductNameMn: row.ProductNameMn.String,
+						PriceMn:       row.PriceMn.String,
+						StockQuantity: row.StockQuantity.Int32,
+						ImagesPathMn:  row.ImagesPathMn.String,
+					}
+					sCatPtr.Products = append(sCatPtr.Products, newProduct)
+				}
+			}
 		}
 	}
 
-	result := make([]*models.CategoryWithSubCategoriesAndProductsMn, 0, len(categories))
-	for _, cateogory := range categories {
-		result = append(result, cateogory)
+	// Convert the category map to a slice.
+	var result []*models.CategoryWithSubCategoriesAndProductsMn
+	for _, cat := range categoryMap {
+		result = append(result, cat)
 	}
 
 	return ctx.Status(fiber.StatusOK).JSON(result)
