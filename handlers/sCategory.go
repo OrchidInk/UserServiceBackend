@@ -50,7 +50,7 @@ func (hd *Handlers) CreateSCategoryMn(ctx *fiber.Ctx) error {
 	}
 
 	createSCategory, err := queries.CreateSCategoryMn(ctx.Context(), db.CreateSCategoryMnParams{
-		SCategoryNameMn: rqst.SCategoryName,   // This should now have the value "Харандаа"
+		SCategoryNameMn: rqst.SCategoryNameMn, // This should now have the value "Харандаа"
 		SubCategoryIDMn: rqst.SubCategoryIDMn, // This should now be 1
 	})
 	if err != nil {

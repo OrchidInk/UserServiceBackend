@@ -60,6 +60,7 @@ INSERT INTO "OrderItems" (
     "CustomerOrderId",
     "ProductMnID",
     "ProductEnID",
+    "UserId",
     "PhoneNumber",
     "Quantity",
     "PriceAtOrder"
@@ -69,14 +70,16 @@ INSERT INTO "OrderItems" (
     $3,
     $4,
     $5,
-    $6
-) RETURNING "OrderItemId", "CustomerOrderId", "ProductMnID", "ProductEnID", "PhoneNumber", "Quantity", "PriceAtOrder"
+    $6,
+    $7
+) RETURNING "OrderItemId", "CustomerOrderId", "ProductMnID", "ProductEnID", "UserId", "PhoneNumber", "Quantity", "PriceAtOrder"
 `
 
 type CreateOrderItemParams struct {
 	CustomerOrderID int32
 	ProductMnID     int32
 	ProductEnID     int32
+	UserId          int32
 	PhoneNumber     string
 	Quantity        int32
 	PriceAtOrder    string
@@ -87,6 +90,7 @@ func (q *Queries) CreateOrderItem(ctx context.Context, arg CreateOrderItemParams
 		arg.CustomerOrderID,
 		arg.ProductMnID,
 		arg.ProductEnID,
+		arg.UserId,
 		arg.PhoneNumber,
 		arg.Quantity,
 		arg.PriceAtOrder,
@@ -97,6 +101,7 @@ func (q *Queries) CreateOrderItem(ctx context.Context, arg CreateOrderItemParams
 		&i.CustomerOrderId,
 		&i.ProductMnID,
 		&i.ProductEnID,
+		&i.UserId,
 		&i.PhoneNumber,
 		&i.Quantity,
 		&i.PriceAtOrder,
@@ -175,7 +180,7 @@ func (q *Queries) GetDeliveriesByUserId(ctx context.Context, customerid int32) (
 }
 
 const getOrderItemsByCustomerOrderID = `-- name: GetOrderItemsByCustomerOrderID :many
-SELECT "OrderItemId", "CustomerOrderId", "ProductMnID", "ProductEnID", "PhoneNumber", "Quantity", "PriceAtOrder"
+SELECT "OrderItemId", "CustomerOrderId", "ProductMnID", "ProductEnID", "UserId", "PhoneNumber", "Quantity", "PriceAtOrder"
 FROM "OrderItems"
 WHERE "CustomerOrderId" = $1
 `
@@ -194,6 +199,7 @@ func (q *Queries) GetOrderItemsByCustomerOrderID(ctx context.Context, customeror
 			&i.CustomerOrderId,
 			&i.ProductMnID,
 			&i.ProductEnID,
+			&i.UserId,
 			&i.PhoneNumber,
 			&i.Quantity,
 			&i.PriceAtOrder,
@@ -215,7 +221,7 @@ const updateOrderItem = `-- name: UpdateOrderItem :one
 UPDATE "OrderItems"
 SET "Quantity" = $1,
     "PriceAtOrder" = $2
-WHERE "OrderItemId" = $3 RETURNING "OrderItemId", "CustomerOrderId", "ProductMnID", "ProductEnID", "PhoneNumber", "Quantity", "PriceAtOrder"
+WHERE "OrderItemId" = $3 RETURNING "OrderItemId", "CustomerOrderId", "ProductMnID", "ProductEnID", "UserId", "PhoneNumber", "Quantity", "PriceAtOrder"
 `
 
 type UpdateOrderItemParams struct {
@@ -232,6 +238,7 @@ func (q *Queries) UpdateOrderItem(ctx context.Context, arg UpdateOrderItemParams
 		&i.CustomerOrderId,
 		&i.ProductMnID,
 		&i.ProductEnID,
+		&i.UserId,
 		&i.PhoneNumber,
 		&i.Quantity,
 		&i.PriceAtOrder,

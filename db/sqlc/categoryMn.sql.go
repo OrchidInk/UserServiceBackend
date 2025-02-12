@@ -165,6 +165,8 @@ SELECT
     c."CategoryNameMn",
     sc."SubCategoryIDMn",
     sc."subCategoryNameMn",
+    scc."sCategoryIdMn",
+    scc."sCategoryNameMn",
     p."ProductMnID",
     p."ProductNameMn",
     p."PriceMn",
@@ -173,10 +175,11 @@ SELECT
 FROM
     "categoryMn" c
     LEFT JOIN "subCategoryMn" sc ON c."CategoryMnID" = sc."CategoryMnID"
-    LEFT JOIN "productMn" p ON sc."SubCategoryIDMn" = p."SubCategoryIDMn"
+    LEFT JOIN "sCategoryMn" scc ON scc."SubCategoryIDMn" = sc."SubCategoryIDMn"
+    LEFT JOIN "productMn" p ON scc."sCategoryIdMn" = p."sCategoryIdMn"
 ORDER BY
     c."CategoryMnID",
-    sc."SubCategoryIDMn",
+    scc."sCategoryIdMn",
     p."ProductMnID"
 `
 
@@ -185,6 +188,8 @@ type GetCategoriesWithSubCategoriesAndProductMnRow struct {
 	CategoryNameMn    string
 	SubCategoryIDMn   sql.NullInt32
 	SubCategoryNameMn sql.NullString
+	SCategoryIdMn     sql.NullInt32
+	SCategoryNameMn   sql.NullString
 	ProductMnID       sql.NullInt32
 	ProductNameMn     sql.NullString
 	PriceMn           sql.NullString
@@ -206,6 +211,8 @@ func (q *Queries) GetCategoriesWithSubCategoriesAndProductMn(ctx context.Context
 			&i.CategoryNameMn,
 			&i.SubCategoryIDMn,
 			&i.SubCategoryNameMn,
+			&i.SCategoryIdMn,
+			&i.SCategoryNameMn,
 			&i.ProductMnID,
 			&i.ProductNameMn,
 			&i.PriceMn,
@@ -230,10 +237,15 @@ SELECT
     c."CategoryMnID",
     c."CategoryNameMn",
     sc."SubCategoryIDMn",
-    sc."subCategoryNameMn"
+    sc."subCategoryNameMn",
+    scc."sCategoryIdMn",
+    scc."sCategoryNameMn"
 FROM
     "categoryMn" c
-    LEFT JOIN "subCategoryMn" sc ON c."CategoryMnID" = sc."CategoryMnID"
+    LEFT JOIN "subCategoryMn" sc 
+        ON c."CategoryMnID" = sc."CategoryMnID"
+    LEFT JOIN "sCategoryMn" scc 
+        ON scc."SubCategoryIDMn" = sc."SubCategoryIDMn"
 ORDER BY
     c."CategoryMnID"
 `
@@ -243,6 +255,8 @@ type GetCategoriesWithSubCategoriesMnRow struct {
 	CategoryNameMn    string
 	SubCategoryIDMn   sql.NullInt32
 	SubCategoryNameMn sql.NullString
+	SCategoryIdMn     sql.NullInt32
+	SCategoryNameMn   sql.NullString
 }
 
 func (q *Queries) GetCategoriesWithSubCategoriesMn(ctx context.Context) ([]GetCategoriesWithSubCategoriesMnRow, error) {
@@ -259,6 +273,8 @@ func (q *Queries) GetCategoriesWithSubCategoriesMn(ctx context.Context) ([]GetCa
 			&i.CategoryNameMn,
 			&i.SubCategoryIDMn,
 			&i.SubCategoryNameMn,
+			&i.SCategoryIdMn,
+			&i.SCategoryNameMn,
 		); err != nil {
 			return nil, err
 		}

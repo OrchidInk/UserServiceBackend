@@ -31,27 +31,32 @@ type CreateCategoryMn struct {
 }
 
 type SubCategoryEn struct {
-	SubCategoryIDEn   int32  `json:"SubCategoryIDEn"`
-	SubCategoryNameEN string `json:"SubCategoryNameEN"`
-	CategoryEnID      int32  `json:"categoryEnId"`
+	SubCategoryIDEn   int32         `json:"subCategoryIdEn"`
+	SubCategoryNameEN string        `json:"subCategoryNameEn"`
+	CategoryEnID      int32         `json:"categoryEnId"`
+	SCategories       []SCategoryEn `json:"sCategories,omitempty"`
 }
 
+// models/s_category_en.go
 type SCategoryEn struct {
-	SCategoryIdEn   int32  `json:"sCategoryIdEn"`
-	SCategoryNameEn string `json:"sCategoryNameEn"`
-	SubCategoryIDEn int32  `json:"subCategoryIDEn"`
+	SCategoryIdEn   int32       `json:"sCategoryIdEn"`
+	SCategoryNameEn string      `json:"sCategoryNameEn"`
+	SubCategoryIDEn int32       `json:"subCategoryIdEn"`
+	Products        []ProductEn `json:"products"`
 }
 
 type SubCategoryMn struct {
-	SubCategoryIDMn   int32  `json:"SubCategoryIDMn"`
-	SubCategoryNameMn string `json:"SubCategoryNameMN"`
-	CategoryMnID      int32  `json:"categoryMnId"`
+	SubCategoryIDMn   int32         `json:"SubCategoryIDMn"`
+	SubCategoryNameMn string        `json:"SubCategoryNameMN"`
+	CategoryMnID      int32         `json:"categoryMnId"`
+	SCategories       []SCategoryMn `json:"sCategories,omitempty"`
 }
 
 type SCategoryMn struct {
-	SCategoryIdMn   int32  `json:"sCategoryIdMn"`
-	SCategoryName   string `json:"sCategoryNameMn"`
-	SubCategoryIDMn int32  `json:"subCategoryIDMn"`
+	SCategoryIdMn   int32       `json:"sCategoryIdMn"`
+	SCategoryNameMn string      `json:"sCategoryNameMn"`
+	SubCategoryIDMn int32       `json:"subCategoryIDMn"`
+	Products        []ProductMn `json:"products"`
 }
 
 type UpdateSubCategoryEn struct {
@@ -74,18 +79,18 @@ type UpdateSCategoryMn struct {
 	SCategoryIdMn int32  `json:"sCategoryIdMn"`
 }
 
-type SubCategoryWithProductsEn struct {
-	SubCategoryIDEn   int32       `json:"SubCategoryIDEn"`
-	SubCategoryNameEn string      `json:"subCategoryNameEn"`
-	Products          []ProductEn `json:"products"`
-}
-
 type CategoryWithSubCategoriesAndProductsEn struct {
 	CategoryEnID    int32                       `json:"categoryEnId"`
 	CategoryNameEn  string                      `json:"categoryNameEn"`
-	SubcategoriesEn []SubCategoryWithProductsEn `json:"subCategoriesEn"`
+	SubcategoriesEn []SubCategoryWithProductsEn `json:"subcategories"`
 }
 
+// models/sub_category_with_products_en.go
+type SubCategoryWithProductsEn struct {
+	SubCategoryIDEn   int32         `json:"subCategoryIdEn"`
+	SubCategoryNameEn string        `json:"subCategoryNameEn"`
+	SCategories       []SCategoryEn `json:"sCategories"`
+}
 type ProductEn struct {
 	ProductEnID   int32  `json:"productEnId"`
 	ProductNameEn string `json:"productNameEn"`
@@ -95,15 +100,15 @@ type ProductEn struct {
 }
 
 type SubCategoryWithProductsMn struct {
-	SubCategoryIDMn   int32       `json:"SubCategoryIDMn"`
-	SubCategoryNameMn string      `json:"subCategoryNameMn"`
-	Products          []ProductMn `json:"products"`
+	SubCategoryIDMn   int32         `json:"SubCategoryIDMn"`
+	SubCategoryNameMn string        `json:"subCategoryNameMn"`
+	SCategories       []SCategoryMn `json:"sCategories"`
 }
 
 type CategoryWithSubCategoriesAndProductsMn struct {
-	CategoryMnID    int32                       `json:"cateogoryMnId"`
+	CategoryMnID    int32                       `json:"categoryMnId"`
 	CategoryNameMn  string                      `json:"categoryNameMn"`
-	SubCategoriesMn []SubCategoryWithProductsMn `json:"subCategoriesMn'`
+	SubCategoriesMn []SubCategoryWithProductsMn `json:"subCategoriesMn"`
 }
 
 type ProductMn struct {

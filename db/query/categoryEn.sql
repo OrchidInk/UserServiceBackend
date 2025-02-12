@@ -59,10 +59,13 @@ SELECT
     c."CategoryEnID",
     c."CategoryNameEn",
     sc."SubCategoryIDEn",
-    sc."subCategoryNameEn"
+    sc."subCategoryNameEn",
+    scc."sCategoryIdEn",
+    scc."sCategoryNameEn"
 FROM
     "categoryEn" c
     LEFT JOIN "subCategoryEn" sc ON c."CategoryEnID" = sc."CategoryEnID"
+    LEFT JOIN "sCategoryEn" scc ON scc."SubCategoryIDEn" = sc."SubCategoryIDEn"
 ORDER BY
     c."CategoryEnID";
 
@@ -72,6 +75,8 @@ SELECT
     c."CategoryNameEn",
     sc."SubCategoryIDEn",
     sc."subCategoryNameEn",
+    scc."sCategoryIdEn",
+    scc."sCategoryNameEn",
     p."ProductEnID",
     p."ProductNameEn",
     p."PriceEn",
@@ -80,10 +85,11 @@ SELECT
 FROM
     "categoryEn" c
     LEFT JOIN "subCategoryEn" sc ON c."CategoryEnID" = sc."CategoryEnID"
-    LEFT JOIN "productEn" p ON sc."SubCategoryIDEn" = p."SubCategoryIDEn"
+    LEFT JOIN "sCategoryEn" scc ON scc."SubCategoryIDEn" = sc."SubCategoryIDEn"
+    LEFT JOIN "productEn" p ON scc."sCategoryIdEn" = p."sCategoryIdEn"
 ORDER BY
     c."CategoryEnID",
-    sc."SubCategoryIDEn",
+    scc."sCategoryIdEn",
     p."ProductEnID";
 
 -- name: FindSubCategoriesAndProductsByCategoryIDEn :many
@@ -92,6 +98,8 @@ SELECT
     c."CategoryNameEn",
     sc."SubCategoryIDEn",
     sc."subCategoryNameEn",
+    scc."sCategoryIdEn",
+    scc."sCategoryNameEn",
     p."ProductEnID",
     p."ProductNameEn",
     p."PriceEn",
@@ -100,9 +108,10 @@ SELECT
 FROM
     "categoryEn" c
     LEFT JOIN "subCategoryEn" sc ON c."CategoryEnID" = sc."CategoryEnID"
-    LEFT JOIN "productEn" p ON sc."SubCategoryIDEn" = p."SubCategoryIDEn"
+    LEFT JOIN "sCategoryEn" scc ON scc."SubCategoryIDEn" = sc."SubCategoryIDEn"
+    LEFT JOIN "productEn" p ON scc."sCategoryIdEn" = p."sCategoryIdEn"
 WHERE
     c."CategoryEnID" = sqlc.arg('CategoryEnID')
 ORDER BY
-    sc."SubCategoryIDEn",
+    scc."sCategoryIdEn",
     p."ProductEnID";
