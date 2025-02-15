@@ -115,6 +115,8 @@ func (q *Queries) GetListAllSubCategoriesEn(ctx context.Context) ([]SubCategoryE
 
 const getProductsBySubCategoryEn = `-- name: GetProductsBySubCategoryEn :many
 SELECT
+    scc."sCategoryIdEn",
+    scc."sCategoryNameEn",
     p."ProductEnID",
     p."ProductNameEn",
     p."PriceEn",
@@ -122,21 +124,24 @@ SELECT
     p."ImagesPathEn"
 FROM
     "subCategoryEn" sc
-    JOIN "productEn" p ON sc."SubCategoryIDEn" = p."SubCategoryIDEn"
+    JOIN "sCategoryEn" scc ON scc."SubCategoryIDEn" = sc."SubCategoryIDEn"
+    JOIN "productEn" p ON scc."sCategoryIdEn" = p."sCategoryIdEn"
 WHERE
-    sc."SubCategoryIDEn" = $1
+    scc."sCategoryIdEn" = $1
 `
 
 type GetProductsBySubCategoryEnRow struct {
-	ProductEnID   int32
-	ProductNameEn string
-	PriceEn       string
-	StockQuantity int32
-	ImagesPathEn  string
+	SCategoryIdEn   int32
+	SCategoryNameEn string
+	ProductEnID     int32
+	ProductNameEn   string
+	PriceEn         string
+	StockQuantity   int32
+	ImagesPathEn    string
 }
 
-func (q *Queries) GetProductsBySubCategoryEn(ctx context.Context, subcategoryiden int32) ([]GetProductsBySubCategoryEnRow, error) {
-	rows, err := q.db.QueryContext(ctx, getProductsBySubCategoryEn, subcategoryiden)
+func (q *Queries) GetProductsBySubCategoryEn(ctx context.Context, scategoryiden int32) ([]GetProductsBySubCategoryEnRow, error) {
+	rows, err := q.db.QueryContext(ctx, getProductsBySubCategoryEn, scategoryiden)
 	if err != nil {
 		return nil, err
 	}
@@ -145,6 +150,8 @@ func (q *Queries) GetProductsBySubCategoryEn(ctx context.Context, subcategoryide
 	for rows.Next() {
 		var i GetProductsBySubCategoryEnRow
 		if err := rows.Scan(
+			&i.SCategoryIdEn,
+			&i.SCategoryNameEn,
 			&i.ProductEnID,
 			&i.ProductNameEn,
 			&i.PriceEn,

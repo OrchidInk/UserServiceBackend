@@ -5,6 +5,7 @@ import (
 	"strconv"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/shopspring/decimal"
 	db "orchid.admin.service/db/sqlc"
 	"orchid.admin.service/models"
 )
@@ -18,6 +19,16 @@ func (hd *Handlers) CreateOrderItem(ctx *fiber.Ctx) error {
 		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"err": "Invalid request body"})
 	}
 
+	price, err := decimal.NewFromString(request.PriceAtOrder)
+	if err != nil {
+		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"err": err})
+	}
+	if price.Exponent() < -2 || price.GreaterThan(decimal.NewFromInt(9999999999)) {
+		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": "Price exceeds allowed range (maximum: 9999999999.99)",
+		})
+	}
+
 	orderItem, err := queries.CreateOrderItem(ctx.Context(), db.CreateOrderItemParams{
 		CustomerOrderID: request.CustomerOrderID,
 		ProductMnID:     request.ProductMnID,
@@ -25,7 +36,7 @@ func (hd *Handlers) CreateOrderItem(ctx *fiber.Ctx) error {
 		UserId:          request.UserId,
 		PhoneNumber:     request.PhoneNumber,
 		Quantity:        request.Quantity,
-		PriceAtOrder:    request.PriceAtOrder,
+		PriceAtOrder:    price.String(),
 	})
 	if err != nil {
 		slog.Error("Unable to create order item", slog.Any("err", err))

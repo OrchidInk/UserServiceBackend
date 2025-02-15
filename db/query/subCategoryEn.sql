@@ -53,6 +53,8 @@ LIMIT
 
 -- name: GetProductsBySubCategoryEn :many
 SELECT
+    scc."sCategoryIdEn",
+    scc."sCategoryNameEn",
     p."ProductEnID",
     p."ProductNameEn",
     p."PriceEn",
@@ -60,9 +62,10 @@ SELECT
     p."ImagesPathEn"
 FROM
     "subCategoryEn" sc
-    JOIN "productEn" p ON sc."SubCategoryIDEn" = p."SubCategoryIDEn"
+    JOIN "sCategoryEn" scc ON scc."SubCategoryIDEn" = sc."SubCategoryIDEn"
+    JOIN "productEn" p ON scc."sCategoryIdEn" = p."sCategoryIdEn"
 WHERE
-    sc."SubCategoryIDEn" = sqlc.arg('SubCategoryIDEn');
+    scc."sCategoryIdEn" = sqlc.arg('sCategoryIdEn');
 
 -- name: UpdateSubCategoryByIDEn :one
 UPDATE
