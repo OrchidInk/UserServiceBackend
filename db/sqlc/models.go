@@ -73,9 +73,9 @@ type Deliveryaddress struct {
 
 type OrderItem struct {
 	OrderItemId     int32
-	CustomerOrderId int32
-	ProductMnID     int32
-	ProductEnID     int32
+	CustomerOrderId sql.NullInt32
+	ProductMnID     sql.NullInt32
+	ProductEnID     sql.NullInt32
 	UserId          int32
 	PhoneNumber     string
 	Quantity        int32

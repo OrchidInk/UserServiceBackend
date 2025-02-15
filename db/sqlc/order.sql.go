@@ -7,6 +7,7 @@ package db
 
 import (
 	"context"
+	"database/sql"
 )
 
 const countActiveCustomersOrder = `-- name: CountActiveCustomersOrder :one
@@ -76,9 +77,9 @@ INSERT INTO "OrderItems" (
 `
 
 type CreateOrderItemParams struct {
-	CustomerOrderID int32
-	ProductMnID     int32
-	ProductEnID     int32
+	CustomerOrderID sql.NullInt32
+	ProductMnID     sql.NullInt32
+	ProductEnID     sql.NullInt32
 	UserId          int32
 	PhoneNumber     string
 	Quantity        int32
@@ -210,7 +211,7 @@ FROM "OrderItems"
 WHERE "CustomerOrderId" = $1
 `
 
-func (q *Queries) GetOrderItemsByCustomerOrderID(ctx context.Context, customerorderid int32) ([]OrderItem, error) {
+func (q *Queries) GetOrderItemsByCustomerOrderID(ctx context.Context, customerorderid sql.NullInt32) ([]OrderItem, error) {
 	rows, err := q.db.QueryContext(ctx, getOrderItemsByCustomerOrderID, customerorderid)
 	if err != nil {
 		return nil, err
