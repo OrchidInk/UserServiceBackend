@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"database/sql"
 	"log/slog"
 	"strconv"
 
@@ -30,9 +31,9 @@ func (hd *Handlers) CreateOrderItem(ctx *fiber.Ctx) error {
 	}
 
 	orderItem, err := queries.CreateOrderItem(ctx.Context(), db.CreateOrderItemParams{
-		CustomerOrderID: request.CustomerOrderID,
-		ProductMnID:     request.ProductMnID,
-		ProductEnID:     request.ProductEnID,
+		CustomerOrderID: sql.NullInt32{Int32: request.CustomerOrderID, Valid: request.CustomerOrderID != 0},
+		ProductMnID:     sql.NullInt32{Int32: request.ProductMnID, Valid: request.ProductMnID != 0},
+		ProductEnID:     sql.NullInt32{Int32: request.ProductEnID, Valid: request.ProductEnID != 0},
 		UserId:          request.UserId,
 		PhoneNumber:     request.PhoneNumber,
 		Quantity:        request.Quantity,
@@ -56,7 +57,11 @@ func (hd *Handlers) GetOrderItemsByCustomerOrderID(ctx *fiber.Ctx) error {
 		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"err": "Invalid customer order ID"})
 	}
 
-	orderItems, err := queries.GetOrderItemsByCustomerOrderID(ctx.Context(), int32(customerOrderID))
+	// Wrap the customerOrderID in a sql.NullInt32.
+	orderItems, err := queries.GetOrderItemsByCustomerOrderID(ctx.Context(), sql.NullInt32{
+		Int32: int32(customerOrderID),
+		Valid: customerOrderID != 0,
+	})
 	if err != nil {
 		slog.Error("Unable to fetch order items", slog.Any("err", err))
 		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"err": "Failed to fetch order items"})
