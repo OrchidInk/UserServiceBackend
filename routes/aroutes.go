@@ -115,7 +115,7 @@ func superAdminRoutes(app *fiber.App, hd *handlers.Handlers) {
 
 	order := api.Group("/order")
 	order.Post("/create", hd.CreateOrderItem)
-	order.Get("/list", hd.GetOrderItemsByCustomerOrderID)
+	order.Get("/list", hd.GetListOrder)
 	order.Patch("/update/:id", hd.UpdateOrderItem)
 	order.Delete("/delete/:orderItemId", hd.DeleteOrderItem)
 

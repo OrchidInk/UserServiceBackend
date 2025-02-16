@@ -205,6 +205,45 @@ func (q *Queries) GetDeliveriesByUserId(ctx context.Context, customerid int32) (
 	return items, nil
 }
 
+const getListAll = `-- name: GetListAll :many
+SELECT
+    "OrderItemId", "CustomerOrderId", "ProductMnID", "ProductEnID", "UserId", "PhoneNumber", "Quantity", "PriceAtOrder"
+FROM
+    "OrderItems"
+`
+
+func (q *Queries) GetListAll(ctx context.Context) ([]OrderItem, error) {
+	rows, err := q.db.QueryContext(ctx, getListAll)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []OrderItem
+	for rows.Next() {
+		var i OrderItem
+		if err := rows.Scan(
+			&i.OrderItemId,
+			&i.CustomerOrderId,
+			&i.ProductMnID,
+			&i.ProductEnID,
+			&i.UserId,
+			&i.PhoneNumber,
+			&i.Quantity,
+			&i.PriceAtOrder,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const getOrderItemsByCustomerOrderID = `-- name: GetOrderItemsByCustomerOrderID :many
 SELECT "OrderItemId", "CustomerOrderId", "ProductMnID", "ProductEnID", "UserId", "PhoneNumber", "Quantity", "PriceAtOrder"
 FROM "OrderItems"

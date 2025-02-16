@@ -120,3 +120,14 @@ func (hd *Handlers) DeleteOrderItem(ctx *fiber.Ctx) error {
 
 	return ctx.Status(fiber.StatusOK).JSON(fiber.Map{"message": "Order item deleted successfully"})
 }
+
+func (hd *Handlers) GetListOrder(ctx *fiber.Ctx) error {
+	queries, _, _ := hd.queries()
+
+	getListOrder, err := queries.GetListAll(ctx.Context())
+	if err != nil {
+		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"err": err})
+	}
+
+	return ctx.Status(fiber.StatusOK).JSON(getListOrder)
+}

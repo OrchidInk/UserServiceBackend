@@ -22,6 +22,12 @@ SELECT *
 FROM "OrderItems"
 WHERE "CustomerOrderId" = sqlc.arg('CustomerOrderID');
 
+-- name: GetListAll :many
+SELECT
+    *
+FROM
+    "OrderItems";
+
 -- name: UpdateOrderItem :one
 UPDATE "OrderItems"
 SET "Quantity" = sqlc.arg('Quantity'),
