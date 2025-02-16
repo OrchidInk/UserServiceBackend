@@ -689,3 +689,52 @@ func (q *Queries) UpdateProductMnSubCategory(ctx context.Context, arg UpdateProd
 	)
 	return i, err
 }
+
+const updateSProductMn = `-- name: UpdateSProductMn :one
+UPDATE
+    "productMn"
+SET
+    "StockQuantity" = $1
+WHERE
+    "ProductMnID" = $2 RETURNING "ProductMnID", "ProductNameMn", "sCategoryIdMn", "PriceMn", "StockQuantity", "ImagesPathMn", "DescriptionMn", "BrandMn", "ManufacturedCountryMn", "ColorMn", "SizeMn", "PenOutputMn", "FeaturesMn", "MaterialMn", "StapleSizeMn", "CapacityMn", "WeightMn", "ThicknessMn", "PackagingMn", "UsageMn", "InstructionsMn", "ProductCodeMn", "CostPriceMn", "RetailPriceMn", "WarehouseStockMn", "Created_At", "Updated_At"
+`
+
+type UpdateSProductMnParams struct {
+	StockQuantity int32
+	ProductMnID   int32
+}
+
+func (q *Queries) UpdateSProductMn(ctx context.Context, arg UpdateSProductMnParams) (ProductMn, error) {
+	row := q.db.QueryRowContext(ctx, updateSProductMn, arg.StockQuantity, arg.ProductMnID)
+	var i ProductMn
+	err := row.Scan(
+		&i.ProductMnID,
+		&i.ProductNameMn,
+		&i.SCategoryIdMn,
+		&i.PriceMn,
+		&i.StockQuantity,
+		&i.ImagesPathMn,
+		&i.DescriptionMn,
+		&i.BrandMn,
+		&i.ManufacturedCountryMn,
+		&i.ColorMn,
+		&i.SizeMn,
+		&i.PenOutputMn,
+		&i.FeaturesMn,
+		&i.MaterialMn,
+		&i.StapleSizeMn,
+		&i.CapacityMn,
+		&i.WeightMn,
+		&i.ThicknessMn,
+		&i.PackagingMn,
+		&i.UsageMn,
+		&i.InstructionsMn,
+		&i.ProductCodeMn,
+		&i.CostPriceMn,
+		&i.RetailPriceMn,
+		&i.WarehouseStockMn,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+	)
+	return i, err
+}

@@ -394,6 +394,69 @@ func (hd *Handlers) UpdateProductMn(ctx *fiber.Ctx) error {
 	return ctx.Status(fiber.StatusOK).JSON(UpdatedProduct)
 }
 
+func (hd *Handlers) UpdateSProductEn(ctx *fiber.Ctx) error {
+	queries, _, _ := hd.queries()
+	ProductEnIdStr := ctx.Params("id")
+	ProductEnId, err := strconv.Atoi(ProductEnIdStr)
+	if err != nil {
+		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"err": "cannot parse id"})
+	}
+
+	var rqst models.UpdateSProductEn
+	if err := ctx.BodyParser(&rqst); err != nil {
+		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"err": "cannot parse "})
+	}
+
+	_, err = queries.FindByProductIdEn(ctx.Context(), int32(ProductEnId))
+	if err != nil {
+		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"err": "Product not found"})
+	}
+
+	updatedSProduct, err := queries.UpdateSProductEn(ctx.Context(), db.UpdateSProductEnParams{
+		StockQuantity: rqst.StockQuantity,
+		ProductEnID:   int32(ProductEnId),
+	})
+	if err != nil {
+		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"Err": "Cannot update product stock quantity"})
+	}
+
+	return ctx.Status(fiber.StatusOK).JSON(fiber.Map{
+		"msgg":          "successfully",
+		"Updated Stock": updatedSProduct.StockQuantity,
+		"ProductEnID":   updatedSProduct.ProductEnID,
+	})
+}
+
+func (hd *Handlers) UpdateSProductMn(ctx *fiber.Ctx) error {
+	queries, _, _ := hd.queries()
+	ProductMnIdStr := ctx.Params("id")
+	ProductMnId, err := strconv.Atoi(ProductMnIdStr)
+	if err != nil {
+		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"Err": "Cannot parse id"})
+	}
+
+	var rqst models.UpdateSProductMn
+	if err := ctx.BodyParser(&rqst); err != nil {
+		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"err": "parse error"})
+	}
+
+	_, err = queries.FindByProductIdMn(ctx.Context(), int32(ProductMnId))
+	if err != nil {
+		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"Err": "not found"})
+	}
+
+	updatedSPRoductMn, err := queries.UpdateSProductMn(ctx.Context(), db.UpdateSProductMnParams{StockQuantity: rqst.StockQuantity, ProductMnID: int32(ProductMnId)})
+	if err != nil {
+		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"err": err})
+	}
+
+	return ctx.Status(fiber.StatusOK).JSON(fiber.Map{
+		"Msgg":          "successfully",
+		"Updated Stock": updatedSPRoductMn.StockQuantity,
+		"productId":     ProductMnId,
+	})
+}
+
 // func (hd *Handlers) GetProductWithDetailsEn(ctx *fiber.Ctx) error {
 // 	queries, _, _ := hd.queries()
 

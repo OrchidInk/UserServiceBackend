@@ -124,7 +124,13 @@ SET
     "sCategoryIdMn" = sqlc.arg('sCategoryIdMn')
 WHERE
     "ProductMnID" = sqlc.arg('ProductMnID') RETURNING *;
-
+-- name: UpdateSProductMn :one
+UPDATE
+    "productMn"
+SET
+    "StockQuantity" = sqlc.arg('StockQuantity')
+WHERE
+    "ProductMnID" = sqlc.arg('ProductMnID') RETURNING *;
 
 -- name: UpdateProductMn :one
 UPDATE
