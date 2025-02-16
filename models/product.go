@@ -59,6 +59,15 @@ type UpdateProductEnPriceRequest struct {
 	PriceEn     string `json:"priceEn" validate:"required"`
 }
 
+type UpdateSProductEn struct {
+	ProductEnID   int32 `json:"productEnId" validate:"required"`
+	StockQuantity int32 `json:"stockQuantity" validate:"required"`
+}
+
+type UpdateSProductMn struct {
+	ProductMnID   int32 `json:"productMnId" validate:"required"`
+	StockQuantity int32 `json:"stockQuantity" validate:"required"`
+}
 type UpdateProductEnStockRequest struct {
 	ProductEnID   int32 `json:"productEnId" validate:"required"`
 	StockQuantity int32 `json:"stockQuantity" validate:"required"`

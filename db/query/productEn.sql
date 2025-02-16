@@ -125,7 +125,13 @@ SET
 WHERE
     "ProductEnID" = sqlc.arg('ProductEnID') RETURNING *;
 
-
+-- name: UpdateSProductEn :one
+UPDATE
+    "productEn"
+SET
+    "StockQuantity" = sqlc.arg('StockQuantity')
+WHERE
+    "ProductEnID" = sqlc.arg('ProductEnID') RETURNING *;
 -- name: UpdateProductEn :one
 UPDATE 
     "productEn"
