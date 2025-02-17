@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"log/slog"
 	"strconv"
+	"time"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/shopspring/decimal"
@@ -38,6 +39,7 @@ func (hd *Handlers) CreateOrderItem(ctx *fiber.Ctx) error {
 		PhoneNumber:     request.PhoneNumber,
 		Quantity:        request.Quantity,
 		PriceAtOrder:    price.String(),
+		CreatedAt:       sql.NullTime{Time: time.Now().UTC(), Valid: true},
 	})
 	if err != nil {
 		slog.Error("Unable to create order item", slog.Any("err", err))

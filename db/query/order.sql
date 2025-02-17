@@ -6,7 +6,8 @@ INSERT INTO "OrderItems" (
     "UserId",
     "PhoneNumber",
     "Quantity",
-    "PriceAtOrder"
+    "PriceAtOrder",
+    "CreatedAt"
 ) VALUES (
     sqlc.arg('CustomerOrderID'),
     sqlc.arg('ProductMnID'),
@@ -14,7 +15,8 @@ INSERT INTO "OrderItems" (
     sqlc.arg('UserId'),
     sqlc.arg('PhoneNumber'),
     sqlc.arg('Quantity'),
-    sqlc.arg('PriceAtOrder')
+    sqlc.arg('PriceAtOrder'),
+    sqlc.arg('CreatedAt')
 ) RETURNING *;
 
 -- name: GetOrderItemsByCustomerOrderID :many

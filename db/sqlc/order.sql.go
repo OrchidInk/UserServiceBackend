@@ -64,7 +64,8 @@ INSERT INTO "OrderItems" (
     "UserId",
     "PhoneNumber",
     "Quantity",
-    "PriceAtOrder"
+    "PriceAtOrder",
+    "CreatedAt"
 ) VALUES (
     $1,
     $2,
@@ -72,7 +73,8 @@ INSERT INTO "OrderItems" (
     $4,
     $5,
     $6,
-    $7
+    $7,
+    $8
 ) RETURNING "OrderItemId", "CustomerOrderId", "ProductMnID", "ProductEnID", "UserId", "PhoneNumber", "Quantity", "PriceAtOrder", "CreatedAt"
 `
 
@@ -84,6 +86,7 @@ type CreateOrderItemParams struct {
 	PhoneNumber     string
 	Quantity        int32
 	PriceAtOrder    string
+	CreatedAt       sql.NullTime
 }
 
 func (q *Queries) CreateOrderItem(ctx context.Context, arg CreateOrderItemParams) (OrderItem, error) {
@@ -95,6 +98,7 @@ func (q *Queries) CreateOrderItem(ctx context.Context, arg CreateOrderItemParams
 		arg.PhoneNumber,
 		arg.Quantity,
 		arg.PriceAtOrder,
+		arg.CreatedAt,
 	)
 	var i OrderItem
 	err := row.Scan(
