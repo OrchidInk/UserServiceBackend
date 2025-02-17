@@ -73,7 +73,7 @@ INSERT INTO "OrderItems" (
     $5,
     $6,
     $7
-) RETURNING "OrderItemId", "CustomerOrderId", "ProductMnID", "ProductEnID", "UserId", "PhoneNumber", "Quantity", "PriceAtOrder"
+) RETURNING "OrderItemId", "CustomerOrderId", "ProductMnID", "ProductEnID", "UserId", "PhoneNumber", "Quantity", "PriceAtOrder", "CreatedAt"
 `
 
 type CreateOrderItemParams struct {
@@ -106,6 +106,7 @@ func (q *Queries) CreateOrderItem(ctx context.Context, arg CreateOrderItemParams
 		&i.PhoneNumber,
 		&i.Quantity,
 		&i.PriceAtOrder,
+		&i.CreatedAt,
 	)
 	return i, err
 }
@@ -122,7 +123,7 @@ func (q *Queries) DeleteOrderItem(ctx context.Context, orderitemid int32) error 
 
 const findByOrderItemsId = `-- name: FindByOrderItemsId :one
 SELECT
-    "OrderItemId", "CustomerOrderId", "ProductMnID", "ProductEnID", "UserId", "PhoneNumber", "Quantity", "PriceAtOrder"
+    "OrderItemId", "CustomerOrderId", "ProductMnID", "ProductEnID", "UserId", "PhoneNumber", "Quantity", "PriceAtOrder", "CreatedAt"
 FROM
     "OrderItems"
 WHERE
@@ -141,6 +142,7 @@ func (q *Queries) FindByOrderItemsId(ctx context.Context, orderitemid int32) (Or
 		&i.PhoneNumber,
 		&i.Quantity,
 		&i.PriceAtOrder,
+		&i.CreatedAt,
 	)
 	return i, err
 }
@@ -207,7 +209,7 @@ func (q *Queries) GetDeliveriesByUserId(ctx context.Context, customerid int32) (
 
 const getListAll = `-- name: GetListAll :many
 SELECT
-    "OrderItemId", "CustomerOrderId", "ProductMnID", "ProductEnID", "UserId", "PhoneNumber", "Quantity", "PriceAtOrder"
+    "OrderItemId", "CustomerOrderId", "ProductMnID", "ProductEnID", "UserId", "PhoneNumber", "Quantity", "PriceAtOrder", "CreatedAt"
 FROM
     "OrderItems"
 `
@@ -230,6 +232,7 @@ func (q *Queries) GetListAll(ctx context.Context) ([]OrderItem, error) {
 			&i.PhoneNumber,
 			&i.Quantity,
 			&i.PriceAtOrder,
+			&i.CreatedAt,
 		); err != nil {
 			return nil, err
 		}
@@ -245,7 +248,7 @@ func (q *Queries) GetListAll(ctx context.Context) ([]OrderItem, error) {
 }
 
 const getOrderItemsByCustomerOrderID = `-- name: GetOrderItemsByCustomerOrderID :many
-SELECT "OrderItemId", "CustomerOrderId", "ProductMnID", "ProductEnID", "UserId", "PhoneNumber", "Quantity", "PriceAtOrder"
+SELECT "OrderItemId", "CustomerOrderId", "ProductMnID", "ProductEnID", "UserId", "PhoneNumber", "Quantity", "PriceAtOrder", "CreatedAt"
 FROM "OrderItems"
 WHERE "CustomerOrderId" = $1
 `
@@ -268,6 +271,7 @@ func (q *Queries) GetOrderItemsByCustomerOrderID(ctx context.Context, customeror
 			&i.PhoneNumber,
 			&i.Quantity,
 			&i.PriceAtOrder,
+			&i.CreatedAt,
 		); err != nil {
 			return nil, err
 		}
@@ -286,7 +290,7 @@ const updateOrderItem = `-- name: UpdateOrderItem :one
 UPDATE "OrderItems"
 SET "Quantity" = $1,
     "PriceAtOrder" = $2
-WHERE "OrderItemId" = $3 RETURNING "OrderItemId", "CustomerOrderId", "ProductMnID", "ProductEnID", "UserId", "PhoneNumber", "Quantity", "PriceAtOrder"
+WHERE "OrderItemId" = $3 RETURNING "OrderItemId", "CustomerOrderId", "ProductMnID", "ProductEnID", "UserId", "PhoneNumber", "Quantity", "PriceAtOrder", "CreatedAt"
 `
 
 type UpdateOrderItemParams struct {
@@ -307,6 +311,7 @@ func (q *Queries) UpdateOrderItem(ctx context.Context, arg UpdateOrderItemParams
 		&i.PhoneNumber,
 		&i.Quantity,
 		&i.PriceAtOrder,
+		&i.CreatedAt,
 	)
 	return i, err
 }
