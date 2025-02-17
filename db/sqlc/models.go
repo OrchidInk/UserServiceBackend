@@ -80,6 +80,7 @@ type OrderItem struct {
 	PhoneNumber     string
 	Quantity        int32
 	PriceAtOrder    string
+	CreatedAt       sql.NullTime
 }
 
 type Payment struct {

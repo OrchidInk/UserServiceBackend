@@ -10,6 +10,7 @@ CREATE TABLE "OrderItems" (
     "PhoneNumber" varchar(100) not NULL,
     "Quantity" INT NOT NULL,
     "PriceAtOrder" DECIMAL(10, 2) NOT NULL,
+    "CreatedAt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY ("ProductMnID") REFERENCES "productMn" ("ProductMnID") ON DELETE CASCADE,
     FOREIGN KEY ("ProductEnID") REFERENCES "productEn" ("ProductEnID") ON DELETE CASCADE,
     FOREIGN KEY ("UserId") REFERENCES "User" ("ID") ON DELETE CASCADE
