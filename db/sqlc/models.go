@@ -34,6 +34,11 @@ type CategoryMn struct {
 	CategoryNameMn string
 }
 
+type Color struct {
+	ColorId int32
+	Color   string
+}
+
 type Customer struct {
 	CustomerId        int32
 	CustomerName      string
@@ -59,16 +64,6 @@ type Delivery struct {
 	OrderId        int32
 	DeliveryAmount string
 	CreatedAt      sql.NullTime
-}
-
-type Deliveryaddress struct {
-	AddressId  int32
-	DeliverId  int32
-	Street     string
-	City       string
-	State      sql.NullString
-	PostalCode string
-	CreatedAt  sql.NullTime
 }
 
 type OrderItem struct {
@@ -104,8 +99,8 @@ type ProductEn struct {
 	DescriptionEn         string
 	BrandEn               string
 	ManufacturedCountryEn string
-	ColorEn               string
-	SizeEn                string
+	ColorId               int32
+	SizeId                int32
 	PenOutputEn           string
 	FeaturesEn            string
 	MaterialEn            string
@@ -140,8 +135,8 @@ type ProductMn struct {
 	DescriptionMn         string
 	BrandMn               string
 	ManufacturedCountryMn string
-	ColorMn               string
-	SizeMn                string
+	ColorId               int32
+	SizeId                int32
 	PenOutputMn           string
 	FeaturesMn            string
 	MaterialMn            string
@@ -160,16 +155,6 @@ type ProductMn struct {
 	UpdatedAt             sql.NullTime
 }
 
-type ProductReview struct {
-	ReviewID    int32
-	ProductMnID int32
-	ProductEnID int32
-	UserID      sql.NullInt32
-	Rating      sql.NullInt32
-	ReviewText  sql.NullString
-	CreatedAt   sql.NullTime
-}
-
 type SCategoryEn struct {
 	SCategoryIdEn   int32
 	SCategoryNameEn string
@@ -180,6 +165,11 @@ type SCategoryMn struct {
 	SCategoryIdMn   int32
 	SCategoryNameMn string
 	SubCategoryIDMn int32
+}
+
+type Size struct {
+	SizeId int32
+	Size   string
 }
 
 type SubCategoryEn struct {

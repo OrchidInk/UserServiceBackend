@@ -9,8 +9,8 @@ type CreateProductEnRequest struct {
 	DescriptionEn         string `json:"descriptionEn" validate:"required"`
 	BrandEn               string `json:"brandEn"`
 	ManufacturedCountryEn string `json:"manufacturedCountryEn"`
-	ColorEn               string `json:"colorEn"`
-	SizeEn                string `json:"sizeEn"`
+	ColorId               int32  `json:"colorId"`
+	SizeId                int32  `json:"sizeId"`
 	PenOutputEn           string `json:"penOutputEn"`
 	FeaturesEn            string `json:"featuresEn"`
 	MaterialEn            string `json:"materialEn"`
@@ -36,8 +36,8 @@ type CreateProductMnRequest struct {
 	DescriptionMn         string `json:"descriptionMn" validate:"required"`
 	BrandMn               string `json:"brandMn"`
 	ManufacturedCountryMn string `json:"manufacturedCountryMn"`
-	ColorMn               string `json:"colorMn"`
-	SizeMn                string `json:"sizeMn"`
+	ColorId               int32  `json:"colorId"`
+	SizeId                int32  `json:"sizeId"`
 	PenOutputMn           string `json:"penOutputMn"`
 	FeaturesMn            string `json:"featuresMn"`
 	MaterialMn            string `json:"materialMn"`

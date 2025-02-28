@@ -89,6 +89,10 @@ func superAdminRoutes(app *fiber.App, hd *handlers.Handlers) {
 	product.Delete("/deleteEn/:id", hd.DeleteProductEn)
 	product.Delete("/deleteMn/:id", hd.DeleteProductMn)
 
+	// Color
+	color := api.Group("/color")
+	color.Post("/create", hd.CreateColor)
+
 	// Product With Category and subCategory
 
 	//Banner

@@ -11,8 +11,8 @@ CREATE TABLE "productEn" (
     "DescriptionEn" TEXT NOT NULL DEFAULT '',
     "BrandEn" TEXT NOT NULL DEFAULT '',
     "ManufacturedCountryEn" TEXT NOT NULL DEFAULT '',
-    "ColorEn" TEXT NOT NULL DEFAULT '',
-    "SizeEn" TEXT NOT NULL DEFAULT '',
+    "ColorId" INT NOT NULL DEFAULT 0,
+    "SizeId" INT NOT NULL DEFAULT 0,
     "PenOutputEn" TEXT NOT NULL DEFAULT '',
     "FeaturesEn" TEXT NOT NULL DEFAULT '',
     "MaterialEn" TEXT NOT NULL DEFAULT '',
@@ -31,7 +31,9 @@ CREATE TABLE "productEn" (
     "Updated_At" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT "FK_Product_sCategoryIDEn" 
         FOREIGN KEY ("sCategoryIdEn")
-        REFERENCES "sCategoryEn" ("sCategoryIdEn") ON DELETE CASCADE
+        REFERENCES "sCategoryEn" ("sCategoryIdEn") ON DELETE CASCADE,
+    CONSTRAINT "FK_Product_ColorId" FOREIGN KEY ("ColorId") REFERENCES "Color" ("ColorId") ON DELETE CASCADE,
+    CONSTRAINT "FK_Product_Size" FOREIGN KEY ("SizeId") REFERENCES "Size" ("SizeId") ON DELETE CASCADE
 ) TABLESPACE pg_default;
 
 COMMIT;
