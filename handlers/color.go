@@ -83,3 +83,20 @@ func (hd *Handlers) DeleteColor(ctx *fiber.Ctx) error {
 		"ColorId":             colorId,
 	})
 }
+
+func (hd *Handlers) FindColorId(ctx *fiber.Ctx) error {
+	queries, _, _ := hd.queries()
+
+	colorIdStr := ctx.Params("id")
+	colorId, err := strconv.Atoi(colorIdStr)
+	if err != nil {
+		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"err": err})
+	}
+
+	colorIds, err := queries.FindByColorId(ctx.Context(), int32(colorId))
+	if err != nil {
+		return ctx.Status(fiber.StatusNotFound).JSON(fiber.Map{"err": err})
+	}
+
+	return ctx.Status(fiber.StatusOK).JSON(colorIds)
+}

@@ -94,3 +94,22 @@ func (hd *Handlers) GetAllSize(ctx *fiber.Ctx) error {
 
 	return ctx.Status(fiber.StatusOK).JSON(size)
 }
+
+func (hd *Handlers) FindSizeId(ctx *fiber.Ctx) error {
+	queries, _, _ := hd.queries()
+
+	sizeIDSTR := ctx.Params("id")
+	sizeId, err := strconv.Atoi(sizeIDSTR)
+	if err != nil {
+		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"err": err,
+		})
+	}
+
+	sizeIds, err := queries.FindByIdSize(ctx.Context(), int32(sizeId))
+	if err != nil {
+		return ctx.Status(fiber.StatusNotFound).JSON(fiber.Map{"err": err})
+	}
+
+	return ctx.Status(fiber.StatusOK).JSON(sizeIds)
+}
