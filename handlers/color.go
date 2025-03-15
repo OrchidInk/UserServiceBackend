@@ -100,3 +100,16 @@ func (hd *Handlers) FindColorId(ctx *fiber.Ctx) error {
 
 	return ctx.Status(fiber.StatusOK).JSON(colorIds)
 }
+
+func (hd *Handlers) GetColor(ctx *fiber.Ctx) error {
+	queries, _, _ := hd.queries()
+
+	colors, err := queries.GetAllColor(ctx.Context())
+	if err != nil {
+		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"Successfully": "false",
+		})
+	}
+
+	return ctx.Status(fiber.StatusOK).JSON(colors)
+}

@@ -92,6 +92,7 @@ func superAdminRoutes(app *fiber.App, hd *handlers.Handlers) {
 	// Color
 	color := api.Group("/color")
 	color.Get("/list/:id", hd.FindColorId)
+	color.Get("/list", hd.GetColor)
 	color.Post("/create", hd.CreateColor)
 	color.Patch("/update/:id", hd.UpdateColor)
 	color.Delete("/delete/:id", hd.DeleteColor)
