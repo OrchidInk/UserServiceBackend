@@ -32,6 +32,22 @@ func (q *Queries) DeleteSize(ctx context.Context, sizeid int32) error {
 	return err
 }
 
+const findByIdSize = `-- name: FindByIdSize :one
+SELECT
+    "SizeId", "Size"
+FROM
+    "Size"
+WHERE
+    "SizeId" = $1
+`
+
+func (q *Queries) FindByIdSize(ctx context.Context, sizeid int32) (Size, error) {
+	row := q.db.QueryRowContext(ctx, findByIdSize, sizeid)
+	var i Size
+	err := row.Scan(&i.SizeId, &i.Size)
+	return i, err
+}
+
 const getAllSize = `-- name: GetAllSize :many
 SELECT
     "SizeId", "Size"

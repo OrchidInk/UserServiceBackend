@@ -24,3 +24,12 @@ DELETE FROM
     "Color"
 WHERE
     "ColorId" = sqlc.arg('ColorId');
+
+-- name: FindByColorId :one
+SELECT
+    *
+FROM
+    "Color"
+WHERE
+    "ColorId" = sqlc.arg('ColorID')
+limit 1;

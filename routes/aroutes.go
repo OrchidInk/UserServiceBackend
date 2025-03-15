@@ -93,6 +93,13 @@ func superAdminRoutes(app *fiber.App, hd *handlers.Handlers) {
 	color := api.Group("/color")
 	color.Post("/create", hd.CreateColor)
 
+	// Size
+	size := api.Group("/size")
+	size.Post("/create", hd.CreateSize)
+	size.Patch("/update/:id", hd.UpdateSize)
+	size.Delete("/delete/:id", hd.DeleteSize)
+	size.Get("/", hd.GetAllSize)
+
 	// Product With Category and subCategory
 
 	//Banner

@@ -36,6 +36,23 @@ func (q *Queries) DeleteColor(ctx context.Context, colorid int32) error {
 	return err
 }
 
+const findByColorId = `-- name: FindByColorId :one
+SELECT
+    "ColorId", "Color"
+FROM
+    "Color"
+WHERE
+    "ColorId" = $1
+limit 1
+`
+
+func (q *Queries) FindByColorId(ctx context.Context, colorid int32) (Color, error) {
+	row := q.db.QueryRowContext(ctx, findByColorId, colorid)
+	var i Color
+	err := row.Scan(&i.ColorId, &i.Color)
+	return i, err
+}
+
 const getAllColor = `-- name: GetAllColor :many
 SELECT
     "ColorId", "Color"

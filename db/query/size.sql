@@ -20,3 +20,12 @@ DELETE FROM
     "Size"
 WHERE
     "SizeId" = sqlc.arg('SizeId');
+
+
+-- name: FindByIdSize :one
+SELECT
+    *
+FROM
+    "Size"
+WHERE
+    "SizeId" = sqlc.arg('SizeId');
