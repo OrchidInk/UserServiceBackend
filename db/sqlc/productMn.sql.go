@@ -21,8 +21,6 @@ INSERT INTO
         "DescriptionMn",
         "BrandMn",
         "ManufacturedCountryMn",
-        "ColorId",
-        "SizeId",
         "PenOutputMn",
         "FeaturesMn",
         "MaterialMn",
@@ -57,10 +55,8 @@ VALUES
         $17,
         $18,
         $19,
-        $20,
-        $21,
-        $22
-    ) RETURNING "ProductMnID", "ProductNameMn", "sCategoryIdMn", "PriceMn", "StockQuantity", "ImagesPathMn", "DescriptionMn", "BrandMn", "ManufacturedCountryMn", "ColorId", "SizeId", "PenOutputMn", "FeaturesMn", "MaterialMn", "StapleSizeMn", "CapacityMn", "WeightMn", "ThicknessMn", "PackagingMn", "UsageMn", "InstructionsMn", "ProductCodeMn", "CostPriceMn", "RetailPriceMn", "WarehouseStockMn", "Created_At", "Updated_At"
+        $20
+    ) RETURNING "ProductMnID", "ProductNameMn", "sCategoryIdMn", "PriceMn", "StockQuantity", "ImagesPathMn", "DescriptionMn", "BrandMn", "ManufacturedCountryMn", "PenOutputMn", "FeaturesMn", "MaterialMn", "StapleSizeMn", "CapacityMn", "WeightMn", "ThicknessMn", "PackagingMn", "UsageMn", "InstructionsMn", "ProductCodeMn", "CostPriceMn", "RetailPriceMn", "WarehouseStockMn", "Created_At", "Updated_At"
 `
 
 type CreateProductMnParams struct {
@@ -72,8 +68,6 @@ type CreateProductMnParams struct {
 	DescriptionMn         string
 	BrandMn               string
 	ManufacturedCountryMn string
-	ColorId               int32
-	SizeId                int32
 	PenOutputMn           string
 	FeaturesMn            string
 	MaterialMn            string
@@ -98,8 +92,6 @@ func (q *Queries) CreateProductMn(ctx context.Context, arg CreateProductMnParams
 		arg.DescriptionMn,
 		arg.BrandMn,
 		arg.ManufacturedCountryMn,
-		arg.ColorId,
-		arg.SizeId,
 		arg.PenOutputMn,
 		arg.FeaturesMn,
 		arg.MaterialMn,
@@ -124,8 +116,6 @@ func (q *Queries) CreateProductMn(ctx context.Context, arg CreateProductMnParams
 		&i.DescriptionMn,
 		&i.BrandMn,
 		&i.ManufacturedCountryMn,
-		&i.ColorId,
-		&i.SizeId,
 		&i.PenOutputMn,
 		&i.FeaturesMn,
 		&i.MaterialMn,
@@ -153,7 +143,7 @@ SET
     "StockQuantity" = "StockQuantity" - $1
 WHERE
     "ProductMnID" = $2
-    AND "StockQuantity" >= $1 RETURNING "ProductMnID", "ProductNameMn", "sCategoryIdMn", "PriceMn", "StockQuantity", "ImagesPathMn", "DescriptionMn", "BrandMn", "ManufacturedCountryMn", "ColorId", "SizeId", "PenOutputMn", "FeaturesMn", "MaterialMn", "StapleSizeMn", "CapacityMn", "WeightMn", "ThicknessMn", "PackagingMn", "UsageMn", "InstructionsMn", "ProductCodeMn", "CostPriceMn", "RetailPriceMn", "WarehouseStockMn", "Created_At", "Updated_At"
+    AND "StockQuantity" >= $1 RETURNING "ProductMnID", "ProductNameMn", "sCategoryIdMn", "PriceMn", "StockQuantity", "ImagesPathMn", "DescriptionMn", "BrandMn", "ManufacturedCountryMn", "PenOutputMn", "FeaturesMn", "MaterialMn", "StapleSizeMn", "CapacityMn", "WeightMn", "ThicknessMn", "PackagingMn", "UsageMn", "InstructionsMn", "ProductCodeMn", "CostPriceMn", "RetailPriceMn", "WarehouseStockMn", "Created_At", "Updated_At"
 `
 
 type DeductSockQuantityByProductMnIDParams struct {
@@ -174,8 +164,6 @@ func (q *Queries) DeductSockQuantityByProductMnID(ctx context.Context, arg Deduc
 		&i.DescriptionMn,
 		&i.BrandMn,
 		&i.ManufacturedCountryMn,
-		&i.ColorId,
-		&i.SizeId,
 		&i.PenOutputMn,
 		&i.FeaturesMn,
 		&i.MaterialMn,
@@ -210,7 +198,7 @@ func (q *Queries) DeleteByProductMnId(ctx context.Context, productmnid int32) er
 
 const filterByProductMnName = `-- name: FilterByProductMnName :many
 SELECT
-    "ProductMnID", "ProductNameMn", "sCategoryIdMn", "PriceMn", "StockQuantity", "ImagesPathMn", "DescriptionMn", "BrandMn", "ManufacturedCountryMn", "ColorId", "SizeId", "PenOutputMn", "FeaturesMn", "MaterialMn", "StapleSizeMn", "CapacityMn", "WeightMn", "ThicknessMn", "PackagingMn", "UsageMn", "InstructionsMn", "ProductCodeMn", "CostPriceMn", "RetailPriceMn", "WarehouseStockMn", "Created_At", "Updated_At"
+    "ProductMnID", "ProductNameMn", "sCategoryIdMn", "PriceMn", "StockQuantity", "ImagesPathMn", "DescriptionMn", "BrandMn", "ManufacturedCountryMn", "PenOutputMn", "FeaturesMn", "MaterialMn", "StapleSizeMn", "CapacityMn", "WeightMn", "ThicknessMn", "PackagingMn", "UsageMn", "InstructionsMn", "ProductCodeMn", "CostPriceMn", "RetailPriceMn", "WarehouseStockMn", "Created_At", "Updated_At"
 FROM
     "productMn"
 WHERE
@@ -238,8 +226,6 @@ func (q *Queries) FilterByProductMnName(ctx context.Context, productnamemn sql.N
 			&i.DescriptionMn,
 			&i.BrandMn,
 			&i.ManufacturedCountryMn,
-			&i.ColorId,
-			&i.SizeId,
 			&i.PenOutputMn,
 			&i.FeaturesMn,
 			&i.MaterialMn,
@@ -272,7 +258,7 @@ func (q *Queries) FilterByProductMnName(ctx context.Context, productnamemn sql.N
 
 const findByProductIdMn = `-- name: FindByProductIdMn :one
 SELECT
-    "ProductMnID", "ProductNameMn", "sCategoryIdMn", "PriceMn", "StockQuantity", "ImagesPathMn", "DescriptionMn", "BrandMn", "ManufacturedCountryMn", "ColorId", "SizeId", "PenOutputMn", "FeaturesMn", "MaterialMn", "StapleSizeMn", "CapacityMn", "WeightMn", "ThicknessMn", "PackagingMn", "UsageMn", "InstructionsMn", "ProductCodeMn", "CostPriceMn", "RetailPriceMn", "WarehouseStockMn", "Created_At", "Updated_At"
+    "ProductMnID", "ProductNameMn", "sCategoryIdMn", "PriceMn", "StockQuantity", "ImagesPathMn", "DescriptionMn", "BrandMn", "ManufacturedCountryMn", "PenOutputMn", "FeaturesMn", "MaterialMn", "StapleSizeMn", "CapacityMn", "WeightMn", "ThicknessMn", "PackagingMn", "UsageMn", "InstructionsMn", "ProductCodeMn", "CostPriceMn", "RetailPriceMn", "WarehouseStockMn", "Created_At", "Updated_At"
 FROM
     "productMn"
 WHERE
@@ -294,8 +280,6 @@ func (q *Queries) FindByProductIdMn(ctx context.Context, productmnid int32) (Pro
 		&i.DescriptionMn,
 		&i.BrandMn,
 		&i.ManufacturedCountryMn,
-		&i.ColorId,
-		&i.SizeId,
 		&i.PenOutputMn,
 		&i.FeaturesMn,
 		&i.MaterialMn,
@@ -318,7 +302,7 @@ func (q *Queries) FindByProductIdMn(ctx context.Context, productmnid int32) (Pro
 
 const getListProductMn = `-- name: GetListProductMn :many
 SELECT
-    "ProductMnID", "ProductNameMn", "sCategoryIdMn", "PriceMn", "StockQuantity", "ImagesPathMn", "DescriptionMn", "BrandMn", "ManufacturedCountryMn", "ColorId", "SizeId", "PenOutputMn", "FeaturesMn", "MaterialMn", "StapleSizeMn", "CapacityMn", "WeightMn", "ThicknessMn", "PackagingMn", "UsageMn", "InstructionsMn", "ProductCodeMn", "CostPriceMn", "RetailPriceMn", "WarehouseStockMn", "Created_At", "Updated_At"
+    "ProductMnID", "ProductNameMn", "sCategoryIdMn", "PriceMn", "StockQuantity", "ImagesPathMn", "DescriptionMn", "BrandMn", "ManufacturedCountryMn", "PenOutputMn", "FeaturesMn", "MaterialMn", "StapleSizeMn", "CapacityMn", "WeightMn", "ThicknessMn", "PackagingMn", "UsageMn", "InstructionsMn", "ProductCodeMn", "CostPriceMn", "RetailPriceMn", "WarehouseStockMn", "Created_At", "Updated_At"
 FROM
     "productMn"
 ORDER BY
@@ -344,8 +328,6 @@ func (q *Queries) GetListProductMn(ctx context.Context) ([]ProductMn, error) {
 			&i.DescriptionMn,
 			&i.BrandMn,
 			&i.ManufacturedCountryMn,
-			&i.ColorId,
-			&i.SizeId,
 			&i.PenOutputMn,
 			&i.FeaturesMn,
 			&i.MaterialMn,
@@ -376,13 +358,181 @@ func (q *Queries) GetListProductMn(ctx context.Context) ([]ProductMn, error) {
 	return items, nil
 }
 
+const getProductMnWithAllColorsAndSizes = `-- name: GetProductMnWithAllColorsAndSizes :many
+SELECT 
+    p."ProductMnID",
+    p."ProductNameMn",
+    p."sCategoryIdMn",
+    p."PriceMn",
+    p."StockQuantity",
+    p."ImagesPathMn",
+    p."DescriptionMn",
+    p."BrandMn",
+    p."ManufacturedCountryMn",
+    p."PenOutputMn",
+    p."FeaturesMn",
+    p."MaterialMn",
+    p."StapleSizeMn",
+    p."CapacityMn",
+    p."WeightMn",
+    p."ThicknessMn",
+    p."PackagingMn",
+    p."UsageMn",
+    p."InstructionsMn",
+    p."ProductCodeMn",
+    p."CostPriceMn",
+    p."RetailPriceMn",
+    p."WarehouseStockMn",
+    p."Created_At",
+    p."Updated_At",
+
+    COALESCE(
+        ARRAY_AGG(DISTINCT c."ColorId") FILTER (WHERE c."ColorId" IS NOT NULL),
+        '{}'
+    ) AS "ColorIds",
+    COALESCE(
+        ARRAY_AGG(DISTINCT c."Color") FILTER (WHERE c."Color" IS NOT NULL),
+        '{}'
+    ) AS "ColorNames",
+
+    COALESCE(
+        ARRAY_AGG(DISTINCT s."SizeId") FILTER (WHERE s."SizeId" IS NOT NULL),
+        '{}'
+    ) AS "SizeIds",
+    COALESCE(
+        ARRAY_AGG(DISTINCT s."Size") FILTER (WHERE s."Size" IS NOT NULL),
+        '{}'
+    ) AS "SizeNames"
+
+FROM "productMn" p
+LEFT JOIN "productMn_colors" pc ON p."ProductMnID" = pc."ProductMnID"
+LEFT JOIN "productMn_sizes" ps ON p."ProductMnID" = ps."ProductMnID"
+LEFT JOIN "Color" c ON pc."ColorId" = c."ColorId"
+LEFT JOIN "Size" s ON ps."SizeId" = s."SizeId"
+GROUP BY p."ProductMnID"
+`
+
+type GetProductMnWithAllColorsAndSizesRow struct {
+	ProductMnID           int32
+	ProductNameMn         string
+	SCategoryIdMn         int32
+	PriceMn               string
+	StockQuantity         int32
+	ImagesPathMn          string
+	DescriptionMn         string
+	BrandMn               string
+	ManufacturedCountryMn string
+	PenOutputMn           string
+	FeaturesMn            string
+	MaterialMn            string
+	StapleSizeMn          string
+	CapacityMn            string
+	WeightMn              string
+	ThicknessMn           string
+	PackagingMn           string
+	UsageMn               string
+	InstructionsMn        string
+	ProductCodeMn         string
+	CostPriceMn           string
+	RetailPriceMn         string
+	WarehouseStockMn      int32
+	CreatedAt             sql.NullTime
+	UpdatedAt             sql.NullTime
+	ColorIds              interface{}
+	ColorNames            interface{}
+	SizeIds               interface{}
+	SizeNames             interface{}
+}
+
+func (q *Queries) GetProductMnWithAllColorsAndSizes(ctx context.Context) ([]GetProductMnWithAllColorsAndSizesRow, error) {
+	rows, err := q.db.QueryContext(ctx, getProductMnWithAllColorsAndSizes)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []GetProductMnWithAllColorsAndSizesRow
+	for rows.Next() {
+		var i GetProductMnWithAllColorsAndSizesRow
+		if err := rows.Scan(
+			&i.ProductMnID,
+			&i.ProductNameMn,
+			&i.SCategoryIdMn,
+			&i.PriceMn,
+			&i.StockQuantity,
+			&i.ImagesPathMn,
+			&i.DescriptionMn,
+			&i.BrandMn,
+			&i.ManufacturedCountryMn,
+			&i.PenOutputMn,
+			&i.FeaturesMn,
+			&i.MaterialMn,
+			&i.StapleSizeMn,
+			&i.CapacityMn,
+			&i.WeightMn,
+			&i.ThicknessMn,
+			&i.PackagingMn,
+			&i.UsageMn,
+			&i.InstructionsMn,
+			&i.ProductCodeMn,
+			&i.CostPriceMn,
+			&i.RetailPriceMn,
+			&i.WarehouseStockMn,
+			&i.CreatedAt,
+			&i.UpdatedAt,
+			&i.ColorIds,
+			&i.ColorNames,
+			&i.SizeIds,
+			&i.SizeNames,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const insertProductMnColor = `-- name: InsertProductMnColor :exec
+INSERT into "productMn_colors" ("ProductMnID", "ColorId") VALUES ($1, $2)
+`
+
+type InsertProductMnColorParams struct {
+	ProductMnID int32
+	ColorId     int32
+}
+
+func (q *Queries) InsertProductMnColor(ctx context.Context, arg InsertProductMnColorParams) error {
+	_, err := q.db.ExecContext(ctx, insertProductMnColor, arg.ProductMnID, arg.ColorId)
+	return err
+}
+
+const insertProductMnSize = `-- name: InsertProductMnSize :exec
+
+INSERT into "productMn_sizes" ("ProductMnID", "SizeId") VALUES ($1, $2)
+`
+
+type InsertProductMnSizeParams struct {
+	ProductMnID int32
+	SizeId      int32
+}
+
+func (q *Queries) InsertProductMnSize(ctx context.Context, arg InsertProductMnSizeParams) error {
+	_, err := q.db.ExecContext(ctx, insertProductMnSize, arg.ProductMnID, arg.SizeId)
+	return err
+}
+
 const updateByMnImagePath = `-- name: UpdateByMnImagePath :one
 UPDATE
     "productMn"
 SET
     "ImagesPathMn" = $1
 WHERE
-    "ProductMnID" = $2 RETURNING "ProductMnID", "ProductNameMn", "sCategoryIdMn", "PriceMn", "StockQuantity", "ImagesPathMn", "DescriptionMn", "BrandMn", "ManufacturedCountryMn", "ColorId", "SizeId", "PenOutputMn", "FeaturesMn", "MaterialMn", "StapleSizeMn", "CapacityMn", "WeightMn", "ThicknessMn", "PackagingMn", "UsageMn", "InstructionsMn", "ProductCodeMn", "CostPriceMn", "RetailPriceMn", "WarehouseStockMn", "Created_At", "Updated_At"
+    "ProductMnID" = $2 RETURNING "ProductMnID", "ProductNameMn", "sCategoryIdMn", "PriceMn", "StockQuantity", "ImagesPathMn", "DescriptionMn", "BrandMn", "ManufacturedCountryMn", "PenOutputMn", "FeaturesMn", "MaterialMn", "StapleSizeMn", "CapacityMn", "WeightMn", "ThicknessMn", "PackagingMn", "UsageMn", "InstructionsMn", "ProductCodeMn", "CostPriceMn", "RetailPriceMn", "WarehouseStockMn", "Created_At", "Updated_At"
 `
 
 type UpdateByMnImagePathParams struct {
@@ -403,8 +553,6 @@ func (q *Queries) UpdateByMnImagePath(ctx context.Context, arg UpdateByMnImagePa
 		&i.DescriptionMn,
 		&i.BrandMn,
 		&i.ManufacturedCountryMn,
-		&i.ColorId,
-		&i.SizeId,
 		&i.PenOutputMn,
 		&i.FeaturesMn,
 		&i.MaterialMn,
@@ -431,7 +579,7 @@ UPDATE
 SET
     "PriceMn" = $1
 WHERE
-    "ProductMnID" = $2 RETURNING "ProductMnID", "ProductNameMn", "sCategoryIdMn", "PriceMn", "StockQuantity", "ImagesPathMn", "DescriptionMn", "BrandMn", "ManufacturedCountryMn", "ColorId", "SizeId", "PenOutputMn", "FeaturesMn", "MaterialMn", "StapleSizeMn", "CapacityMn", "WeightMn", "ThicknessMn", "PackagingMn", "UsageMn", "InstructionsMn", "ProductCodeMn", "CostPriceMn", "RetailPriceMn", "WarehouseStockMn", "Created_At", "Updated_At"
+    "ProductMnID" = $2 RETURNING "ProductMnID", "ProductNameMn", "sCategoryIdMn", "PriceMn", "StockQuantity", "ImagesPathMn", "DescriptionMn", "BrandMn", "ManufacturedCountryMn", "PenOutputMn", "FeaturesMn", "MaterialMn", "StapleSizeMn", "CapacityMn", "WeightMn", "ThicknessMn", "PackagingMn", "UsageMn", "InstructionsMn", "ProductCodeMn", "CostPriceMn", "RetailPriceMn", "WarehouseStockMn", "Created_At", "Updated_At"
 `
 
 type UpdateByProductMnPriceParams struct {
@@ -452,8 +600,6 @@ func (q *Queries) UpdateByProductMnPrice(ctx context.Context, arg UpdateByProduc
 		&i.DescriptionMn,
 		&i.BrandMn,
 		&i.ManufacturedCountryMn,
-		&i.ColorId,
-		&i.SizeId,
 		&i.PenOutputMn,
 		&i.FeaturesMn,
 		&i.MaterialMn,
@@ -480,7 +626,7 @@ UPDATE
 SET
     "StockQuantity" = $1
 WHERE
-    "ProductMnID" = $2 RETURNING "ProductMnID", "ProductNameMn", "sCategoryIdMn", "PriceMn", "StockQuantity", "ImagesPathMn", "DescriptionMn", "BrandMn", "ManufacturedCountryMn", "ColorId", "SizeId", "PenOutputMn", "FeaturesMn", "MaterialMn", "StapleSizeMn", "CapacityMn", "WeightMn", "ThicknessMn", "PackagingMn", "UsageMn", "InstructionsMn", "ProductCodeMn", "CostPriceMn", "RetailPriceMn", "WarehouseStockMn", "Created_At", "Updated_At"
+    "ProductMnID" = $2 RETURNING "ProductMnID", "ProductNameMn", "sCategoryIdMn", "PriceMn", "StockQuantity", "ImagesPathMn", "DescriptionMn", "BrandMn", "ManufacturedCountryMn", "PenOutputMn", "FeaturesMn", "MaterialMn", "StapleSizeMn", "CapacityMn", "WeightMn", "ThicknessMn", "PackagingMn", "UsageMn", "InstructionsMn", "ProductCodeMn", "CostPriceMn", "RetailPriceMn", "WarehouseStockMn", "Created_At", "Updated_At"
 `
 
 type UpdateByProductMnStockQuantityParams struct {
@@ -501,8 +647,6 @@ func (q *Queries) UpdateByProductMnStockQuantity(ctx context.Context, arg Update
 		&i.DescriptionMn,
 		&i.BrandMn,
 		&i.ManufacturedCountryMn,
-		&i.ColorId,
-		&i.SizeId,
 		&i.PenOutputMn,
 		&i.FeaturesMn,
 		&i.MaterialMn,
@@ -535,23 +679,21 @@ SET
     "DescriptionMn" = $6,
     "BrandMn" = $7,
     "ManufacturedCountryMn" = $8,
-    "ColorId" = $9,
-    "SizeId" = $10,
-    "PenOutputMn" = $11,
-    "FeaturesMn" = $12,
-    "StapleSizeMn" = $13,
-    "CapacityMn" = $14,
-    "WeightMn" = $15,
-    "ThicknessMn" = $16,
-    "PackagingMn" = $17,
-    "UsageMn" = $18,
-    "InstructionsMn" = $19,
-    "ProductCodeMn" = $20,
-    "CostPriceMn" = $21,
-    "RetailPriceMn" = $22,
-    "WarehouseStockMn" = $23
+    "PenOutputMn" = $9,
+    "FeaturesMn" = $10,
+    "StapleSizeMn" = $11,
+    "CapacityMn" = $12,
+    "WeightMn" = $13,
+    "ThicknessMn" = $14,
+    "PackagingMn" = $15,
+    "UsageMn" = $16,
+    "InstructionsMn" = $17,
+    "ProductCodeMn" = $18,
+    "CostPriceMn" = $19,
+    "RetailPriceMn" = $20,
+    "WarehouseStockMn" = $21
 WHERE
-    "ProductMnID" = $24 RETURNING "ProductMnID", "ProductNameMn", "sCategoryIdMn", "PriceMn", "StockQuantity", "ImagesPathMn", "DescriptionMn", "BrandMn", "ManufacturedCountryMn", "ColorId", "SizeId", "PenOutputMn", "FeaturesMn", "MaterialMn", "StapleSizeMn", "CapacityMn", "WeightMn", "ThicknessMn", "PackagingMn", "UsageMn", "InstructionsMn", "ProductCodeMn", "CostPriceMn", "RetailPriceMn", "WarehouseStockMn", "Created_At", "Updated_At"
+    "ProductMnID" = $22 RETURNING "ProductMnID", "ProductNameMn", "sCategoryIdMn", "PriceMn", "StockQuantity", "ImagesPathMn", "DescriptionMn", "BrandMn", "ManufacturedCountryMn", "PenOutputMn", "FeaturesMn", "MaterialMn", "StapleSizeMn", "CapacityMn", "WeightMn", "ThicknessMn", "PackagingMn", "UsageMn", "InstructionsMn", "ProductCodeMn", "CostPriceMn", "RetailPriceMn", "WarehouseStockMn", "Created_At", "Updated_At"
 `
 
 type UpdateProductMnParams struct {
@@ -563,8 +705,6 @@ type UpdateProductMnParams struct {
 	DescriptionMn         string
 	BrandMn               string
 	ManufacturedCountryMn string
-	ColorId               int32
-	SizeId                int32
 	PenOutputMn           string
 	FeaturesMn            string
 	StapleSizeMn          string
@@ -591,8 +731,6 @@ func (q *Queries) UpdateProductMn(ctx context.Context, arg UpdateProductMnParams
 		arg.DescriptionMn,
 		arg.BrandMn,
 		arg.ManufacturedCountryMn,
-		arg.ColorId,
-		arg.SizeId,
 		arg.PenOutputMn,
 		arg.FeaturesMn,
 		arg.StapleSizeMn,
@@ -619,8 +757,6 @@ func (q *Queries) UpdateProductMn(ctx context.Context, arg UpdateProductMnParams
 		&i.DescriptionMn,
 		&i.BrandMn,
 		&i.ManufacturedCountryMn,
-		&i.ColorId,
-		&i.SizeId,
 		&i.PenOutputMn,
 		&i.FeaturesMn,
 		&i.MaterialMn,
@@ -647,7 +783,7 @@ UPDATE
 SET
     "sCategoryIdMn" = $1
 WHERE
-    "ProductMnID" = $2 RETURNING "ProductMnID", "ProductNameMn", "sCategoryIdMn", "PriceMn", "StockQuantity", "ImagesPathMn", "DescriptionMn", "BrandMn", "ManufacturedCountryMn", "ColorId", "SizeId", "PenOutputMn", "FeaturesMn", "MaterialMn", "StapleSizeMn", "CapacityMn", "WeightMn", "ThicknessMn", "PackagingMn", "UsageMn", "InstructionsMn", "ProductCodeMn", "CostPriceMn", "RetailPriceMn", "WarehouseStockMn", "Created_At", "Updated_At"
+    "ProductMnID" = $2 RETURNING "ProductMnID", "ProductNameMn", "sCategoryIdMn", "PriceMn", "StockQuantity", "ImagesPathMn", "DescriptionMn", "BrandMn", "ManufacturedCountryMn", "PenOutputMn", "FeaturesMn", "MaterialMn", "StapleSizeMn", "CapacityMn", "WeightMn", "ThicknessMn", "PackagingMn", "UsageMn", "InstructionsMn", "ProductCodeMn", "CostPriceMn", "RetailPriceMn", "WarehouseStockMn", "Created_At", "Updated_At"
 `
 
 type UpdateProductMnSubCategoryParams struct {
@@ -668,8 +804,6 @@ func (q *Queries) UpdateProductMnSubCategory(ctx context.Context, arg UpdateProd
 		&i.DescriptionMn,
 		&i.BrandMn,
 		&i.ManufacturedCountryMn,
-		&i.ColorId,
-		&i.SizeId,
 		&i.PenOutputMn,
 		&i.FeaturesMn,
 		&i.MaterialMn,
@@ -696,7 +830,7 @@ UPDATE
 SET
     "StockQuantity" = $1
 WHERE
-    "ProductMnID" = $2 RETURNING "ProductMnID", "ProductNameMn", "sCategoryIdMn", "PriceMn", "StockQuantity", "ImagesPathMn", "DescriptionMn", "BrandMn", "ManufacturedCountryMn", "ColorId", "SizeId", "PenOutputMn", "FeaturesMn", "MaterialMn", "StapleSizeMn", "CapacityMn", "WeightMn", "ThicknessMn", "PackagingMn", "UsageMn", "InstructionsMn", "ProductCodeMn", "CostPriceMn", "RetailPriceMn", "WarehouseStockMn", "Created_At", "Updated_At"
+    "ProductMnID" = $2 RETURNING "ProductMnID", "ProductNameMn", "sCategoryIdMn", "PriceMn", "StockQuantity", "ImagesPathMn", "DescriptionMn", "BrandMn", "ManufacturedCountryMn", "PenOutputMn", "FeaturesMn", "MaterialMn", "StapleSizeMn", "CapacityMn", "WeightMn", "ThicknessMn", "PackagingMn", "UsageMn", "InstructionsMn", "ProductCodeMn", "CostPriceMn", "RetailPriceMn", "WarehouseStockMn", "Created_At", "Updated_At"
 `
 
 type UpdateSProductMnParams struct {
@@ -717,8 +851,6 @@ func (q *Queries) UpdateSProductMn(ctx context.Context, arg UpdateSProductMnPara
 		&i.DescriptionMn,
 		&i.BrandMn,
 		&i.ManufacturedCountryMn,
-		&i.ColorId,
-		&i.SizeId,
 		&i.PenOutputMn,
 		&i.FeaturesMn,
 		&i.MaterialMn,

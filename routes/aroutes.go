@@ -68,8 +68,8 @@ func superAdminRoutes(app *fiber.App, hd *handlers.Handlers) {
 
 	//Product
 	product := api.Group("/product")
-	product.Get("/listEn", hd.GetProductEn)
-	product.Get("/listMn", hd.GetProductMn)
+	product.Get("/listEn", hd.GetProductEnWithDetails)
+	product.Get("/listMn", hd.GetProductMnWithDetails)
 	product.Post("/createEn", hd.CreateProductEn)
 	product.Post("/createMn", hd.CreateProductMn)
 

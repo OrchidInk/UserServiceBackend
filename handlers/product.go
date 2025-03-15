@@ -15,50 +15,31 @@ func (hd *Handlers) CreateProductEn(ctx *fiber.Ctx) error {
 
 	var request models.CreateProductEnRequest
 	if err := ctx.BodyParser(&request); err != nil {
-		slog.Error("unable to parse request body", slog.Any("err", err))
-		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"err": "invalid request body"})
+		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "invalid request body"})
 	}
 
-	// Check if the subCategoryEnID exists
+	// 1) Validate subcategory
 	_, err := queries.FindBySCategoryIdEn(ctx.Context(), request.SCategoryEnID)
 	if err != nil {
-		slog.Error("subcategory does not exist", slog.Any("err", err))
-		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"err": "Invalid subCategoryEnID"})
+		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid subCategoryEnID"})
 	}
 
-	// Convert price to decimal
+	// 2) Convert prices
 	price, err := decimal.NewFromString(request.PriceEn)
 	if err != nil {
-		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"message": "Invalid price format"})
+		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid price format"})
 	}
-	if price.Exponent() < -2 || price.GreaterThan(decimal.NewFromInt(9999999999)) {
-		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"message": "Price exceeds allowed range (maximum: 9999999999.99)",
-		})
-	}
-
 	costPrice, err := decimal.NewFromString(request.CostPriceEn)
 	if err != nil {
-		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"message": "Invalid price format"})
+		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid cost price"})
 	}
-	if costPrice.Exponent() < -2 || costPrice.GreaterThan(decimal.NewFromInt(9999999999)) {
-		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"message": "Price exceeds allowed range (maximum: 9999999999.99)",
-		})
-	}
-
 	retailPrice, err := decimal.NewFromString(request.RetailPriceEn)
 	if err != nil {
-		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"message": "Invalid price format"})
-	}
-	if retailPrice.Exponent() < -2 || retailPrice.GreaterThan(decimal.NewFromInt(9999999999)) {
-		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"message": "Price exceeds allowed range (maximum: 9999999999.99)",
-		})
+		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid retail price"})
 	}
 
-	// Insert product
-	createProduct, err := queries.CreateProductEn(ctx.Context(), db.CreateProductEnParams{
+	// 3) Insert the main product (WITHOUT ColorId / SizeId columns)
+	createdProduct, err := queries.CreateProductEn(ctx.Context(), db.CreateProductEnParams{
 		ProductNameEn:         request.ProductNameEn,
 		SCategoryIdEn:         request.SCategoryEnID,
 		PriceEn:               price.String(),
@@ -67,8 +48,6 @@ func (hd *Handlers) CreateProductEn(ctx *fiber.Ctx) error {
 		DescriptionEn:         request.DescriptionEn,
 		BrandEn:               request.BrandEn,
 		ManufacturedCountryEn: request.ManufacturedCountryEn,
-		ColorId:               request.ColorId,
-		SizeId:                request.SizeId,
 		PenOutputEn:           request.PenOutputEn,
 		FeaturesEn:            request.FeaturesEn,
 		MaterialEn:            request.MaterialEn,
@@ -83,13 +62,36 @@ func (hd *Handlers) CreateProductEn(ctx *fiber.Ctx) error {
 		WarehouseStockEn:      request.WarehouseStockEn,
 	})
 	if err != nil {
-		slog.Error("unable to create product en", slog.Any("err", err))
-		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"err": err})
+		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
+	}
+
+	// 4) Insert multiple color IDs into productEn_colors
+	for _, colorId := range request.ColorIds {
+		// optional: check that colorId is valid
+		err := queries.InsertProductEnColor(ctx.Context(), db.InsertProductEnColorParams{
+			ProductEnID: createdProduct.ProductEnID,
+			ColorId:     colorId,
+		})
+		if err != nil {
+			return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to insert color link"})
+		}
+	}
+
+	// 5) Insert multiple size IDs into productEn_sizes
+	for _, sizeId := range request.SizeIds {
+		// optional: check that sizeId is valid
+		err := queries.InsertProductEnSize(ctx.Context(), db.InsertProductEnSizeParams{
+			ProductEnID: createdProduct.ProductEnID,
+			SizeId:      sizeId,
+		})
+		if err != nil {
+			return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to insert size link"})
+		}
 	}
 
 	return ctx.Status(fiber.StatusOK).JSON(fiber.Map{
-		"message":    "Product created successfully",
-		"product ID": createProduct.ProductEnID,
+		"message":   "Product created successfully",
+		"productID": createdProduct.ProductEnID,
 	})
 }
 
@@ -98,48 +100,51 @@ func (hd *Handlers) CreateProductMn(ctx *fiber.Ctx) error {
 
 	var request models.CreateProductMnRequest
 	if err := ctx.BodyParser(&request); err != nil {
-		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"err": err})
+		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"err": "invalid request body"})
 	}
 
+	// Validate that the subcategory exists.
 	_, err := queries.FindBySCategoryIdMn(ctx.Context(), request.SCategoryMnID)
 	if err != nil {
-		slog.Error("subCategory does not exist", slog.Any("Err", err))
+		slog.Error("subcategory does not exist", slog.Any("err", err))
 		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"err": "invalid subCategoryMNID"})
 	}
 
+	// Convert price strings.
 	price, err := decimal.NewFromString(request.PriceMn)
 	if err != nil {
-		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"message": "Invalid price format"})
+		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"err": "Invalid price format"})
 	}
-
-	if price.Exponent() < -2 || price.GreaterThan(decimal.NewFromInt(9999999999)) {
-		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"message": "Price exceeds allowed range (maximum: 9999999999.99)",
-		})
-	}
-
 	costPrice, err := decimal.NewFromString(request.CostPriceMn)
 	if err != nil {
-		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"message": "invalid cost price format"})
+		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"err": "Invalid cost price format"})
 	}
-
-	if costPrice.Exponent() < -2 || costPrice.GreaterThan(decimal.NewFromInt(9999999999)) {
-		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"message": "Price exceeds allowed range (maximum: 9999999999.99)",
-		})
-	}
-
 	retailPrice, err := decimal.NewFromString(request.RetailPriceMn)
 	if err != nil {
-		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"message": "invalid cost price format"})
+		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"err": "Invalid retail price format"})
 	}
 
-	if retailPrice.Exponent() < -2 || retailPrice.GreaterThan(decimal.NewFromInt(9999999999)) {
-		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"message": "Price exceeds allowed range (maximum: 9999999999.99)",
-		})
+	// Choose the primary color and size from the arrays.
+	var primaryColorId int32 = 0
+	var primarySizeId int32 = 0
+	if len(request.ColorIds) > 0 {
+		primaryColorId = request.ColorIds[0]
+		// Validate that this color exists.
+		_, err = queries.FindByColorId(ctx.Context(), primaryColorId)
+		if err != nil {
+			return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"err": "Invalid primary ColorId"})
+		}
+	}
+	if len(request.SizeIds) > 0 {
+		primarySizeId = request.SizeIds[0]
+		// Validate that this size exists.
+		_, err = queries.FindByIdSize(ctx.Context(), primarySizeId)
+		if err != nil {
+			return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"err": "Invalid primary SizeId"})
+		}
 	}
 
+	// Insert the main productMn row (ignoring the single ColorId/SizeId columns).
 	createProduct, err := queries.CreateProductMn(ctx.Context(), db.CreateProductMnParams{
 		ProductNameMn:         request.ProductNameMn,
 		SCategoryIdMn:         request.SCategoryMnID,
@@ -149,27 +154,51 @@ func (hd *Handlers) CreateProductMn(ctx *fiber.Ctx) error {
 		DescriptionMn:         request.DescriptionMn,
 		BrandMn:               request.BrandMn,
 		ManufacturedCountryMn: request.ManufacturedCountryMn,
-		ColorId:               request.ColorId,
-		SizeId:                request.SizeId,
-		PenOutputMn:           request.PenOutputMn,
-		FeaturesMn:            request.FeaturesMn,
-		MaterialMn:            request.MaterialMn,
-		StapleSizeMn:          request.StapleSizeMn,
-		CapacityMn:            request.CapacityMn,
-		WeightMn:              request.WeightMn,
-		ThicknessMn:           request.ThicknessMn,
-		PackagingMn:           request.PackagingMn,
-		ProductCodeMn:         request.ProductCodeMn,
-		CostPriceMn:           costPrice.String(),
-		RetailPriceMn:         request.RetailPriceMn,
-		WarehouseStockMn:      request.WarehouseStockMn,
+		// We do not set ColorId/SizeId here if you’re using linking tables.
+		PenOutputMn:      request.PenOutputMn,
+		FeaturesMn:       request.FeaturesMn,
+		MaterialMn:       request.MaterialMn,
+		StapleSizeMn:     request.StapleSizeMn,
+		CapacityMn:       request.CapacityMn,
+		WeightMn:         request.WeightMn,
+		ThicknessMn:      request.ThicknessMn,
+		PackagingMn:      request.PackagingMn,
+		ProductCodeMn:    request.ProductCodeMn,
+		CostPriceMn:      costPrice.String(),
+		RetailPriceMn:    retailPrice.String(),
+		WarehouseStockMn: request.WarehouseStockMn,
 	})
 	if err != nil {
-		slog.Error("unable to create product request", slog.Any("err", err))
-		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"err": err})
+		slog.Error("unable to create product mn", slog.Any("err", err))
+		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"err": err.Error()})
 	}
 
-	return ctx.Status(fiber.StatusOK).JSON(fiber.Map{"message": "product create successfully", "product Id": createProduct.ProductMnID})
+	// Insert each color into the linking table for productMn.
+	for _, colorId := range request.ColorIds {
+		err := queries.InsertProductMnColor(ctx.Context(), db.InsertProductMnColorParams{
+			ProductMnID: createProduct.ProductMnID,
+			ColorId:     colorId,
+		})
+		if err != nil {
+			return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"err": "Failed to insert color link"})
+		}
+	}
+
+	// Insert each size into the linking table for productMn.
+	for _, sizeId := range request.SizeIds {
+		err := queries.InsertProductMnSize(ctx.Context(), db.InsertProductMnSizeParams{
+			ProductMnID: createProduct.ProductMnID,
+			SizeId:      sizeId,
+		})
+		if err != nil {
+			return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"err": "Failed to insert size link"})
+		}
+	}
+
+	return ctx.Status(fiber.StatusOK).JSON(fiber.Map{
+		"message":   "Product created successfully",
+		"productID": createProduct.ProductMnID,
+	})
 }
 
 func (hd *Handlers) DeleteProductEn(ctx *fiber.Ctx) error {
@@ -645,6 +674,30 @@ func (hd *Handlers) UpdateSProductMn(ctx *fiber.Ctx) error {
 // 		return ctx.Status(fiber.StatusNotFound).JSON(fiber.Map{"error": "Product not found"})
 // 	}
 
-// 	// Return the product with details
-// 	return ctx.Status(fiber.StatusOK).JSON(product)
-// }
+//		// Return the product with details
+//		return ctx.Status(fiber.StatusOK).JSON(product)
+//	}
+//
+// GET endpoint that joins the product with Color and Size details for English products.
+func (hd *Handlers) GetProductEnWithDetails(ctx *fiber.Ctx) error {
+	queries, _, _ := hd.queries()
+
+	// This query should join "productEn" with "Color" and "Size".
+	products, err := queries.GetProductEnWithAllColorsAndSizes(ctx.Context())
+	if err != nil {
+		slog.Error("unable to fetch products with details", slog.Any("err", err))
+		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"err": err.Error()})
+	}
+	return ctx.Status(fiber.StatusOK).JSON(products)
+}
+
+func (hd *Handlers) GetProductMnWithDetails(ctx *fiber.Ctx) error {
+	queries, _, _ := hd.queries()
+
+	products, err := queries.GetProductMnWithAllColorsAndSizes(ctx.Context())
+	if err != nil {
+		slog.Error("unable to fetch Mongolian products with details", slog.Any("err", err))
+		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"err": err.Error()})
+	}
+	return ctx.Status(fiber.StatusOK).JSON(products)
+}

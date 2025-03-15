@@ -99,8 +99,6 @@ type ProductEn struct {
 	DescriptionEn         string
 	BrandEn               string
 	ManufacturedCountryEn string
-	ColorId               int32
-	SizeId                int32
 	PenOutputEn           string
 	FeaturesEn            string
 	MaterialEn            string
@@ -119,6 +117,16 @@ type ProductEn struct {
 	UpdatedAt             sql.NullTime
 }
 
+type ProductEnColor struct {
+	ProductEnID int32
+	ColorId     int32
+}
+
+type ProductEnSize struct {
+	ProductEnID int32
+	SizeId      int32
+}
+
 type ProductImage struct {
 	ImageID     int32
 	ImagePathEn string
@@ -135,8 +143,6 @@ type ProductMn struct {
 	DescriptionMn         string
 	BrandMn               string
 	ManufacturedCountryMn string
-	ColorId               int32
-	SizeId                int32
 	PenOutputMn           string
 	FeaturesMn            string
 	MaterialMn            string
@@ -153,6 +159,16 @@ type ProductMn struct {
 	WarehouseStockMn      int32
 	CreatedAt             sql.NullTime
 	UpdatedAt             sql.NullTime
+}
+
+type ProductMnColor struct {
+	ProductMnID int32
+	ColorId     int32
+}
+
+type ProductMnSize struct {
+	ProductMnID int32
+	SizeId      int32
 }
 
 type SCategoryEn struct {
