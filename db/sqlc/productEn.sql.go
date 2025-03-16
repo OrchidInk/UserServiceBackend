@@ -359,6 +359,8 @@ func (q *Queries) GetListProductEn(ctx context.Context) ([]ProductEn, error) {
 }
 
 const getProductEnWithAllColorsAndSizes = `-- name: GetProductEnWithAllColorsAndSizes :many
+
+
 SELECT 
     p."ProductEnID",
     p."ProductNameEn",
@@ -451,6 +453,42 @@ type GetProductEnWithAllColorsAndSizesRow struct {
 	SizeNames             interface{}
 }
 
+// -- name: GetProductEnWithDetails :many
+// SELECT
+//
+//	p."ProductEnID",
+//	p."ProductNameEn",
+//	p."sCategoryIdEn",
+//	p."PriceEn",
+//	p."StockQuantity",
+//	p."ImagesPathEn",
+//	p."DescriptionEn",
+//	p."BrandEn",
+//	p."ManufacturedCountryEn",
+//	p."ColorId",
+//	c."Color" AS colorName,
+//	p."SizeId",
+//	s."Size" AS sizeName,
+//	p."PenOutputEn",
+//	p."FeaturesEn",
+//	p."MaterialEn",
+//	p."StapleSizeEn",
+//	p."CapacityEn",
+//	p."WeightEn",
+//	p."ThicknessEn",
+//	p."PackagingEn",
+//	p."UsageEn",
+//	p."InstructionsEn",
+//	p."ProductCodeEn",
+//	p."CostPriceEn",
+//	p."RetailPriceEn",
+//	p."WarehouseStockEn",
+//	p."Created_At",
+//	p."Updated_At"
+//
+// FROM "productEn" p
+// LEFT JOIN "Color" c ON p."ColorId" = c."ColorId"
+// LEFT JOIN "Size" s ON p."SizeId" = s."SizeId";
 func (q *Queries) GetProductEnWithAllColorsAndSizes(ctx context.Context) ([]GetProductEnWithAllColorsAndSizesRow, error) {
 	rows, err := q.db.QueryContext(ctx, getProductEnWithAllColorsAndSizes)
 	if err != nil {
@@ -504,71 +542,125 @@ func (q *Queries) GetProductEnWithAllColorsAndSizes(ctx context.Context) ([]GetP
 	return items, nil
 }
 
-const insertProductEnColor = `-- name: InsertProductEnColor :exec
-
-INSERT INTO "productEn_colors" ("ProductEnID", "ColorId")
-VALUES ($1, $2)
+const getProductEnWithAllColorsAndSizesByID = `-- name: GetProductEnWithAllColorsAndSizesByID :one
+SELECT 
+    p."ProductEnID",
+    p."ProductNameEn",
+    p."sCategoryIdEn",
+    p."PriceEn",
+    p."StockQuantity",
+    p."ImagesPathEn",
+    p."DescriptionEn",
+    p."BrandEn",
+    p."ManufacturedCountryEn",
+    p."PenOutputEn",
+    p."FeaturesEn",
+    p."MaterialEn",
+    p."StapleSizeEn",
+    p."CapacityEn",
+    p."WeightEn",
+    p."ThicknessEn",
+    p."PackagingEn",
+    p."UsageEn",
+    p."InstructionsEn",
+    p."ProductCodeEn",
+    p."CostPriceEn",
+    p."RetailPriceEn",
+    p."WarehouseStockEn",
+    p."Created_At",
+    p."Updated_At",
+    COALESCE(
+        ARRAY_AGG(DISTINCT c."ColorId") FILTER (WHERE c."ColorId" IS NOT NULL),
+        '{}'
+    ) AS "ColorIds",
+    COALESCE(
+        ARRAY_AGG(DISTINCT c."Color") FILTER (WHERE c."Color" IS NOT NULL),
+        '{}'
+    ) AS "ColorNames",
+    COALESCE(
+        ARRAY_AGG(DISTINCT s."SizeId") FILTER (WHERE s."SizeId" IS NOT NULL),
+        '{}'
+    ) AS "SizeIds",
+    COALESCE(
+        ARRAY_AGG(DISTINCT s."Size") FILTER (WHERE s."Size" IS NOT NULL),
+        '{}'
+    ) AS "SizeNames"
+FROM "productEn" p
+LEFT JOIN "productEn_colors" pc ON p."ProductEnID" = pc."ProductEnID"
+LEFT JOIN "productEn_sizes" ps ON p."ProductEnID" = ps."ProductEnID"
+LEFT JOIN "Color" c ON pc."ColorId" = c."ColorId"
+LEFT JOIN "Size" s ON ps."SizeId" = s."SizeId"
+WHERE p."ProductEnID" = $1
+GROUP BY p."ProductEnID"
 `
 
-type InsertProductEnColorParams struct {
-	ProductEnID int32
-	ColorId     int32
+type GetProductEnWithAllColorsAndSizesByIDRow struct {
+	ProductEnID           int32
+	ProductNameEn         string
+	SCategoryIdEn         int32
+	PriceEn               string
+	StockQuantity         int32
+	ImagesPathEn          string
+	DescriptionEn         string
+	BrandEn               string
+	ManufacturedCountryEn string
+	PenOutputEn           string
+	FeaturesEn            string
+	MaterialEn            string
+	StapleSizeEn          string
+	CapacityEn            string
+	WeightEn              string
+	ThicknessEn           string
+	PackagingEn           string
+	UsageEn               string
+	InstructionsEn        string
+	ProductCodeEn         string
+	CostPriceEn           string
+	RetailPriceEn         string
+	WarehouseStockEn      int32
+	CreatedAt             sql.NullTime
+	UpdatedAt             sql.NullTime
+	ColorIds              interface{}
+	ColorNames            interface{}
+	SizeIds               interface{}
+	SizeNames             interface{}
 }
 
-// -- name: GetProductEnWithDetails :many
-// SELECT
-//
-//	p."ProductEnID",
-//	p."ProductNameEn",
-//	p."sCategoryIdEn",
-//	p."PriceEn",
-//	p."StockQuantity",
-//	p."ImagesPathEn",
-//	p."DescriptionEn",
-//	p."BrandEn",
-//	p."ManufacturedCountryEn",
-//	p."ColorId",
-//	c."Color" AS colorName,
-//	p."SizeId",
-//	s."Size" AS sizeName,
-//	p."PenOutputEn",
-//	p."FeaturesEn",
-//	p."MaterialEn",
-//	p."StapleSizeEn",
-//	p."CapacityEn",
-//	p."WeightEn",
-//	p."ThicknessEn",
-//	p."PackagingEn",
-//	p."UsageEn",
-//	p."InstructionsEn",
-//	p."ProductCodeEn",
-//	p."CostPriceEn",
-//	p."RetailPriceEn",
-//	p."WarehouseStockEn",
-//	p."Created_At",
-//	p."Updated_At"
-//
-// FROM "productEn" p
-// LEFT JOIN "Color" c ON p."ColorId" = c."ColorId"
-// LEFT JOIN "Size" s ON p."SizeId" = s."SizeId";
-func (q *Queries) InsertProductEnColor(ctx context.Context, arg InsertProductEnColorParams) error {
-	_, err := q.db.ExecContext(ctx, insertProductEnColor, arg.ProductEnID, arg.ColorId)
-	return err
-}
-
-const insertProductEnSize = `-- name: InsertProductEnSize :exec
-INSERT INTO "productEn_sizes" ("ProductEnID", "SizeId")
-VALUES ($1, $2)
-`
-
-type InsertProductEnSizeParams struct {
-	ProductEnID int32
-	SizeId      int32
-}
-
-func (q *Queries) InsertProductEnSize(ctx context.Context, arg InsertProductEnSizeParams) error {
-	_, err := q.db.ExecContext(ctx, insertProductEnSize, arg.ProductEnID, arg.SizeId)
-	return err
+func (q *Queries) GetProductEnWithAllColorsAndSizesByID(ctx context.Context, productenid int32) (GetProductEnWithAllColorsAndSizesByIDRow, error) {
+	row := q.db.QueryRowContext(ctx, getProductEnWithAllColorsAndSizesByID, productenid)
+	var i GetProductEnWithAllColorsAndSizesByIDRow
+	err := row.Scan(
+		&i.ProductEnID,
+		&i.ProductNameEn,
+		&i.SCategoryIdEn,
+		&i.PriceEn,
+		&i.StockQuantity,
+		&i.ImagesPathEn,
+		&i.DescriptionEn,
+		&i.BrandEn,
+		&i.ManufacturedCountryEn,
+		&i.PenOutputEn,
+		&i.FeaturesEn,
+		&i.MaterialEn,
+		&i.StapleSizeEn,
+		&i.CapacityEn,
+		&i.WeightEn,
+		&i.ThicknessEn,
+		&i.PackagingEn,
+		&i.UsageEn,
+		&i.InstructionsEn,
+		&i.ProductCodeEn,
+		&i.CostPriceEn,
+		&i.RetailPriceEn,
+		&i.WarehouseStockEn,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+		&i.ColorIds,
+		&i.ColorNames,
+		&i.SizeIds,
+		&i.SizeNames,
+	)
+	return i, err
 }
 
 const updateByEnImagePath = `-- name: UpdateByEnImagePath :one

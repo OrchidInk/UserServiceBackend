@@ -6,6 +6,7 @@ package db
 
 import (
 	"database/sql"
+	"encoding/json"
 	"time"
 )
 
@@ -66,16 +67,24 @@ type Delivery struct {
 	CreatedAt      sql.NullTime
 }
 
-type OrderItem struct {
-	OrderItemId     int32
+type Order struct {
+	OrderID         int32
 	CustomerOrderId sql.NullInt32
-	ProductMnID     sql.NullInt32
-	ProductEnID     sql.NullInt32
 	UserId          int32
 	PhoneNumber     string
-	Quantity        int32
-	PriceAtOrder    string
+	OrderItems      json.RawMessage
 	CreatedAt       sql.NullTime
+}
+
+type OrderItem struct {
+	OrderItemID   int32
+	OrderID       int32
+	ProductMnID   sql.NullInt32
+	ProductEnID   sql.NullInt32
+	Quantity      int32
+	PriceAtOrder  string
+	SelectedColor sql.NullString
+	SelectedSize  sql.NullString
 }
 
 type Payment struct {

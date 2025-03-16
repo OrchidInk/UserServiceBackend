@@ -10,8 +10,8 @@ type CreateProductEnRequest struct {
 	BrandEn               string `json:"brandEn"`
 	ManufacturedCountryEn string `json:"manufacturedCountryEn"`
 	// Instead of a single ColorId and SizeId, use arrays:
-	ColorIds         []int32 `json:"colorId" validate:"required"` // client sends an array e.g. [16,17,18]
-	SizeIds          []int32 `json:"sizeId" validate:"required"`  // e.g. [1,2,5]
+	ColorIds         []int32 `json:"colorIds" validate:"required"` // client sends an array e.g. [16,17,18]
+	SizeIds          []int32 `json:"sizeIds" validate:"required"`  // e.g. [1,2,5]
 	PenOutputEn      string  `json:"penOutputEn"`
 	FeaturesEn       string  `json:"featuresEn"`
 	MaterialEn       string  `json:"materialEn"`

@@ -65,10 +65,15 @@ func (hd *Handlers) CreateProductEn(ctx *fiber.Ctx) error {
 		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
 	}
 
-	// 4) Insert multiple color IDs into productEn_colors
 	for _, colorId := range request.ColorIds {
-		// optional: check that colorId is valid
-		err := queries.InsertProductEnColor(ctx.Context(), db.InsertProductEnColorParams{
+		// 1. Check if color exists
+		_, err := queries.FindByColorId(ctx.Context(), colorId)
+		if err != nil {
+			return ctx.Status(fiber.StatusNotFound).JSON(fiber.Map{"err": err})
+		}
+
+		// 2. Insert product-color link
+		_, err = queries.InsertProductEnColor(ctx.Context(), db.InsertProductEnColorParams{
 			ProductEnID: createdProduct.ProductEnID,
 			ColorId:     colorId,
 		})
@@ -79,8 +84,16 @@ func (hd *Handlers) CreateProductEn(ctx *fiber.Ctx) error {
 
 	// 5) Insert multiple size IDs into productEn_sizes
 	for _, sizeId := range request.SizeIds {
-		// optional: check that sizeId is valid
-		err := queries.InsertProductEnSize(ctx.Context(), db.InsertProductEnSizeParams{
+		_, err := queries.FindByIdSize(ctx.Context(), sizeId)
+		if err != nil {
+			// Insert dummy size if doesn't exist
+			if err != nil {
+				return ctx.Status(fiber.StatusNotFound).JSON(fiber.Map{"error": "Failed to insert size"})
+			}
+		}
+
+		// Insert link
+		_, err = queries.InsertProductEnSize(ctx.Context(), db.InsertProductEnSizeParams{
 			ProductEnID: createdProduct.ProductEnID,
 			SizeId:      sizeId,
 		})
@@ -175,7 +188,7 @@ func (hd *Handlers) CreateProductMn(ctx *fiber.Ctx) error {
 
 	// Insert each color into the linking table for productMn.
 	for _, colorId := range request.ColorIds {
-		err := queries.InsertProductMnColor(ctx.Context(), db.InsertProductMnColorParams{
+		_, err := queries.InsertProductMnColor(ctx.Context(), db.InsertProductMnColorParams{
 			ProductMnID: createProduct.ProductMnID,
 			ColorId:     colorId,
 		})
@@ -186,7 +199,7 @@ func (hd *Handlers) CreateProductMn(ctx *fiber.Ctx) error {
 
 	// Insert each size into the linking table for productMn.
 	for _, sizeId := range request.SizeIds {
-		err := queries.InsertProductMnSize(ctx.Context(), db.InsertProductMnSizeParams{
+		_, err := queries.InsertProductMnSize(ctx.Context(), db.InsertProductMnSizeParams{
 			ProductMnID: createProduct.ProductMnID,
 			SizeId:      sizeId,
 		})
@@ -335,24 +348,23 @@ func (hd *Handlers) GetProductMn(ctx *fiber.Ctx) error {
 	return ctx.Status(fiber.StatusOK).JSON(Product)
 }
 
-func (hd *Handlers) FindProductId(ctx *fiber.Ctx) error {
+func (hd *Handlers) GetProductEnWithDetailsByID(ctx *fiber.Ctx) error {
 	queries, _, _ := hd.queries()
-	ProductIdSTR := ctx.Params("id")
-	ProductId, err := strconv.Atoi(ProductIdSTR)
+	idStr := ctx.Params("id")
+	productID, err := strconv.Atoi(idStr)
 	if err != nil {
-		slog.Error("unable to find product id", slog.Any("Err", err))
-		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"err": err})
+		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid product id"})
 	}
 
-	Product, err := queries.FindByProductIdEn(ctx.Context(), int32(ProductId))
+	// Call the query that aggregates color and size details.
+	product, err := queries.GetProductEnWithAllColorsAndSizesByID(ctx.Context(), int32(productID))
 	if err != nil {
-		slog.Error("unable to find id", slog.Any("err", err))
-		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"err": err})
+		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
 	}
-	return ctx.Status(fiber.StatusOK).JSON(Product)
+	return ctx.Status(fiber.StatusOK).JSON(product)
 }
 
-func (hd *Handlers) FindProductIdMn(ctx *fiber.Ctx) error {
+func (hd *Handlers) GetProductMnWithDetailsByID(ctx *fiber.Ctx) error {
 	queries, _, _ := hd.queries()
 
 	ProductIdStr := ctx.Params("id")
@@ -362,7 +374,7 @@ func (hd *Handlers) FindProductIdMn(ctx *fiber.Ctx) error {
 		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"err": err})
 	}
 
-	Product, err := queries.FindByProductIdMn(ctx.Context(), int32(ProductId))
+	Product, err := queries.GetProductMnWithAllColorsAndSizesByID(ctx.Context(), int32(ProductId))
 	if err != nil {
 		slog.Error("unable to find product Id", slog.Any("Err", err))
 		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"err": err})

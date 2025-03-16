@@ -75,8 +75,8 @@ func superAdminRoutes(app *fiber.App, hd *handlers.Handlers) {
 
 	// product.Get("/listdetailen", hd.GetProductWithDetailsEn)
 	// product.Get("/listdetailmn", hd.GetProductWithDetailsMn)
-	product.Get("/findEn/:id", hd.FindProductId)
-	product.Get("/findMn/:id", hd.FindProductIdMn)
+	product.Get("/findEn/:id", hd.GetProductEnWithDetailsByID)
+	product.Get("/findMn/:id", hd.GetProductMnWithDetailsByID)
 
 	// Product Update
 	product.Put("/purchaseEn/:id", hd.DeductProductStockEn)
@@ -102,7 +102,7 @@ func superAdminRoutes(app *fiber.App, hd *handlers.Handlers) {
 	size.Post("/create", hd.CreateSize)
 	size.Patch("/update/:id", hd.UpdateSize)
 	size.Delete("/delete/:id", hd.DeleteSize)
-	size.Get("/", hd.GetAllSize)
+	size.Get("/list", hd.GetAllSize)
 
 	size.Get("/list/:id", hd.FindSizeId)
 	// Product With Category and subCategory
@@ -130,11 +130,11 @@ func superAdminRoutes(app *fiber.App, hd *handlers.Handlers) {
 	// Order
 
 	order := api.Group("/order")
-	order.Post("/create", hd.CreateOrderItem)
-	order.Get("/list", hd.GetListOrder)
-	order.Patch("/update/:id", hd.UpdateOrderItem)
-	order.Delete("/delete/:orderItemId", hd.DeleteOrderItem)
-
+	order.Post("/create", hd.CreateOrder)
+	order.Get("/list", hd.GetOrdersWithDetails)
+	// order.Patch("/update/:id", hd.UpdateOrderItem)
+	// orderItem := api.Group("/orderitem")
+	// orderItem.Post("/create", hd.CreateOrderItem)
 	// Payments
 	payments := api.Group("/payment")
 	payments.Patch("/update/:id", hd.UpdatePaymentStatus)
@@ -195,10 +195,8 @@ func adminRoutes(app *fiber.App, hd *handlers.Handlers) {
 	delivery.Delete("/delete/:id", hd.DeleteDelivery)
 
 	order := api.Group("/order")
-	order.Post("/create", hd.CreateOrderItem)
-	order.Get("/list", hd.GetOrderItemsByCustomerOrderID)
-	order.Put("/update", hd.UpdateOrderItem)
-	order.Delete("/delete/:orderItemId", hd.DeleteOrderItem)
+	order.Post("/create", hd.CreateOrder)
+	order.Get("/list", hd.GetOrdersWithDetails)
 }
 
 func userRoutes(app *fiber.App, hd *handlers.Handlers) {
@@ -230,10 +228,8 @@ func userRoutes(app *fiber.App, hd *handlers.Handlers) {
 	delivery.Delete("/delete/:id", hd.DeleteDelivery)
 
 	order := api.Group("/order")
-	order.Post("/create", hd.CreateOrderItem)
-	order.Get("/list", hd.GetOrderItemsByCustomerOrderID)
-	order.Put("/update", hd.UpdateOrderItem)
-	order.Delete("/delete/:orderItemId", hd.DeleteOrderItem)
+	order.Post("/create", hd.CreateOrder)
+	order.Get("/list", hd.GetOrdersWithDetails)
 
 	// Payments
 	payments := api.Group("/payment")

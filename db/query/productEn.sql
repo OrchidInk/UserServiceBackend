@@ -192,9 +192,6 @@ SET
 -- LEFT JOIN "Color" c ON p."ColorId" = c."ColorId"
 -- LEFT JOIN "Size" s ON p."SizeId" = s."SizeId";
 
--- name: InsertProductEnColor :exec
-INSERT INTO "productEn_colors" ("ProductEnID", "ColorId")
-VALUES ($1, $2);
 
 -- name: GetProductEnWithAllColorsAndSizes :many
 SELECT 
@@ -257,7 +254,53 @@ LEFT JOIN "Size" s
 GROUP BY p."ProductEnID";
 
 
-
--- name: InsertProductEnSize :exec
-INSERT INTO "productEn_sizes" ("ProductEnID", "SizeId")
-VALUES ($1, $2);
+-- name: GetProductEnWithAllColorsAndSizesByID :one
+SELECT 
+    p."ProductEnID",
+    p."ProductNameEn",
+    p."sCategoryIdEn",
+    p."PriceEn",
+    p."StockQuantity",
+    p."ImagesPathEn",
+    p."DescriptionEn",
+    p."BrandEn",
+    p."ManufacturedCountryEn",
+    p."PenOutputEn",
+    p."FeaturesEn",
+    p."MaterialEn",
+    p."StapleSizeEn",
+    p."CapacityEn",
+    p."WeightEn",
+    p."ThicknessEn",
+    p."PackagingEn",
+    p."UsageEn",
+    p."InstructionsEn",
+    p."ProductCodeEn",
+    p."CostPriceEn",
+    p."RetailPriceEn",
+    p."WarehouseStockEn",
+    p."Created_At",
+    p."Updated_At",
+    COALESCE(
+        ARRAY_AGG(DISTINCT c."ColorId") FILTER (WHERE c."ColorId" IS NOT NULL),
+        '{}'
+    ) AS "ColorIds",
+    COALESCE(
+        ARRAY_AGG(DISTINCT c."Color") FILTER (WHERE c."Color" IS NOT NULL),
+        '{}'
+    ) AS "ColorNames",
+    COALESCE(
+        ARRAY_AGG(DISTINCT s."SizeId") FILTER (WHERE s."SizeId" IS NOT NULL),
+        '{}'
+    ) AS "SizeIds",
+    COALESCE(
+        ARRAY_AGG(DISTINCT s."Size") FILTER (WHERE s."Size" IS NOT NULL),
+        '{}'
+    ) AS "SizeNames"
+FROM "productEn" p
+LEFT JOIN "productEn_colors" pc ON p."ProductEnID" = pc."ProductEnID"
+LEFT JOIN "productEn_sizes" ps ON p."ProductEnID" = ps."ProductEnID"
+LEFT JOIN "Color" c ON pc."ColorId" = c."ColorId"
+LEFT JOIN "Size" s ON ps."SizeId" = s."SizeId"
+WHERE p."ProductEnID" = sqlc.arg('ProductEnID')
+GROUP BY p."ProductEnID";

@@ -1,40 +1,32 @@
 package models
 
-import "time"
+import (
+	"time"
+)
 
 type OrderItem struct {
-	OrderItemID     int32  `json:"orderItemId"`
-	CustomerOrderID int32  `json:"customerOrderId"`
-	ProductMnID     int32  `json:"productMnId"`
-	ProductEnID     int32  `json:"productEnId"`
-	UserId          int32  `json:"userId"`
-	PhoneNumber     string `json:"phoneNumber"`
-	Quantity        int32  `json:"quantity"`
-	PriceAtOrder    string `json:"priceAtOrder"`
+	ProductMnID   int32  `json:"productMnId"`
+	ProductEnID   int32  `json:"productEnId"`
+	ProductName   string `json:"productName"`
+	Quantity      int32  `json:"quantity"`
+	PriceAtOrder  string `json:"priceAtOrder"`
+	SelectedColor string `json:"selectedColor"`
+	SelectedSize  string `json:"selectedSize"`
 }
 
+type CreateOrderRequest struct {
+	CustomerOrderID int32       `json:"customerOrderId"`
+	UserId          int32       `json:"userId"`
+	PhoneNumber     string      `json:"phoneNumber"`
+	OrderItems      []OrderItem `json:"orderItems"`
+	CreatedAt       time.Time   `json:"CreatedAt"`
+}
 type CreateOrderItemRequest struct {
-	CustomerOrderID int32     `json:"customerOrderId"`
-	ProductMnID     int32     `json:"productMnId"`
-	ProductEnID     int32     `json:"productEnId"`
-	UserId          int32     `json:"userId"`
-	PhoneNumber     string    `json:"phoneNumber"`
-	Quantity        int32     `json:"quantity" validate:"required"`
-	PriceAtOrder    string    `json:"priceAtOrder" validate:"required"`
-	CreatedAt       time.Time `json:"CreatedAt"`
-}
-
-type UpdateOrderItemRequest struct {
-	OrderItemID  int32  `json:"orderItemId" validate:"required"`
-	Quantity     int32  `json:"quantity" validate:"required"`
-	PriceAtOrder string `json:"priceAtOrder" validate:"required"`
-}
-
-type OrderItemResponse struct {
-	OrderItemID     int32  `json:"orderItemId"`
-	CustomerOrderID int32  `json:"customerOrderId"`
-	ProductMnID     int32  `json:"productMnId"`
-	ProductEnID     int32  `json:"productEnId"`
-	Quantity        int32  `json:"quantity"`
-	PriceAtOrder    string `json:"priceAtOrder"`
+	OrderID       int32  `json:"orderId"`
+	ProductMnID   int32  `json:"productMnId"`
+	ProductEnID   int32  `json:"productEnId"`
+	Quantity      int32  `json:"quantity"`
+	PriceAtOrder  string `json:"priceAtOrder"`
+	SelectedColor string `json:"selectedColor"`
+	SelectedSize  string `json:"selectedSize"`
 }

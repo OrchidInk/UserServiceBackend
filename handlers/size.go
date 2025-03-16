@@ -36,7 +36,7 @@ func (hd *Handlers) UpdateSize(ctx *fiber.Ctx) error {
 
 	var rqst models.UpdateSize
 	if err := ctx.BodyParser(&rqst); err != nil {
-		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"err": err})
+		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"err": err, "ctx": "Bodyparser"})
 	}
 
 	_, err = queries.FindByIdSize(ctx.Context(), int32(sizeId))
