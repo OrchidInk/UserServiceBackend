@@ -11,8 +11,6 @@ CREATE TABLE "productEn" (
     "DescriptionEn" TEXT NOT NULL DEFAULT '',
     "BrandEn" TEXT NOT NULL DEFAULT '',
     "ManufacturedCountryEn" TEXT NOT NULL DEFAULT '',
-    "ColorEn" TEXT NOT NULL DEFAULT '',
-    "SizeEn" TEXT NOT NULL DEFAULT '',
     "PenOutputEn" TEXT NOT NULL DEFAULT '',
     "FeaturesEn" TEXT NOT NULL DEFAULT '',
     "MaterialEn" TEXT NOT NULL DEFAULT '',

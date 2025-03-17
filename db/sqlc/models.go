@@ -6,6 +6,7 @@ package db
 
 import (
 	"database/sql"
+	"encoding/json"
 	"time"
 )
 
@@ -32,6 +33,11 @@ type CategoryEn struct {
 type CategoryMn struct {
 	CategoryMnID   int32
 	CategoryNameMn string
+}
+
+type Color struct {
+	ColorId int32
+	Color   string
 }
 
 type Customer struct {
@@ -61,26 +67,24 @@ type Delivery struct {
 	CreatedAt      sql.NullTime
 }
 
-type Deliveryaddress struct {
-	AddressId  int32
-	DeliverId  int32
-	Street     string
-	City       string
-	State      sql.NullString
-	PostalCode string
-	CreatedAt  sql.NullTime
+type Order struct {
+	OrderID         int32
+	CustomerOrderId sql.NullInt32
+	UserId          int32
+	PhoneNumber     string
+	OrderItems      json.RawMessage
+	CreatedAt       sql.NullTime
 }
 
 type OrderItem struct {
-	OrderItemId     int32
-	CustomerOrderId sql.NullInt32
-	ProductMnID     sql.NullInt32
-	ProductEnID     sql.NullInt32
-	UserId          int32
-	PhoneNumber     string
-	Quantity        int32
-	PriceAtOrder    string
-	CreatedAt       sql.NullTime
+	OrderItemID   int32
+	OrderID       int32
+	ProductMnID   sql.NullInt32
+	ProductEnID   sql.NullInt32
+	Quantity      int32
+	PriceAtOrder  string
+	SelectedColor sql.NullString
+	SelectedSize  sql.NullString
 }
 
 type Payment struct {
@@ -104,8 +108,6 @@ type ProductEn struct {
 	DescriptionEn         string
 	BrandEn               string
 	ManufacturedCountryEn string
-	ColorEn               string
-	SizeEn                string
 	PenOutputEn           string
 	FeaturesEn            string
 	MaterialEn            string
@@ -124,6 +126,16 @@ type ProductEn struct {
 	UpdatedAt             sql.NullTime
 }
 
+type ProductEnColor struct {
+	ProductEnID int32
+	ColorId     int32
+}
+
+type ProductEnSize struct {
+	ProductEnID int32
+	SizeId      int32
+}
+
 type ProductImage struct {
 	ImageID     int32
 	ImagePathEn string
@@ -140,8 +152,6 @@ type ProductMn struct {
 	DescriptionMn         string
 	BrandMn               string
 	ManufacturedCountryMn string
-	ColorMn               string
-	SizeMn                string
 	PenOutputMn           string
 	FeaturesMn            string
 	MaterialMn            string
@@ -160,14 +170,14 @@ type ProductMn struct {
 	UpdatedAt             sql.NullTime
 }
 
-type ProductReview struct {
-	ReviewID    int32
+type ProductMnColor struct {
 	ProductMnID int32
-	ProductEnID int32
-	UserID      sql.NullInt32
-	Rating      sql.NullInt32
-	ReviewText  sql.NullString
-	CreatedAt   sql.NullTime
+	ColorId     int32
+}
+
+type ProductMnSize struct {
+	ProductMnID int32
+	SizeId      int32
 }
 
 type SCategoryEn struct {
@@ -180,6 +190,11 @@ type SCategoryMn struct {
 	SCategoryIdMn   int32
 	SCategoryNameMn string
 	SubCategoryIDMn int32
+}
+
+type Size struct {
+	SizeId int32
+	Size   string
 }
 
 type SubCategoryEn struct {

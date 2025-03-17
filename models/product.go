@@ -9,26 +9,27 @@ type CreateProductEnRequest struct {
 	DescriptionEn         string `json:"descriptionEn" validate:"required"`
 	BrandEn               string `json:"brandEn"`
 	ManufacturedCountryEn string `json:"manufacturedCountryEn"`
-	ColorEn               string `json:"colorEn"`
-	SizeEn                string `json:"sizeEn"`
-	PenOutputEn           string `json:"penOutputEn"`
-	FeaturesEn            string `json:"featuresEn"`
-	MaterialEn            string `json:"materialEn"`
-	StapleSizeEn          string `json:"stapleSizeEn"`
-	CapacityEn            string `json:"capacityEn"`
-	WeightEn              string `json:"weightEn"`
-	ThicknessEn           string `json:"thinknessEn"`
-	PackagingEn           string `json:"packagingEn"`
-	UsageEn               string `json:"usageEn"`
-	InstructionsEn        string `json:"instructionsEn"`
-	ProductCodeEn         string `json:"productCodeEn"`
-	CostPriceEn           string `json:"costPriceEn"`
-	RetailPriceEn         string `json:"retailPriceEn"`
-	WarehouseStockEn      int32  `json:"warehouseStockEn"`
+	// Instead of a single ColorId and SizeId, use arrays:
+	ColorIds         []int32 `json:"colorIds" validate:"required"` // client sends an array e.g. [16,17,18]
+	SizeIds          []int32 `json:"sizeIds" validate:"required"`  // e.g. [1,2,5]
+	PenOutputEn      string  `json:"penOutputEn"`
+	FeaturesEn       string  `json:"featuresEn"`
+	MaterialEn       string  `json:"materialEn"`
+	StapleSizeEn     string  `json:"stapleSizeEn"`
+	CapacityEn       string  `json:"capacityEn"`
+	WeightEn         string  `json:"weightEn"`
+	ThicknessEn      string  `json:"thinknessEn"`
+	PackagingEn      string  `json:"packagingEn"`
+	UsageEn          string  `json:"usageEn"`
+	InstructionsEn   string  `json:"instructionsEn"`
+	ProductCodeEn    string  `json:"productCodeEn"`
+	CostPriceEn      string  `json:"costPriceEn"`
+	RetailPriceEn    string  `json:"retailPriceEn"`
+	WarehouseStockEn int32   `json:"warehouseStockEn"`
 }
 
 type CreateProductMnRequest struct {
-	ProductNameMn         string `json:"productNameMN" validate:"required"`
+	ProductNameMn         string `json:"productNameMn" validate:"required"`
 	SCategoryMnID         int32  `json:"sCategoryMnId" validate:"required"`
 	PriceMn               string `json:"priceMn" validate:"required"`
 	StockQuantity         int32  `json:"stockQuantity" validate:"required"`
@@ -36,22 +37,25 @@ type CreateProductMnRequest struct {
 	DescriptionMn         string `json:"descriptionMn" validate:"required"`
 	BrandMn               string `json:"brandMn"`
 	ManufacturedCountryMn string `json:"manufacturedCountryMn"`
-	ColorMn               string `json:"colorMn"`
-	SizeMn                string `json:"sizeMn"`
-	PenOutputMn           string `json:"penOutputMn"`
-	FeaturesMn            string `json:"featuresMn"`
-	MaterialMn            string `json:"materialMn"`
-	StapleSizeMn          string `json:"stapleSizeMn"`
-	CapacityMn            string `json:"capacityMn"`
-	WeightMn              string `json:"weightMn"`
-	ThicknessMn           string `json:"thinknessMn"`
-	PackagingMn           string `json:"packagingMn"`
-	UsageMn               string `json:"usageMn"`
-	InstructionsMn        string `json:"instructionsMn"`
-	ProductCodeMn         string `json:"productCodeMn"`
-	CostPriceMn           string `json:"costPriceMn"`
-	RetailPriceMn         string `json:"retailPriceMn"`
-	WarehouseStockMn      int32  `json:"warehouseStockMn"`
+
+	// Arrays now
+	ColorIds []int32 `json:"colorIds"`
+	SizeIds  []int32 `json:"sizeIds"`
+
+	PenOutputMn      string `json:"penOutputMn"`
+	FeaturesMn       string `json:"featuresMn"`
+	MaterialMn       string `json:"materialMn"`
+	StapleSizeMn     string `json:"stapleSizeMn"`
+	CapacityMn       string `json:"capacityMn"`
+	WeightMn         string `json:"weightMn"`
+	ThicknessMn      string `json:"thinknessMn"`
+	PackagingMn      string `json:"packagingMn"`
+	UsageMn          string `json:"usageMn"`
+	InstructionsMn   string `json:"instructionsMn"`
+	ProductCodeMn    string `json:"productCodeMn"`
+	CostPriceMn      string `json:"costPriceMn"`
+	RetailPriceMn    string `json:"retailPriceMn"`
+	WarehouseStockMn int32  `json:"warehouseStockMn"`
 }
 
 type UpdateProductEnPriceRequest struct {

@@ -21,8 +21,6 @@ INSERT INTO
         "DescriptionEn",
         "BrandEn",
         "ManufacturedCountryEn",
-        "ColorEn",
-        "SizeEn",
         "PenOutputEn",
         "FeaturesEn",
         "MaterialEn",
@@ -57,10 +55,8 @@ VALUES
         $17,
         $18,
         $19,
-        $20,
-        $21,
-        $22
-    ) RETURNING "ProductEnID", "ProductNameEn", "sCategoryIdEn", "PriceEn", "StockQuantity", "ImagesPathEn", "DescriptionEn", "BrandEn", "ManufacturedCountryEn", "ColorEn", "SizeEn", "PenOutputEn", "FeaturesEn", "MaterialEn", "StapleSizeEn", "CapacityEn", "WeightEn", "ThicknessEn", "PackagingEn", "UsageEn", "InstructionsEn", "ProductCodeEn", "CostPriceEn", "RetailPriceEn", "WarehouseStockEn", "Created_At", "Updated_At"
+        $20
+    ) RETURNING "ProductEnID", "ProductNameEn", "sCategoryIdEn", "PriceEn", "StockQuantity", "ImagesPathEn", "DescriptionEn", "BrandEn", "ManufacturedCountryEn", "PenOutputEn", "FeaturesEn", "MaterialEn", "StapleSizeEn", "CapacityEn", "WeightEn", "ThicknessEn", "PackagingEn", "UsageEn", "InstructionsEn", "ProductCodeEn", "CostPriceEn", "RetailPriceEn", "WarehouseStockEn", "Created_At", "Updated_At"
 `
 
 type CreateProductEnParams struct {
@@ -72,8 +68,6 @@ type CreateProductEnParams struct {
 	DescriptionEn         string
 	BrandEn               string
 	ManufacturedCountryEn string
-	ColorEn               string
-	SizeEn                string
 	PenOutputEn           string
 	FeaturesEn            string
 	MaterialEn            string
@@ -98,8 +92,6 @@ func (q *Queries) CreateProductEn(ctx context.Context, arg CreateProductEnParams
 		arg.DescriptionEn,
 		arg.BrandEn,
 		arg.ManufacturedCountryEn,
-		arg.ColorEn,
-		arg.SizeEn,
 		arg.PenOutputEn,
 		arg.FeaturesEn,
 		arg.MaterialEn,
@@ -124,8 +116,6 @@ func (q *Queries) CreateProductEn(ctx context.Context, arg CreateProductEnParams
 		&i.DescriptionEn,
 		&i.BrandEn,
 		&i.ManufacturedCountryEn,
-		&i.ColorEn,
-		&i.SizeEn,
 		&i.PenOutputEn,
 		&i.FeaturesEn,
 		&i.MaterialEn,
@@ -153,7 +143,7 @@ SET
     "StockQuantity" = "StockQuantity" - $1
 WHERE
     "ProductEnID" = $2
-    AND "StockQuantity" >= $1 RETURNING "ProductEnID", "ProductNameEn", "sCategoryIdEn", "PriceEn", "StockQuantity", "ImagesPathEn", "DescriptionEn", "BrandEn", "ManufacturedCountryEn", "ColorEn", "SizeEn", "PenOutputEn", "FeaturesEn", "MaterialEn", "StapleSizeEn", "CapacityEn", "WeightEn", "ThicknessEn", "PackagingEn", "UsageEn", "InstructionsEn", "ProductCodeEn", "CostPriceEn", "RetailPriceEn", "WarehouseStockEn", "Created_At", "Updated_At"
+    AND "StockQuantity" >= $1 RETURNING "ProductEnID", "ProductNameEn", "sCategoryIdEn", "PriceEn", "StockQuantity", "ImagesPathEn", "DescriptionEn", "BrandEn", "ManufacturedCountryEn", "PenOutputEn", "FeaturesEn", "MaterialEn", "StapleSizeEn", "CapacityEn", "WeightEn", "ThicknessEn", "PackagingEn", "UsageEn", "InstructionsEn", "ProductCodeEn", "CostPriceEn", "RetailPriceEn", "WarehouseStockEn", "Created_At", "Updated_At"
 `
 
 type DeductSockQuantityByProductEnIDParams struct {
@@ -174,8 +164,6 @@ func (q *Queries) DeductSockQuantityByProductEnID(ctx context.Context, arg Deduc
 		&i.DescriptionEn,
 		&i.BrandEn,
 		&i.ManufacturedCountryEn,
-		&i.ColorEn,
-		&i.SizeEn,
 		&i.PenOutputEn,
 		&i.FeaturesEn,
 		&i.MaterialEn,
@@ -210,7 +198,7 @@ func (q *Queries) DeleteByProductEnId(ctx context.Context, productenid int32) er
 
 const filterByProductEnName = `-- name: FilterByProductEnName :many
 SELECT
-    "ProductEnID", "ProductNameEn", "sCategoryIdEn", "PriceEn", "StockQuantity", "ImagesPathEn", "DescriptionEn", "BrandEn", "ManufacturedCountryEn", "ColorEn", "SizeEn", "PenOutputEn", "FeaturesEn", "MaterialEn", "StapleSizeEn", "CapacityEn", "WeightEn", "ThicknessEn", "PackagingEn", "UsageEn", "InstructionsEn", "ProductCodeEn", "CostPriceEn", "RetailPriceEn", "WarehouseStockEn", "Created_At", "Updated_At"
+    "ProductEnID", "ProductNameEn", "sCategoryIdEn", "PriceEn", "StockQuantity", "ImagesPathEn", "DescriptionEn", "BrandEn", "ManufacturedCountryEn", "PenOutputEn", "FeaturesEn", "MaterialEn", "StapleSizeEn", "CapacityEn", "WeightEn", "ThicknessEn", "PackagingEn", "UsageEn", "InstructionsEn", "ProductCodeEn", "CostPriceEn", "RetailPriceEn", "WarehouseStockEn", "Created_At", "Updated_At"
 FROM
     "productEn"
 WHERE
@@ -238,8 +226,6 @@ func (q *Queries) FilterByProductEnName(ctx context.Context, productnameen sql.N
 			&i.DescriptionEn,
 			&i.BrandEn,
 			&i.ManufacturedCountryEn,
-			&i.ColorEn,
-			&i.SizeEn,
 			&i.PenOutputEn,
 			&i.FeaturesEn,
 			&i.MaterialEn,
@@ -272,7 +258,7 @@ func (q *Queries) FilterByProductEnName(ctx context.Context, productnameen sql.N
 
 const findByProductIdEn = `-- name: FindByProductIdEn :one
 SELECT
-    "ProductEnID", "ProductNameEn", "sCategoryIdEn", "PriceEn", "StockQuantity", "ImagesPathEn", "DescriptionEn", "BrandEn", "ManufacturedCountryEn", "ColorEn", "SizeEn", "PenOutputEn", "FeaturesEn", "MaterialEn", "StapleSizeEn", "CapacityEn", "WeightEn", "ThicknessEn", "PackagingEn", "UsageEn", "InstructionsEn", "ProductCodeEn", "CostPriceEn", "RetailPriceEn", "WarehouseStockEn", "Created_At", "Updated_At"
+    "ProductEnID", "ProductNameEn", "sCategoryIdEn", "PriceEn", "StockQuantity", "ImagesPathEn", "DescriptionEn", "BrandEn", "ManufacturedCountryEn", "PenOutputEn", "FeaturesEn", "MaterialEn", "StapleSizeEn", "CapacityEn", "WeightEn", "ThicknessEn", "PackagingEn", "UsageEn", "InstructionsEn", "ProductCodeEn", "CostPriceEn", "RetailPriceEn", "WarehouseStockEn", "Created_At", "Updated_At"
 FROM
     "productEn"
 WHERE
@@ -294,8 +280,6 @@ func (q *Queries) FindByProductIdEn(ctx context.Context, productenid int32) (Pro
 		&i.DescriptionEn,
 		&i.BrandEn,
 		&i.ManufacturedCountryEn,
-		&i.ColorEn,
-		&i.SizeEn,
 		&i.PenOutputEn,
 		&i.FeaturesEn,
 		&i.MaterialEn,
@@ -318,7 +302,7 @@ func (q *Queries) FindByProductIdEn(ctx context.Context, productenid int32) (Pro
 
 const getListProductEn = `-- name: GetListProductEn :many
 SELECT
-    "ProductEnID", "ProductNameEn", "sCategoryIdEn", "PriceEn", "StockQuantity", "ImagesPathEn", "DescriptionEn", "BrandEn", "ManufacturedCountryEn", "ColorEn", "SizeEn", "PenOutputEn", "FeaturesEn", "MaterialEn", "StapleSizeEn", "CapacityEn", "WeightEn", "ThicknessEn", "PackagingEn", "UsageEn", "InstructionsEn", "ProductCodeEn", "CostPriceEn", "RetailPriceEn", "WarehouseStockEn", "Created_At", "Updated_At"
+    "ProductEnID", "ProductNameEn", "sCategoryIdEn", "PriceEn", "StockQuantity", "ImagesPathEn", "DescriptionEn", "BrandEn", "ManufacturedCountryEn", "PenOutputEn", "FeaturesEn", "MaterialEn", "StapleSizeEn", "CapacityEn", "WeightEn", "ThicknessEn", "PackagingEn", "UsageEn", "InstructionsEn", "ProductCodeEn", "CostPriceEn", "RetailPriceEn", "WarehouseStockEn", "Created_At", "Updated_At"
 FROM
     "productEn"
 ORDER BY
@@ -344,8 +328,6 @@ func (q *Queries) GetListProductEn(ctx context.Context) ([]ProductEn, error) {
 			&i.DescriptionEn,
 			&i.BrandEn,
 			&i.ManufacturedCountryEn,
-			&i.ColorEn,
-			&i.SizeEn,
 			&i.PenOutputEn,
 			&i.FeaturesEn,
 			&i.MaterialEn,
@@ -376,13 +358,318 @@ func (q *Queries) GetListProductEn(ctx context.Context) ([]ProductEn, error) {
 	return items, nil
 }
 
+const getProductEnWithAllColorsAndSizes = `-- name: GetProductEnWithAllColorsAndSizes :many
+
+
+SELECT 
+    p."ProductEnID",
+    p."ProductNameEn",
+    p."sCategoryIdEn",
+    p."PriceEn",
+    p."StockQuantity",
+    p."ImagesPathEn",
+    p."DescriptionEn",
+    p."BrandEn",
+    p."ManufacturedCountryEn",
+    p."PenOutputEn",
+    p."FeaturesEn",
+    p."MaterialEn",
+    p."StapleSizeEn",
+    p."CapacityEn",
+    p."WeightEn",
+    p."ThicknessEn",
+    p."PackagingEn",
+    p."UsageEn",
+    p."InstructionsEn",
+    p."ProductCodeEn",
+    p."CostPriceEn",
+    p."RetailPriceEn",
+    p."WarehouseStockEn",
+    p."Created_At",
+    p."Updated_At",
+
+    COALESCE(
+        ARRAY_AGG(DISTINCT c."ColorId") FILTER (WHERE c."ColorId" IS NOT NULL),
+        '{}'
+    ) AS "ColorIds",
+
+    COALESCE(
+        ARRAY_AGG(DISTINCT c."Color") FILTER (WHERE c."Color" IS NOT NULL),
+        '{}'
+    ) AS "ColorNames",
+
+    COALESCE(
+        ARRAY_AGG(DISTINCT s."SizeId") FILTER (WHERE s."SizeId" IS NOT NULL),
+        '{}'
+    ) AS "SizeIds",
+
+    COALESCE(
+        ARRAY_AGG(DISTINCT s."Size") FILTER (WHERE s."Size" IS NOT NULL),
+        '{}'
+    ) AS "SizeNames"
+
+FROM "productEn" p
+LEFT JOIN "productEn_colors" pc 
+       ON p."ProductEnID" = pc."ProductEnID"
+LEFT JOIN "productEn_sizes" ps 
+       ON p."ProductEnID" = ps."ProductEnID"
+LEFT JOIN "Color" c 
+       ON pc."ColorId" = c."ColorId"
+LEFT JOIN "Size" s 
+       ON ps."SizeId" = s."SizeId"
+
+GROUP BY p."ProductEnID"
+`
+
+type GetProductEnWithAllColorsAndSizesRow struct {
+	ProductEnID           int32
+	ProductNameEn         string
+	SCategoryIdEn         int32
+	PriceEn               string
+	StockQuantity         int32
+	ImagesPathEn          string
+	DescriptionEn         string
+	BrandEn               string
+	ManufacturedCountryEn string
+	PenOutputEn           string
+	FeaturesEn            string
+	MaterialEn            string
+	StapleSizeEn          string
+	CapacityEn            string
+	WeightEn              string
+	ThicknessEn           string
+	PackagingEn           string
+	UsageEn               string
+	InstructionsEn        string
+	ProductCodeEn         string
+	CostPriceEn           string
+	RetailPriceEn         string
+	WarehouseStockEn      int32
+	CreatedAt             sql.NullTime
+	UpdatedAt             sql.NullTime
+	ColorIds              interface{}
+	ColorNames            interface{}
+	SizeIds               interface{}
+	SizeNames             interface{}
+}
+
+// -- name: GetProductEnWithDetails :many
+// SELECT
+//
+//	p."ProductEnID",
+//	p."ProductNameEn",
+//	p."sCategoryIdEn",
+//	p."PriceEn",
+//	p."StockQuantity",
+//	p."ImagesPathEn",
+//	p."DescriptionEn",
+//	p."BrandEn",
+//	p."ManufacturedCountryEn",
+//	p."ColorId",
+//	c."Color" AS colorName,
+//	p."SizeId",
+//	s."Size" AS sizeName,
+//	p."PenOutputEn",
+//	p."FeaturesEn",
+//	p."MaterialEn",
+//	p."StapleSizeEn",
+//	p."CapacityEn",
+//	p."WeightEn",
+//	p."ThicknessEn",
+//	p."PackagingEn",
+//	p."UsageEn",
+//	p."InstructionsEn",
+//	p."ProductCodeEn",
+//	p."CostPriceEn",
+//	p."RetailPriceEn",
+//	p."WarehouseStockEn",
+//	p."Created_At",
+//	p."Updated_At"
+//
+// FROM "productEn" p
+// LEFT JOIN "Color" c ON p."ColorId" = c."ColorId"
+// LEFT JOIN "Size" s ON p."SizeId" = s."SizeId";
+func (q *Queries) GetProductEnWithAllColorsAndSizes(ctx context.Context) ([]GetProductEnWithAllColorsAndSizesRow, error) {
+	rows, err := q.db.QueryContext(ctx, getProductEnWithAllColorsAndSizes)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []GetProductEnWithAllColorsAndSizesRow
+	for rows.Next() {
+		var i GetProductEnWithAllColorsAndSizesRow
+		if err := rows.Scan(
+			&i.ProductEnID,
+			&i.ProductNameEn,
+			&i.SCategoryIdEn,
+			&i.PriceEn,
+			&i.StockQuantity,
+			&i.ImagesPathEn,
+			&i.DescriptionEn,
+			&i.BrandEn,
+			&i.ManufacturedCountryEn,
+			&i.PenOutputEn,
+			&i.FeaturesEn,
+			&i.MaterialEn,
+			&i.StapleSizeEn,
+			&i.CapacityEn,
+			&i.WeightEn,
+			&i.ThicknessEn,
+			&i.PackagingEn,
+			&i.UsageEn,
+			&i.InstructionsEn,
+			&i.ProductCodeEn,
+			&i.CostPriceEn,
+			&i.RetailPriceEn,
+			&i.WarehouseStockEn,
+			&i.CreatedAt,
+			&i.UpdatedAt,
+			&i.ColorIds,
+			&i.ColorNames,
+			&i.SizeIds,
+			&i.SizeNames,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const getProductEnWithAllColorsAndSizesByID = `-- name: GetProductEnWithAllColorsAndSizesByID :one
+SELECT 
+    p."ProductEnID",
+    p."ProductNameEn",
+    p."sCategoryIdEn",
+    p."PriceEn",
+    p."StockQuantity",
+    p."ImagesPathEn",
+    p."DescriptionEn",
+    p."BrandEn",
+    p."ManufacturedCountryEn",
+    p."PenOutputEn",
+    p."FeaturesEn",
+    p."MaterialEn",
+    p."StapleSizeEn",
+    p."CapacityEn",
+    p."WeightEn",
+    p."ThicknessEn",
+    p."PackagingEn",
+    p."UsageEn",
+    p."InstructionsEn",
+    p."ProductCodeEn",
+    p."CostPriceEn",
+    p."RetailPriceEn",
+    p."WarehouseStockEn",
+    p."Created_At",
+    p."Updated_At",
+    COALESCE(
+        ARRAY_AGG(DISTINCT c."ColorId") FILTER (WHERE c."ColorId" IS NOT NULL),
+        '{}'
+    ) AS "ColorIds",
+    COALESCE(
+        ARRAY_AGG(DISTINCT c."Color") FILTER (WHERE c."Color" IS NOT NULL),
+        '{}'
+    ) AS "ColorNames",
+    COALESCE(
+        ARRAY_AGG(DISTINCT s."SizeId") FILTER (WHERE s."SizeId" IS NOT NULL),
+        '{}'
+    ) AS "SizeIds",
+    COALESCE(
+        ARRAY_AGG(DISTINCT s."Size") FILTER (WHERE s."Size" IS NOT NULL),
+        '{}'
+    ) AS "SizeNames"
+FROM "productEn" p
+LEFT JOIN "productEn_colors" pc ON p."ProductEnID" = pc."ProductEnID"
+LEFT JOIN "productEn_sizes" ps ON p."ProductEnID" = ps."ProductEnID"
+LEFT JOIN "Color" c ON pc."ColorId" = c."ColorId"
+LEFT JOIN "Size" s ON ps."SizeId" = s."SizeId"
+WHERE p."ProductEnID" = $1
+GROUP BY p."ProductEnID"
+`
+
+type GetProductEnWithAllColorsAndSizesByIDRow struct {
+	ProductEnID           int32
+	ProductNameEn         string
+	SCategoryIdEn         int32
+	PriceEn               string
+	StockQuantity         int32
+	ImagesPathEn          string
+	DescriptionEn         string
+	BrandEn               string
+	ManufacturedCountryEn string
+	PenOutputEn           string
+	FeaturesEn            string
+	MaterialEn            string
+	StapleSizeEn          string
+	CapacityEn            string
+	WeightEn              string
+	ThicknessEn           string
+	PackagingEn           string
+	UsageEn               string
+	InstructionsEn        string
+	ProductCodeEn         string
+	CostPriceEn           string
+	RetailPriceEn         string
+	WarehouseStockEn      int32
+	CreatedAt             sql.NullTime
+	UpdatedAt             sql.NullTime
+	ColorIds              interface{}
+	ColorNames            interface{}
+	SizeIds               interface{}
+	SizeNames             interface{}
+}
+
+func (q *Queries) GetProductEnWithAllColorsAndSizesByID(ctx context.Context, productenid int32) (GetProductEnWithAllColorsAndSizesByIDRow, error) {
+	row := q.db.QueryRowContext(ctx, getProductEnWithAllColorsAndSizesByID, productenid)
+	var i GetProductEnWithAllColorsAndSizesByIDRow
+	err := row.Scan(
+		&i.ProductEnID,
+		&i.ProductNameEn,
+		&i.SCategoryIdEn,
+		&i.PriceEn,
+		&i.StockQuantity,
+		&i.ImagesPathEn,
+		&i.DescriptionEn,
+		&i.BrandEn,
+		&i.ManufacturedCountryEn,
+		&i.PenOutputEn,
+		&i.FeaturesEn,
+		&i.MaterialEn,
+		&i.StapleSizeEn,
+		&i.CapacityEn,
+		&i.WeightEn,
+		&i.ThicknessEn,
+		&i.PackagingEn,
+		&i.UsageEn,
+		&i.InstructionsEn,
+		&i.ProductCodeEn,
+		&i.CostPriceEn,
+		&i.RetailPriceEn,
+		&i.WarehouseStockEn,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+		&i.ColorIds,
+		&i.ColorNames,
+		&i.SizeIds,
+		&i.SizeNames,
+	)
+	return i, err
+}
+
 const updateByEnImagePath = `-- name: UpdateByEnImagePath :one
 UPDATE
     "productEn"
 SET
     "ImagesPathEn" = $1
 WHERE
-    "ProductEnID" = $2 RETURNING "ProductEnID", "ProductNameEn", "sCategoryIdEn", "PriceEn", "StockQuantity", "ImagesPathEn", "DescriptionEn", "BrandEn", "ManufacturedCountryEn", "ColorEn", "SizeEn", "PenOutputEn", "FeaturesEn", "MaterialEn", "StapleSizeEn", "CapacityEn", "WeightEn", "ThicknessEn", "PackagingEn", "UsageEn", "InstructionsEn", "ProductCodeEn", "CostPriceEn", "RetailPriceEn", "WarehouseStockEn", "Created_At", "Updated_At"
+    "ProductEnID" = $2 RETURNING "ProductEnID", "ProductNameEn", "sCategoryIdEn", "PriceEn", "StockQuantity", "ImagesPathEn", "DescriptionEn", "BrandEn", "ManufacturedCountryEn", "PenOutputEn", "FeaturesEn", "MaterialEn", "StapleSizeEn", "CapacityEn", "WeightEn", "ThicknessEn", "PackagingEn", "UsageEn", "InstructionsEn", "ProductCodeEn", "CostPriceEn", "RetailPriceEn", "WarehouseStockEn", "Created_At", "Updated_At"
 `
 
 type UpdateByEnImagePathParams struct {
@@ -403,8 +690,6 @@ func (q *Queries) UpdateByEnImagePath(ctx context.Context, arg UpdateByEnImagePa
 		&i.DescriptionEn,
 		&i.BrandEn,
 		&i.ManufacturedCountryEn,
-		&i.ColorEn,
-		&i.SizeEn,
 		&i.PenOutputEn,
 		&i.FeaturesEn,
 		&i.MaterialEn,
@@ -431,7 +716,7 @@ UPDATE
 SET
     "PriceEn" = $1
 WHERE
-    "ProductEnID" = $2 RETURNING "ProductEnID", "ProductNameEn", "sCategoryIdEn", "PriceEn", "StockQuantity", "ImagesPathEn", "DescriptionEn", "BrandEn", "ManufacturedCountryEn", "ColorEn", "SizeEn", "PenOutputEn", "FeaturesEn", "MaterialEn", "StapleSizeEn", "CapacityEn", "WeightEn", "ThicknessEn", "PackagingEn", "UsageEn", "InstructionsEn", "ProductCodeEn", "CostPriceEn", "RetailPriceEn", "WarehouseStockEn", "Created_At", "Updated_At"
+    "ProductEnID" = $2 RETURNING "ProductEnID", "ProductNameEn", "sCategoryIdEn", "PriceEn", "StockQuantity", "ImagesPathEn", "DescriptionEn", "BrandEn", "ManufacturedCountryEn", "PenOutputEn", "FeaturesEn", "MaterialEn", "StapleSizeEn", "CapacityEn", "WeightEn", "ThicknessEn", "PackagingEn", "UsageEn", "InstructionsEn", "ProductCodeEn", "CostPriceEn", "RetailPriceEn", "WarehouseStockEn", "Created_At", "Updated_At"
 `
 
 type UpdateByProductEnPriceParams struct {
@@ -452,8 +737,6 @@ func (q *Queries) UpdateByProductEnPrice(ctx context.Context, arg UpdateByProduc
 		&i.DescriptionEn,
 		&i.BrandEn,
 		&i.ManufacturedCountryEn,
-		&i.ColorEn,
-		&i.SizeEn,
 		&i.PenOutputEn,
 		&i.FeaturesEn,
 		&i.MaterialEn,
@@ -480,7 +763,7 @@ UPDATE
 SET
     "StockQuantity" = $1
 WHERE
-    "ProductEnID" = $2 RETURNING "ProductEnID", "ProductNameEn", "sCategoryIdEn", "PriceEn", "StockQuantity", "ImagesPathEn", "DescriptionEn", "BrandEn", "ManufacturedCountryEn", "ColorEn", "SizeEn", "PenOutputEn", "FeaturesEn", "MaterialEn", "StapleSizeEn", "CapacityEn", "WeightEn", "ThicknessEn", "PackagingEn", "UsageEn", "InstructionsEn", "ProductCodeEn", "CostPriceEn", "RetailPriceEn", "WarehouseStockEn", "Created_At", "Updated_At"
+    "ProductEnID" = $2 RETURNING "ProductEnID", "ProductNameEn", "sCategoryIdEn", "PriceEn", "StockQuantity", "ImagesPathEn", "DescriptionEn", "BrandEn", "ManufacturedCountryEn", "PenOutputEn", "FeaturesEn", "MaterialEn", "StapleSizeEn", "CapacityEn", "WeightEn", "ThicknessEn", "PackagingEn", "UsageEn", "InstructionsEn", "ProductCodeEn", "CostPriceEn", "RetailPriceEn", "WarehouseStockEn", "Created_At", "Updated_At"
 `
 
 type UpdateByProductEnStockQuantityParams struct {
@@ -501,8 +784,6 @@ func (q *Queries) UpdateByProductEnStockQuantity(ctx context.Context, arg Update
 		&i.DescriptionEn,
 		&i.BrandEn,
 		&i.ManufacturedCountryEn,
-		&i.ColorEn,
-		&i.SizeEn,
 		&i.PenOutputEn,
 		&i.FeaturesEn,
 		&i.MaterialEn,
@@ -535,24 +816,22 @@ SET
     "DescriptionEn" = $6,
     "BrandEn" = $7,
     "ManufacturedCountryEn" = $8,
-    "ColorEn" = $9,
-    "SizeEn" = $10,
-    "PenOutputEn" = $11,
-    "FeaturesEn" = $12,
-    "MaterialEn" = $13,
-    "StapleSizeEn" = $14,
-    "CapacityEn" = $15,
-    "WeightEn" = $16,
-    "ThicknessEn" = $17,
-    "PackagingEn" = $18,
-    "UsageEn" = $19,
-    "InstructionsEn" = $20,
-    "ProductCodeEn" = $21,
-    "CostPriceEn" = $22,
-    "RetailPriceEn" = $23,
-    "WarehouseStockEn" = $24
+    "PenOutputEn" = $9,
+    "FeaturesEn" = $10,
+    "MaterialEn" = $11,
+    "StapleSizeEn" = $12,
+    "CapacityEn" = $13,
+    "WeightEn" = $14,
+    "ThicknessEn" = $15,
+    "PackagingEn" = $16,
+    "UsageEn" = $17,
+    "InstructionsEn" = $18,
+    "ProductCodeEn" = $19,
+    "CostPriceEn" = $20,
+    "RetailPriceEn" = $21,
+    "WarehouseStockEn" = $22
     WHERE
-    "ProductEnID" = $25 RETURNING "ProductEnID", "ProductNameEn", "sCategoryIdEn", "PriceEn", "StockQuantity", "ImagesPathEn", "DescriptionEn", "BrandEn", "ManufacturedCountryEn", "ColorEn", "SizeEn", "PenOutputEn", "FeaturesEn", "MaterialEn", "StapleSizeEn", "CapacityEn", "WeightEn", "ThicknessEn", "PackagingEn", "UsageEn", "InstructionsEn", "ProductCodeEn", "CostPriceEn", "RetailPriceEn", "WarehouseStockEn", "Created_At", "Updated_At"
+    "ProductEnID" = $23 RETURNING "ProductEnID", "ProductNameEn", "sCategoryIdEn", "PriceEn", "StockQuantity", "ImagesPathEn", "DescriptionEn", "BrandEn", "ManufacturedCountryEn", "PenOutputEn", "FeaturesEn", "MaterialEn", "StapleSizeEn", "CapacityEn", "WeightEn", "ThicknessEn", "PackagingEn", "UsageEn", "InstructionsEn", "ProductCodeEn", "CostPriceEn", "RetailPriceEn", "WarehouseStockEn", "Created_At", "Updated_At"
 `
 
 type UpdateProductEnParams struct {
@@ -564,8 +843,6 @@ type UpdateProductEnParams struct {
 	DescriptionEn         string
 	BrandEn               string
 	ManufacturedCountryEn string
-	ColorEn               string
-	SizeEn                string
 	PenOutputEn           string
 	FeaturesEn            string
 	MaterialEn            string
@@ -593,8 +870,6 @@ func (q *Queries) UpdateProductEn(ctx context.Context, arg UpdateProductEnParams
 		arg.DescriptionEn,
 		arg.BrandEn,
 		arg.ManufacturedCountryEn,
-		arg.ColorEn,
-		arg.SizeEn,
 		arg.PenOutputEn,
 		arg.FeaturesEn,
 		arg.MaterialEn,
@@ -622,8 +897,6 @@ func (q *Queries) UpdateProductEn(ctx context.Context, arg UpdateProductEnParams
 		&i.DescriptionEn,
 		&i.BrandEn,
 		&i.ManufacturedCountryEn,
-		&i.ColorEn,
-		&i.SizeEn,
 		&i.PenOutputEn,
 		&i.FeaturesEn,
 		&i.MaterialEn,
@@ -650,7 +923,7 @@ UPDATE
 SET
     "sCategoryIdEn" = $1
 WHERE
-    "ProductEnID" = $2 RETURNING "ProductEnID", "ProductNameEn", "sCategoryIdEn", "PriceEn", "StockQuantity", "ImagesPathEn", "DescriptionEn", "BrandEn", "ManufacturedCountryEn", "ColorEn", "SizeEn", "PenOutputEn", "FeaturesEn", "MaterialEn", "StapleSizeEn", "CapacityEn", "WeightEn", "ThicknessEn", "PackagingEn", "UsageEn", "InstructionsEn", "ProductCodeEn", "CostPriceEn", "RetailPriceEn", "WarehouseStockEn", "Created_At", "Updated_At"
+    "ProductEnID" = $2 RETURNING "ProductEnID", "ProductNameEn", "sCategoryIdEn", "PriceEn", "StockQuantity", "ImagesPathEn", "DescriptionEn", "BrandEn", "ManufacturedCountryEn", "PenOutputEn", "FeaturesEn", "MaterialEn", "StapleSizeEn", "CapacityEn", "WeightEn", "ThicknessEn", "PackagingEn", "UsageEn", "InstructionsEn", "ProductCodeEn", "CostPriceEn", "RetailPriceEn", "WarehouseStockEn", "Created_At", "Updated_At"
 `
 
 type UpdateProductEnSubCategoryParams struct {
@@ -671,8 +944,6 @@ func (q *Queries) UpdateProductEnSubCategory(ctx context.Context, arg UpdateProd
 		&i.DescriptionEn,
 		&i.BrandEn,
 		&i.ManufacturedCountryEn,
-		&i.ColorEn,
-		&i.SizeEn,
 		&i.PenOutputEn,
 		&i.FeaturesEn,
 		&i.MaterialEn,
@@ -699,7 +970,7 @@ UPDATE
 SET
     "StockQuantity" = $1
 WHERE
-    "ProductEnID" = $2 RETURNING "ProductEnID", "ProductNameEn", "sCategoryIdEn", "PriceEn", "StockQuantity", "ImagesPathEn", "DescriptionEn", "BrandEn", "ManufacturedCountryEn", "ColorEn", "SizeEn", "PenOutputEn", "FeaturesEn", "MaterialEn", "StapleSizeEn", "CapacityEn", "WeightEn", "ThicknessEn", "PackagingEn", "UsageEn", "InstructionsEn", "ProductCodeEn", "CostPriceEn", "RetailPriceEn", "WarehouseStockEn", "Created_At", "Updated_At"
+    "ProductEnID" = $2 RETURNING "ProductEnID", "ProductNameEn", "sCategoryIdEn", "PriceEn", "StockQuantity", "ImagesPathEn", "DescriptionEn", "BrandEn", "ManufacturedCountryEn", "PenOutputEn", "FeaturesEn", "MaterialEn", "StapleSizeEn", "CapacityEn", "WeightEn", "ThicknessEn", "PackagingEn", "UsageEn", "InstructionsEn", "ProductCodeEn", "CostPriceEn", "RetailPriceEn", "WarehouseStockEn", "Created_At", "Updated_At"
 `
 
 type UpdateSProductEnParams struct {
@@ -720,8 +991,6 @@ func (q *Queries) UpdateSProductEn(ctx context.Context, arg UpdateSProductEnPara
 		&i.DescriptionEn,
 		&i.BrandEn,
 		&i.ManufacturedCountryEn,
-		&i.ColorEn,
-		&i.SizeEn,
 		&i.PenOutputEn,
 		&i.FeaturesEn,
 		&i.MaterialEn,

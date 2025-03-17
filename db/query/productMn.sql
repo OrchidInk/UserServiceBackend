@@ -9,8 +9,6 @@ INSERT INTO
         "DescriptionMn",
         "BrandMn",
         "ManufacturedCountryMn",
-        "ColorMn",
-        "SizeMn",
         "PenOutputMn",
         "FeaturesMn",
         "MaterialMn",
@@ -34,8 +32,6 @@ VALUES
         sqlc.arg('DescriptionMn'),
         sqlc.arg('BrandMn'),
         sqlc.arg('ManufacturedCountryMn'),
-        sqlc.arg('ColorMn'),
-        sqlc.arg('SizeMn'),
         sqlc.arg('PenOutputMn'),
         sqlc.arg('FeaturesMn'),
         sqlc.arg('MaterialMn'),
@@ -144,8 +140,6 @@ SET
     "DescriptionMn" = sqlc.arg('DescriptionMn'),
     "BrandMn" = sqlc.arg('BrandMn'),
     "ManufacturedCountryMn" = sqlc.arg('ManufacturedCountryMn'),
-    "ColorMn" = sqlc.arg('ColorMn'),
-    "SizeMn" = sqlc.arg('SizeMn'),
     "PenOutputMn" = sqlc.arg('PenOutputMn'),
     "FeaturesMn" = sqlc.arg('FeaturesMn'),
     "StapleSizeMn" = sqlc.arg('StapleSizeMn'),
@@ -161,3 +155,110 @@ SET
     "WarehouseStockMn" = sqlc.arg('WarehouseStockMn')
 WHERE
     "ProductMnID" = sqlc.arg('ProductMnID') RETURNING *;
+
+-- name: GetProductMnWithAllColorsAndSizes :many
+SELECT 
+    p."ProductMnID",
+    p."ProductNameMn",
+    p."sCategoryIdMn",
+    p."PriceMn",
+    p."StockQuantity",
+    p."ImagesPathMn",
+    p."DescriptionMn",
+    p."BrandMn",
+    p."ManufacturedCountryMn",
+    p."PenOutputMn",
+    p."FeaturesMn",
+    p."MaterialMn",
+    p."StapleSizeMn",
+    p."CapacityMn",
+    p."WeightMn",
+    p."ThicknessMn",
+    p."PackagingMn",
+    p."UsageMn",
+    p."InstructionsMn",
+    p."ProductCodeMn",
+    p."CostPriceMn",
+    p."RetailPriceMn",
+    p."WarehouseStockMn",
+    p."Created_At",
+    p."Updated_At",
+
+    COALESCE(
+        ARRAY_AGG(DISTINCT c."ColorId") FILTER (WHERE c."ColorId" IS NOT NULL),
+        '{}'
+    ) AS "ColorIds",
+    COALESCE(
+        ARRAY_AGG(DISTINCT c."Color") FILTER (WHERE c."Color" IS NOT NULL),
+        '{}'
+    ) AS "ColorNames",
+
+    COALESCE(
+        ARRAY_AGG(DISTINCT s."SizeId") FILTER (WHERE s."SizeId" IS NOT NULL),
+        '{}'
+    ) AS "SizeIds",
+    COALESCE(
+        ARRAY_AGG(DISTINCT s."Size") FILTER (WHERE s."Size" IS NOT NULL),
+        '{}'
+    ) AS "SizeNames"
+
+FROM "productMn" p
+LEFT JOIN "productMn_colors" pc ON p."ProductMnID" = pc."ProductMnID"
+LEFT JOIN "productMn_sizes" ps ON p."ProductMnID" = ps."ProductMnID"
+LEFT JOIN "Color" c ON pc."ColorId" = c."ColorId"
+LEFT JOIN "Size" s ON ps."SizeId" = s."SizeId"
+GROUP BY p."ProductMnID";
+
+-- name: GetProductMnWithAllColorsAndSizesByID :one
+SELECT 
+    p."ProductMnID",
+    p."ProductNameMn",
+    p."sCategoryIdMn",
+    p."PriceMn",
+    p."StockQuantity",
+    p."ImagesPathMn",
+    p."DescriptionMn",
+    p."BrandMn",
+    p."ManufacturedCountryMn",
+    p."PenOutputMn",
+    p."FeaturesMn",
+    p."MaterialMn",
+    p."StapleSizeMn",
+    p."CapacityMn",
+    p."WeightMn",
+    p."ThicknessMn",
+    p."PackagingMn",
+    p."UsageMn",
+    p."InstructionsMn",
+    p."ProductCodeMn",
+    p."CostPriceMn",
+    p."RetailPriceMn",
+    p."WarehouseStockMn",
+    p."Created_At",
+    p."Updated_At",
+
+    COALESCE(
+        ARRAY_AGG(DISTINCT c."ColorId") FILTER (WHERE c."ColorId" IS NOT NULL),
+        '{}'
+    ) AS "ColorIds",
+    COALESCE(
+        ARRAY_AGG(DISTINCT c."Color") FILTER (WHERE c."Color" IS NOT NULL),
+        '{}'
+    ) AS "ColorNames",
+
+    COALESCE(
+        ARRAY_AGG(DISTINCT s."SizeId") FILTER (WHERE s."SizeId" IS NOT NULL),
+        '{}'
+    ) AS "SizeIds",
+    COALESCE(
+        ARRAY_AGG(DISTINCT s."Size") FILTER (WHERE s."Size" IS NOT NULL),
+        '{}'
+    ) AS "SizeNames"
+
+FROM "productMn" p
+LEFT JOIN "productMn_colors" pc ON p."ProductMnID" = pc."ProductMnID"
+LEFT JOIN "productMn_sizes" ps ON p."ProductMnID" = ps."ProductMnID"
+LEFT JOIN "Color" c ON pc."ColorId" = c."ColorId"
+LEFT JOIN "Size" s ON ps."SizeId" = s."SizeId"
+WHERE p."ProductMnID" = sqlc.arg('ProductMnID')
+GROUP BY p."ProductMnID";

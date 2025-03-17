@@ -9,8 +9,6 @@ INSERT INTO
         "DescriptionEn",
         "BrandEn",
         "ManufacturedCountryEn",
-        "ColorEn",
-        "SizeEn",
         "PenOutputEn",
         "FeaturesEn",
         "MaterialEn",
@@ -34,8 +32,6 @@ VALUES
         sqlc.arg('DescriptionEn'),
         sqlc.arg('BrandEn'),
         sqlc.arg('ManufacturedCountryEn'),
-        sqlc.arg('ColorEn'),
-        sqlc.arg('SizeEn'),
         sqlc.arg('PenOutputEn'),
         sqlc.arg('FeaturesEn'),
         sqlc.arg('MaterialEn'),
@@ -144,8 +140,6 @@ SET
     "DescriptionEn" = sqlc.arg('DescriptionEn'),
     "BrandEn" = sqlc.arg('BrandEn'),
     "ManufacturedCountryEn" = sqlc.arg('ManufacturedCountryEn'),
-    "ColorEn" = sqlc.arg('ColorEn'),
-    "SizeEn" = sqlc.arg('SizeEn'),
     "PenOutputEn" = sqlc.arg('PenOutputEn'),
     "FeaturesEn" = sqlc.arg('FeaturesEn'),
     "MaterialEn" = sqlc.arg('MaterialEn'),
@@ -162,3 +156,151 @@ SET
     "WarehouseStockEn" = sqlc.arg('WarehouseStockEn')
     WHERE
     "ProductEnID" = sqlc.arg('ProductEnID') RETURNING *;
+
+-- -- name: GetProductEnWithDetails :many
+-- SELECT 
+--     p."ProductEnID",
+--     p."ProductNameEn",
+--     p."sCategoryIdEn",
+--     p."PriceEn",
+--     p."StockQuantity",
+--     p."ImagesPathEn",
+--     p."DescriptionEn",
+--     p."BrandEn",
+--     p."ManufacturedCountryEn",
+--     p."ColorId",
+--     c."Color" AS colorName,
+--     p."SizeId",
+--     s."Size" AS sizeName,
+--     p."PenOutputEn",
+--     p."FeaturesEn",
+--     p."MaterialEn",
+--     p."StapleSizeEn",
+--     p."CapacityEn",
+--     p."WeightEn",
+--     p."ThicknessEn",
+--     p."PackagingEn",
+--     p."UsageEn",
+--     p."InstructionsEn",
+--     p."ProductCodeEn",
+--     p."CostPriceEn",
+--     p."RetailPriceEn",
+--     p."WarehouseStockEn",
+--     p."Created_At",
+--     p."Updated_At"
+-- FROM "productEn" p
+-- LEFT JOIN "Color" c ON p."ColorId" = c."ColorId"
+-- LEFT JOIN "Size" s ON p."SizeId" = s."SizeId";
+
+
+-- name: GetProductEnWithAllColorsAndSizes :many
+SELECT 
+    p."ProductEnID",
+    p."ProductNameEn",
+    p."sCategoryIdEn",
+    p."PriceEn",
+    p."StockQuantity",
+    p."ImagesPathEn",
+    p."DescriptionEn",
+    p."BrandEn",
+    p."ManufacturedCountryEn",
+    p."PenOutputEn",
+    p."FeaturesEn",
+    p."MaterialEn",
+    p."StapleSizeEn",
+    p."CapacityEn",
+    p."WeightEn",
+    p."ThicknessEn",
+    p."PackagingEn",
+    p."UsageEn",
+    p."InstructionsEn",
+    p."ProductCodeEn",
+    p."CostPriceEn",
+    p."RetailPriceEn",
+    p."WarehouseStockEn",
+    p."Created_At",
+    p."Updated_At",
+
+    COALESCE(
+        ARRAY_AGG(DISTINCT c."ColorId") FILTER (WHERE c."ColorId" IS NOT NULL),
+        '{}'
+    ) AS "ColorIds",
+
+    COALESCE(
+        ARRAY_AGG(DISTINCT c."Color") FILTER (WHERE c."Color" IS NOT NULL),
+        '{}'
+    ) AS "ColorNames",
+
+    COALESCE(
+        ARRAY_AGG(DISTINCT s."SizeId") FILTER (WHERE s."SizeId" IS NOT NULL),
+        '{}'
+    ) AS "SizeIds",
+
+    COALESCE(
+        ARRAY_AGG(DISTINCT s."Size") FILTER (WHERE s."Size" IS NOT NULL),
+        '{}'
+    ) AS "SizeNames"
+
+FROM "productEn" p
+LEFT JOIN "productEn_colors" pc 
+       ON p."ProductEnID" = pc."ProductEnID"
+LEFT JOIN "productEn_sizes" ps 
+       ON p."ProductEnID" = ps."ProductEnID"
+LEFT JOIN "Color" c 
+       ON pc."ColorId" = c."ColorId"
+LEFT JOIN "Size" s 
+       ON ps."SizeId" = s."SizeId"
+
+GROUP BY p."ProductEnID";
+
+
+-- name: GetProductEnWithAllColorsAndSizesByID :one
+SELECT 
+    p."ProductEnID",
+    p."ProductNameEn",
+    p."sCategoryIdEn",
+    p."PriceEn",
+    p."StockQuantity",
+    p."ImagesPathEn",
+    p."DescriptionEn",
+    p."BrandEn",
+    p."ManufacturedCountryEn",
+    p."PenOutputEn",
+    p."FeaturesEn",
+    p."MaterialEn",
+    p."StapleSizeEn",
+    p."CapacityEn",
+    p."WeightEn",
+    p."ThicknessEn",
+    p."PackagingEn",
+    p."UsageEn",
+    p."InstructionsEn",
+    p."ProductCodeEn",
+    p."CostPriceEn",
+    p."RetailPriceEn",
+    p."WarehouseStockEn",
+    p."Created_At",
+    p."Updated_At",
+    COALESCE(
+        ARRAY_AGG(DISTINCT c."ColorId") FILTER (WHERE c."ColorId" IS NOT NULL),
+        '{}'
+    ) AS "ColorIds",
+    COALESCE(
+        ARRAY_AGG(DISTINCT c."Color") FILTER (WHERE c."Color" IS NOT NULL),
+        '{}'
+    ) AS "ColorNames",
+    COALESCE(
+        ARRAY_AGG(DISTINCT s."SizeId") FILTER (WHERE s."SizeId" IS NOT NULL),
+        '{}'
+    ) AS "SizeIds",
+    COALESCE(
+        ARRAY_AGG(DISTINCT s."Size") FILTER (WHERE s."Size" IS NOT NULL),
+        '{}'
+    ) AS "SizeNames"
+FROM "productEn" p
+LEFT JOIN "productEn_colors" pc ON p."ProductEnID" = pc."ProductEnID"
+LEFT JOIN "productEn_sizes" ps ON p."ProductEnID" = ps."ProductEnID"
+LEFT JOIN "Color" c ON pc."ColorId" = c."ColorId"
+LEFT JOIN "Size" s ON ps."SizeId" = s."SizeId"
+WHERE p."ProductEnID" = sqlc.arg('ProductEnID')
+GROUP BY p."ProductEnID";
