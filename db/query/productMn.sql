@@ -200,13 +200,18 @@ SELECT
     COALESCE(
         ARRAY_AGG(DISTINCT s."Size") FILTER (WHERE s."Size" IS NOT NULL),
         '{}'
-    ) AS "SizeNames"
+    ) AS "SizeNames",
+    COALESCE(
+        ARRAY_AGG(DISTINCT pi."imagesPath") FILTER (WHERE pi."ImagesPath" IS NOT NULL),
+        '{}'
+    ) AS "ImagesPath"
 
 FROM "productMn" p
 LEFT JOIN "productMn_colors" pc ON p."ProductMnID" = pc."ProductMnID"
 LEFT JOIN "productMn_sizes" ps ON p."ProductMnID" = ps."ProductMnID"
 LEFT JOIN "Color" c ON pc."ColorId" = c."ColorId"
 LEFT JOIN "Size" s ON ps."SizeId" = s."SizeId"
+LEFT JOIN "productImagesMn" pi ON p."ProductMnID" = pi."ProductMnID"
 GROUP BY p."ProductMnID";
 
 -- name: GetProductMnWithAllColorsAndSizesByID :one
@@ -253,12 +258,17 @@ SELECT
     COALESCE(
         ARRAY_AGG(DISTINCT s."Size") FILTER (WHERE s."Size" IS NOT NULL),
         '{}'
-    ) AS "SizeNames"
+    ) AS "SizeNames",
+    COALESCE(
+        ARRAY_AGG(DISTINCT pi."ImagePath") FILTER (WHERE pi."ImagePath" IS NOT NULL),
+        '{}'
+    ) AS "ImagePaths"
 
 FROM "productMn" p
 LEFT JOIN "productMn_colors" pc ON p."ProductMnID" = pc."ProductMnID"
 LEFT JOIN "productMn_sizes" ps ON p."ProductMnID" = ps."ProductMnID"
 LEFT JOIN "Color" c ON pc."ColorId" = c."ColorId"
 LEFT JOIN "Size" s ON ps."SizeId" = s."SizeId"
+LEFT JOIN "productImagesEn" pi ON p."ProductMnID" = pi."ProductMnID"
 WHERE p."ProductMnID" = sqlc.arg('ProductMnID')
 GROUP BY p."ProductMnID";
