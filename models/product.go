@@ -1,14 +1,14 @@
 package models
 
 type CreateProductEnRequest struct {
-	ProductNameEn         string `json:"productNameEN" validate:"required"`
-	SCategoryEnID         int32  `json:"sCategoryEnId" validate:"required"`
-	PriceEn               string `json:"priceEn" validate:"required"`
-	StockQuantity         int32  `json:"stockQuantity" validate:"required"`
-	ImagesPathEn          string `json:"imagesPathEn" validate:"required"`
-	DescriptionEn         string `json:"descriptionEn" validate:"required"`
-	BrandEn               string `json:"brandEn"`
-	ManufacturedCountryEn string `json:"manufacturedCountryEn"`
+	ProductNameEn         string   `json:"productNameEN" validate:"required"`
+	SCategoryEnID         int32    `json:"sCategoryEnId" validate:"required"`
+	PriceEn               string   `json:"priceEn" validate:"required"`
+	StockQuantity         int32    `json:"stockQuantity" validate:"required"`
+	ImagesPathEn          []string `json:"imagesPathEn" validate:"required"`
+	DescriptionEn         string   `json:"descriptionEn" validate:"required"`
+	BrandEn               string   `json:"brandEn"`
+	ManufacturedCountryEn string   `json:"manufacturedCountryEn"`
 	// Instead of a single ColorId and SizeId, use arrays:
 	ColorIds         []int32 `json:"colorIds" validate:"required"` // client sends an array e.g. [16,17,18]
 	SizeIds          []int32 `json:"sizeIds" validate:"required"`  // e.g. [1,2,5]
@@ -29,14 +29,14 @@ type CreateProductEnRequest struct {
 }
 
 type CreateProductMnRequest struct {
-	ProductNameMn         string `json:"productNameMn" validate:"required"`
-	SCategoryMnID         int32  `json:"sCategoryMnId" validate:"required"`
-	PriceMn               string `json:"priceMn" validate:"required"`
-	StockQuantity         int32  `json:"stockQuantity" validate:"required"`
-	ImagesPathMn          string `json:"imagesPathMn" validate:"required"`
-	DescriptionMn         string `json:"descriptionMn" validate:"required"`
-	BrandMn               string `json:"brandMn"`
-	ManufacturedCountryMn string `json:"manufacturedCountryMn"`
+	ProductNameMn         string   `json:"productNameMn" validate:"required"`
+	SCategoryMnID         int32    `json:"sCategoryMnId" validate:"required"`
+	PriceMn               string   `json:"priceMn" validate:"required"`
+	StockQuantity         int32    `json:"stockQuantity" validate:"required"`
+	ImagesPathMn          []string `json:"imagesPathMn" validate:"required"`
+	DescriptionMn         string   `json:"descriptionMn" validate:"required"`
+	BrandMn               string   `json:"brandMn"`
+	ManufacturedCountryMn string   `json:"manufacturedCountryMn"`
 
 	// Arrays now
 	ColorIds []int32 `json:"colorIds"`

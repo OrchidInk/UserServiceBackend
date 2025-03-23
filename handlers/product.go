@@ -18,13 +18,13 @@ func (hd *Handlers) CreateProductEn(ctx *fiber.Ctx) error {
 		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "invalid request body"})
 	}
 
-	// 1) Validate subcategory
+	// Validate subcategory.
 	_, err := queries.FindBySCategoryIdEn(ctx.Context(), request.SCategoryEnID)
 	if err != nil {
 		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid subCategoryEnID"})
 	}
 
-	// 2) Convert prices
+	// Convert price values.
 	price, err := decimal.NewFromString(request.PriceEn)
 	if err != nil {
 		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid price format"})
@@ -38,13 +38,13 @@ func (hd *Handlers) CreateProductEn(ctx *fiber.Ctx) error {
 		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid retail price"})
 	}
 
-	// 3) Insert the main product (WITHOUT ColorId / SizeId columns)
+	// Create the main product record.
 	createdProduct, err := queries.CreateProductEn(ctx.Context(), db.CreateProductEnParams{
 		ProductNameEn:         request.ProductNameEn,
 		SCategoryIdEn:         request.SCategoryEnID,
 		PriceEn:               price.String(),
 		StockQuantity:         request.StockQuantity,
-		ImagesPathEn:          request.ImagesPathEn,
+		ImagesPathEn:          "", // Main product field; images will be added separately.
 		DescriptionEn:         request.DescriptionEn,
 		BrandEn:               request.BrandEn,
 		ManufacturedCountryEn: request.ManufacturedCountryEn,
@@ -65,14 +65,30 @@ func (hd *Handlers) CreateProductEn(ctx *fiber.Ctx) error {
 		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
 	}
 
+	// Insert multiple images.
+	for _, imagePath := range request.ImagesPathEn {
+		// Skip empty image paths.
+		if imagePath == "" {
+			continue
+		}
+		_, err = queries.CreateProductImageEn(ctx.Context(), db.CreateProductImageEnParams{
+			ProductEnID: createdProduct.ProductEnID,
+			ImagePath:   imagePath,
+		})
+		if err != nil {
+			return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+				"error":   "Failed to insert product image",
+				"details": err.Error(),
+			})
+		}
+	}
+
+	// Process product colors.
 	for _, colorId := range request.ColorIds {
-		// 1. Check if color exists
 		_, err := queries.FindByColorId(ctx.Context(), colorId)
 		if err != nil {
-			return ctx.Status(fiber.StatusNotFound).JSON(fiber.Map{"err": err})
+			return ctx.Status(fiber.StatusNotFound).JSON(fiber.Map{"error": "Color not found", "colorId": colorId})
 		}
-
-		// 2. Insert product-color link
 		_, err = queries.InsertProductEnColor(ctx.Context(), db.InsertProductEnColorParams{
 			ProductEnID: createdProduct.ProductEnID,
 			ColorId:     colorId,
@@ -82,17 +98,12 @@ func (hd *Handlers) CreateProductEn(ctx *fiber.Ctx) error {
 		}
 	}
 
-	// 5) Insert multiple size IDs into productEn_sizes
+	// Process product sizes.
 	for _, sizeId := range request.SizeIds {
 		_, err := queries.FindByIdSize(ctx.Context(), sizeId)
 		if err != nil {
-			// Insert dummy size if doesn't exist
-			if err != nil {
-				return ctx.Status(fiber.StatusNotFound).JSON(fiber.Map{"error": "Failed to insert size"})
-			}
+			return ctx.Status(fiber.StatusNotFound).JSON(fiber.Map{"error": "Size not found", "sizeId": sizeId})
 		}
-
-		// Insert link
 		_, err = queries.InsertProductEnSize(ctx.Context(), db.InsertProductEnSizeParams{
 			ProductEnID: createdProduct.ProductEnID,
 			SizeId:      sizeId,
@@ -108,6 +119,7 @@ func (hd *Handlers) CreateProductEn(ctx *fiber.Ctx) error {
 	})
 }
 
+// CreateProductMn creates a new Mongolian product with multiple images, colors, and sizes.
 func (hd *Handlers) CreateProductMn(ctx *fiber.Ctx) error {
 	queries, _, _ := hd.queries()
 
@@ -116,14 +128,14 @@ func (hd *Handlers) CreateProductMn(ctx *fiber.Ctx) error {
 		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"err": "invalid request body"})
 	}
 
-	// Validate that the subcategory exists.
+	// Validate subcategory.
 	_, err := queries.FindBySCategoryIdMn(ctx.Context(), request.SCategoryMnID)
 	if err != nil {
 		slog.Error("subcategory does not exist", slog.Any("err", err))
-		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"err": "invalid subCategoryMNID"})
+		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"err": "invalid subCategoryMnID"})
 	}
 
-	// Convert price strings.
+	// Convert price values.
 	price, err := decimal.NewFromString(request.PriceMn)
 	if err != nil {
 		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"err": "Invalid price format"})
@@ -137,59 +149,56 @@ func (hd *Handlers) CreateProductMn(ctx *fiber.Ctx) error {
 		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"err": "Invalid retail price format"})
 	}
 
-	// Choose the primary color and size from the arrays.
-	var primaryColorId int32 = 0
-	var primarySizeId int32 = 0
-	if len(request.ColorIds) > 0 {
-		primaryColorId = request.ColorIds[0]
-		// Validate that this color exists.
-		_, err = queries.FindByColorId(ctx.Context(), primaryColorId)
-		if err != nil {
-			return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"err": "Invalid primary ColorId"})
-		}
-	}
-	if len(request.SizeIds) > 0 {
-		primarySizeId = request.SizeIds[0]
-		// Validate that this size exists.
-		_, err = queries.FindByIdSize(ctx.Context(), primarySizeId)
-		if err != nil {
-			return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"err": "Invalid primary SizeId"})
-		}
-	}
-
-	// Insert the main productMn row (ignoring the single ColorId/SizeId columns).
-	createProduct, err := queries.CreateProductMn(ctx.Context(), db.CreateProductMnParams{
+	// (Optional) Validate primary color/size from arrays if needed.
+	// Insert the main product record.
+	createdProduct, err := queries.CreateProductMn(ctx.Context(), db.CreateProductMnParams{
 		ProductNameMn:         request.ProductNameMn,
 		SCategoryIdMn:         request.SCategoryMnID,
 		PriceMn:               price.String(),
 		StockQuantity:         request.StockQuantity,
-		ImagesPathMn:          request.ImagesPathMn,
+		ImagesPathMn:          "", // Leave empty as images are stored separately.
 		DescriptionMn:         request.DescriptionMn,
 		BrandMn:               request.BrandMn,
 		ManufacturedCountryMn: request.ManufacturedCountryMn,
-		// We do not set ColorId/SizeId here if you’re using linking tables.
-		PenOutputMn:      request.PenOutputMn,
-		FeaturesMn:       request.FeaturesMn,
-		MaterialMn:       request.MaterialMn,
-		StapleSizeMn:     request.StapleSizeMn,
-		CapacityMn:       request.CapacityMn,
-		WeightMn:         request.WeightMn,
-		ThicknessMn:      request.ThicknessMn,
-		PackagingMn:      request.PackagingMn,
-		ProductCodeMn:    request.ProductCodeMn,
-		CostPriceMn:      costPrice.String(),
-		RetailPriceMn:    retailPrice.String(),
-		WarehouseStockMn: request.WarehouseStockMn,
+		PenOutputMn:           request.PenOutputMn,
+		FeaturesMn:            request.FeaturesMn,
+		MaterialMn:            request.MaterialMn,
+		StapleSizeMn:          request.StapleSizeMn,
+		CapacityMn:            request.CapacityMn,
+		WeightMn:              request.WeightMn,
+		ThicknessMn:           request.ThicknessMn,
+		PackagingMn:           request.PackagingMn,
+		ProductCodeMn:         request.ProductCodeMn,
+		CostPriceMn:           costPrice.String(),
+		RetailPriceMn:         retailPrice.String(),
+		WarehouseStockMn:      request.WarehouseStockMn,
 	})
 	if err != nil {
 		slog.Error("unable to create product mn", slog.Any("err", err))
 		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"err": err.Error()})
 	}
 
-	// Insert each color into the linking table for productMn.
+	// Insert multiple images.
+	for _, imagePath := range request.ImagesPathMn {
+		if imagePath == "" {
+			continue
+		}
+		_, err = queries.CreateProductImageMn(ctx.Context(), db.CreateProductImageMnParams{
+			ProductMnID: createdProduct.ProductMnID,
+			ImagePath:   imagePath,
+		})
+		if err != nil {
+			return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+				"err":     "Failed to insert product image",
+				"details": err.Error(),
+			})
+		}
+	}
+
+	// Insert color links.
 	for _, colorId := range request.ColorIds {
 		_, err := queries.InsertProductMnColor(ctx.Context(), db.InsertProductMnColorParams{
-			ProductMnID: createProduct.ProductMnID,
+			ProductMnID: createdProduct.ProductMnID,
 			ColorId:     colorId,
 		})
 		if err != nil {
@@ -197,10 +206,10 @@ func (hd *Handlers) CreateProductMn(ctx *fiber.Ctx) error {
 		}
 	}
 
-	// Insert each size into the linking table for productMn.
+	// Insert size links.
 	for _, sizeId := range request.SizeIds {
 		_, err := queries.InsertProductMnSize(ctx.Context(), db.InsertProductMnSizeParams{
-			ProductMnID: createProduct.ProductMnID,
+			ProductMnID: createdProduct.ProductMnID,
 			SizeId:      sizeId,
 		})
 		if err != nil {
@@ -210,7 +219,7 @@ func (hd *Handlers) CreateProductMn(ctx *fiber.Ctx) error {
 
 	return ctx.Status(fiber.StatusOK).JSON(fiber.Map{
 		"message":   "Product created successfully",
-		"productID": createProduct.ProductMnID,
+		"productID": createdProduct.ProductMnID,
 	})
 }
 

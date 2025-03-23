@@ -142,6 +142,20 @@ type ProductImage struct {
 	ImagePathMn string
 }
 
+type ProductImagesEn struct {
+	ImageID     int32
+	ProductEnID int32
+	ImagePath   string
+	CreatedAt   sql.NullTime
+}
+
+type ProductImagesMn struct {
+	ImageID     int32
+	ProductMnID int32
+	ImagePath   string
+	CreatedAt   sql.NullTime
+}
+
 type ProductMn struct {
 	ProductMnID           int32
 	ProductNameMn         string
