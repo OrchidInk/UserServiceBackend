@@ -37,14 +37,17 @@ func (hd *Handlers) CreateProductEn(ctx *fiber.Ctx) error {
 	if err != nil {
 		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid retail price"})
 	}
-
+	var mainImage string
+	if len(request.ImagesPathEn) > 0 {
+		mainImage = request.ImagesPathEn[0]
+	}
 	// Create the main product record.
 	createdProduct, err := queries.CreateProductEn(ctx.Context(), db.CreateProductEnParams{
 		ProductNameEn:         request.ProductNameEn,
 		SCategoryIdEn:         request.SCategoryEnID,
 		PriceEn:               price.String(),
 		StockQuantity:         request.StockQuantity,
-		ImagesPathEn:          "", // Main product field; images will be added separately.
+		ImagesPathEn:          mainImage, // Main product field; images will be added separately.
 		DescriptionEn:         request.DescriptionEn,
 		BrandEn:               request.BrandEn,
 		ManufacturedCountryEn: request.ManufacturedCountryEn,
@@ -148,15 +151,17 @@ func (hd *Handlers) CreateProductMn(ctx *fiber.Ctx) error {
 	if err != nil {
 		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"err": "Invalid retail price format"})
 	}
+	var mainImage string
+	if len(request.ImagesPathMn) > 0 {
+		mainImage = request.ImagesPathMn[0]
+	}
 
-	// (Optional) Validate primary color/size from arrays if needed.
-	// Insert the main product record.
 	createdProduct, err := queries.CreateProductMn(ctx.Context(), db.CreateProductMnParams{
 		ProductNameMn:         request.ProductNameMn,
 		SCategoryIdMn:         request.SCategoryMnID,
 		PriceMn:               price.String(),
 		StockQuantity:         request.StockQuantity,
-		ImagesPathMn:          "", // Leave empty as images are stored separately.
+		ImagesPathMn:          mainImage,
 		DescriptionMn:         request.DescriptionMn,
 		BrandMn:               request.BrandMn,
 		ManufacturedCountryMn: request.ManufacturedCountryMn,
