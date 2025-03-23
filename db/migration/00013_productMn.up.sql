@@ -1,7 +1,6 @@
--- TABLE "productMn"
+-- Create the Mongolian products table
 BEGIN;
-
-CREATE TABLE "productMn" (
+CREATE TABLE IF NOT EXISTS "productMn" (
     "ProductMnID" SERIAL PRIMARY KEY,
     "ProductNameMn" TEXT NOT NULL,
     "sCategoryIdMn" INT NOT NULL,
@@ -27,8 +26,8 @@ CREATE TABLE "productMn" (
     "WarehouseStockMn" INT NOT NULL DEFAULT 0,
     "Created_At" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     "Updated_At" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT "FK_Product_sCategoryIDMn" FOREIGN KEY ("sCategoryIdMn")
+    CONSTRAINT "FK_Product_sCategoryIDMn" 
+        FOREIGN KEY ("sCategoryIdMn")
         REFERENCES "sCategoryMn" ("sCategoryIdMn") ON DELETE CASCADE
-) TABLESPACE pg_default;
-
+);
 COMMIT;

@@ -1,7 +1,6 @@
--- File: 003_create_productEn.sql
+-- Create the English products table
 BEGIN;
-
-CREATE TABLE "productEn" (
+CREATE TABLE IF NOT EXISTS "productEn" (
     "ProductEnID" SERIAL PRIMARY KEY,
     "ProductNameEn" TEXT NOT NULL,
     "sCategoryIdEn" INT NOT NULL,
@@ -30,6 +29,6 @@ CREATE TABLE "productEn" (
     CONSTRAINT "FK_Product_sCategoryIDEn" 
         FOREIGN KEY ("sCategoryIdEn")
         REFERENCES "sCategoryEn" ("sCategoryIdEn") ON DELETE CASCADE
-) TABLESPACE pg_default;
+);
 
 COMMIT;
