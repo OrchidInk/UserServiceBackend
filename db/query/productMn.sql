@@ -202,7 +202,7 @@ SELECT
         '{}'
     ) AS "SizeNames",
     COALESCE(
-        ARRAY_AGG(DISTINCT pi."imagesPath") FILTER (WHERE pi."ImagesPath" IS NOT NULL),
+        ARRAY_AGG(DISTINCT pi."imagePath") FILTER (WHERE pi."ImagePath" IS NOT NULL),
         '{}'
     ) AS "ImagesPath"
 
