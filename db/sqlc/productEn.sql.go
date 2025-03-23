@@ -406,7 +406,11 @@ SELECT
     COALESCE(
         ARRAY_AGG(DISTINCT s."Size") FILTER (WHERE s."Size" IS NOT NULL),
         '{}'
-    ) AS "SizeNames"
+    ) AS "SizeNames",
+    COALESCE(
+        ARRAY_AGG(DISTINCT pi."ImagePath") FILTER (WHERE pi."ImagePath" IS NOT NULL),
+        '{}'
+    ) AS "ImagePaths"
 
 FROM "productEn" p
 LEFT JOIN "productEn_colors" pc 
@@ -417,7 +421,7 @@ LEFT JOIN "Color" c
        ON pc."ColorId" = c."ColorId"
 LEFT JOIN "Size" s 
        ON ps."SizeId" = s."SizeId"
-
+LEFT JOIN "productImagesEn" pi ON p."ProductEnID" = pi."ProductEnID"
 GROUP BY p."ProductEnID"
 `
 
@@ -451,6 +455,7 @@ type GetProductEnWithAllColorsAndSizesRow struct {
 	ColorNames            interface{}
 	SizeIds               interface{}
 	SizeNames             interface{}
+	ImagePaths            interface{}
 }
 
 // -- name: GetProductEnWithDetails :many
@@ -528,6 +533,7 @@ func (q *Queries) GetProductEnWithAllColorsAndSizes(ctx context.Context) ([]GetP
 			&i.ColorNames,
 			&i.SizeIds,
 			&i.SizeNames,
+			&i.ImagePaths,
 		); err != nil {
 			return nil, err
 		}
@@ -584,12 +590,17 @@ SELECT
     COALESCE(
         ARRAY_AGG(DISTINCT s."Size") FILTER (WHERE s."Size" IS NOT NULL),
         '{}'
-    ) AS "SizeNames"
+    ) AS "SizeNames",
+    COALESCE(
+        ARRAY_AGG(DISTINCT pi."ImagePath") FILTER (WHERE pi."ImagePath" IS NOT NULL),
+        '{}'
+    ) AS "ImagePaths"
 FROM "productEn" p
 LEFT JOIN "productEn_colors" pc ON p."ProductEnID" = pc."ProductEnID"
 LEFT JOIN "productEn_sizes" ps ON p."ProductEnID" = ps."ProductEnID"
 LEFT JOIN "Color" c ON pc."ColorId" = c."ColorId"
 LEFT JOIN "Size" s ON ps."SizeId" = s."SizeId"
+LEFT JOIN "productImagesEn" pi ON p."ProductEnID" = pi."ProductEnID"
 WHERE p."ProductEnID" = $1
 GROUP BY p."ProductEnID"
 `
@@ -624,6 +635,7 @@ type GetProductEnWithAllColorsAndSizesByIDRow struct {
 	ColorNames            interface{}
 	SizeIds               interface{}
 	SizeNames             interface{}
+	ImagePaths            interface{}
 }
 
 func (q *Queries) GetProductEnWithAllColorsAndSizesByID(ctx context.Context, productenid int32) (GetProductEnWithAllColorsAndSizesByIDRow, error) {
@@ -659,6 +671,7 @@ func (q *Queries) GetProductEnWithAllColorsAndSizesByID(ctx context.Context, pro
 		&i.ColorNames,
 		&i.SizeIds,
 		&i.SizeNames,
+		&i.ImagePaths,
 	)
 	return i, err
 }

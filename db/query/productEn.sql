@@ -239,7 +239,11 @@ SELECT
     COALESCE(
         ARRAY_AGG(DISTINCT s."Size") FILTER (WHERE s."Size" IS NOT NULL),
         '{}'
-    ) AS "SizeNames"
+    ) AS "SizeNames",
+    COALESCE(
+        ARRAY_AGG(DISTINCT pi."ImagePath") FILTER (WHERE pi."ImagePath" IS NOT NULL),
+        '{}'
+    ) AS "ImagePaths"
 
 FROM "productEn" p
 LEFT JOIN "productEn_colors" pc 
@@ -250,7 +254,7 @@ LEFT JOIN "Color" c
        ON pc."ColorId" = c."ColorId"
 LEFT JOIN "Size" s 
        ON ps."SizeId" = s."SizeId"
-
+LEFT JOIN "productImagesEn" pi ON p."ProductEnID" = pi."ProductEnID"
 GROUP BY p."ProductEnID";
 
 
@@ -296,11 +300,16 @@ SELECT
     COALESCE(
         ARRAY_AGG(DISTINCT s."Size") FILTER (WHERE s."Size" IS NOT NULL),
         '{}'
-    ) AS "SizeNames"
+    ) AS "SizeNames",
+    COALESCE(
+        ARRAY_AGG(DISTINCT pi."ImagePath") FILTER (WHERE pi."ImagePath" IS NOT NULL),
+        '{}'
+    ) AS "ImagePaths"
 FROM "productEn" p
 LEFT JOIN "productEn_colors" pc ON p."ProductEnID" = pc."ProductEnID"
 LEFT JOIN "productEn_sizes" ps ON p."ProductEnID" = ps."ProductEnID"
 LEFT JOIN "Color" c ON pc."ColorId" = c."ColorId"
 LEFT JOIN "Size" s ON ps."SizeId" = s."SizeId"
+LEFT JOIN "productImagesEn" pi ON p."ProductEnID" = pi."ProductEnID"
 WHERE p."ProductEnID" = sqlc.arg('ProductEnID')
 GROUP BY p."ProductEnID";
