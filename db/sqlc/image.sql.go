@@ -87,6 +87,41 @@ func (q *Queries) DeleteProductImageMn(ctx context.Context, imageid int32) error
 	return err
 }
 
+const getAllProductImagesEn = `-- name: GetAllProductImagesEn :many
+SELECT
+    "ImageID", "ProductEnID", "ImagePath", "Created_At"
+FROM
+    "productImagesEn"
+`
+
+func (q *Queries) GetAllProductImagesEn(ctx context.Context) ([]ProductImagesEn, error) {
+	rows, err := q.db.QueryContext(ctx, getAllProductImagesEn)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []ProductImagesEn
+	for rows.Next() {
+		var i ProductImagesEn
+		if err := rows.Scan(
+			&i.ImageID,
+			&i.ProductEnID,
+			&i.ImagePath,
+			&i.CreatedAt,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const getProductImagesEnByProductID = `-- name: GetProductImagesEnByProductID :many
 SELECT "ImageID", "ProductEnID", "ImagePath", "Created_At"
 FROM "productImagesEn"
@@ -106,6 +141,41 @@ func (q *Queries) GetProductImagesEnByProductID(ctx context.Context, productenid
 		if err := rows.Scan(
 			&i.ImageID,
 			&i.ProductEnID,
+			&i.ImagePath,
+			&i.CreatedAt,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const getProductImagesMn = `-- name: GetProductImagesMn :many
+SELECT
+    "ImageID", "ProductMnID", "ImagePath", "Created_At"
+FROM
+    "productImagesMn"
+`
+
+func (q *Queries) GetProductImagesMn(ctx context.Context) ([]ProductImagesMn, error) {
+	rows, err := q.db.QueryContext(ctx, getProductImagesMn)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []ProductImagesMn
+	for rows.Next() {
+		var i ProductImagesMn
+		if err := rows.Scan(
+			&i.ImageID,
+			&i.ProductMnID,
 			&i.ImagePath,
 			&i.CreatedAt,
 		); err != nil {

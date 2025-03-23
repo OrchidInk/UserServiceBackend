@@ -9,6 +9,12 @@ VALUES (
 )
 RETURNING *;
 
+-- name: GetAllProductImagesEn :many
+SELECT
+    *
+FROM
+    "productImagesEn";
+
 -- name: GetProductImagesEnByProductID :many
 SELECT *
 FROM "productImagesEn"
@@ -51,3 +57,9 @@ RETURNING *;
 -- name: DeleteProductImageMn :exec
 DELETE FROM "productImagesMn"
 WHERE "ImageID" = sqlc.arg('ImageID');
+
+-- name: GetProductImagesMn :many
+SELECT
+    *
+FROM
+    "productImagesMn";
