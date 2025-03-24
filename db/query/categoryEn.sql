@@ -81,17 +81,36 @@ SELECT
     p."ProductNameEn",
     p."PriceEn",
     p."StockQuantity",
-    COALESCE(pi."ImagePath", p."ImagesPathEn") as "ImagesPathEn"
-FROM
-    "categoryEn" c
-    LEFT JOIN "subCategoryEn" sc ON c."CategoryEnID" = sc."CategoryEnID"
-    LEFT JOIN "sCategoryEn" scc ON scc."SubCategoryIDEn" = sc."SubCategoryIDEn"
-    LEFT JOIN "productEn" p ON scc."sCategoryIdEn" = p."sCategoryIdEn"
-    LEFT JOIN "productImagesEn" pi ON p."ProductEnID" = pi."ProductEnID"
+    COALESCE(
+        MIN(pi."ImagePath"),
+        p."ImagesPathEn"
+    ) AS "ImagesPathEn"
+FROM "categoryEn" c
+LEFT JOIN "subCategoryEn" sc 
+       ON c."CategoryEnID" = sc."CategoryEnID"
+LEFT JOIN "sCategoryEn" scc 
+       ON scc."SubCategoryIDEn" = sc."SubCategoryIDEn"
+LEFT JOIN "productEn" p 
+       ON scc."sCategoryIdEn" = p."sCategoryIdEn"
+LEFT JOIN "productImagesEn" pi 
+       ON p."ProductEnID" = pi."ProductEnID"
+GROUP BY
+    c."CategoryEnID",
+    c."CategoryNameEn",
+    sc."SubCategoryIDEn",
+    sc."subCategoryNameEn",
+    scc."sCategoryIdEn",
+    scc."sCategoryNameEn",
+    p."ProductEnID",
+    p."ProductNameEn",
+    p."PriceEn",
+    p."StockQuantity",
+    p."ImagesPathEn"
 ORDER BY
     c."CategoryEnID",
     scc."sCategoryIdEn",
     p."ProductEnID";
+
 
 -- name: FindSubCategoriesAndProductsByCategoryIDEn :many
 SELECT
@@ -105,15 +124,32 @@ SELECT
     p."ProductNameEn",
     p."PriceEn",
     p."StockQuantity",
-    COALESCE(pi."ImagePath", p."ImagesPathEn") as "ImagesPathEn"
-FROM
-    "categoryEn" c
-    LEFT JOIN "subCategoryEn" sc ON c."CategoryEnID" = sc."CategoryEnID"
-    LEFT JOIN "sCategoryEn" scc ON scc."SubCategoryIDEn" = sc."SubCategoryIDEn"
-    LEFT JOIN "productEn" p ON scc."sCategoryIdEn" = p."sCategoryIdEn"
-    LEFT JOIN "productImagesEn" pi ON p."ProductEnID" = pi."ProductEnID"
-WHERE
-    c."CategoryEnID" = sqlc.arg('CategoryEnID')
+    COALESCE(
+        MIN(pi."ImagePath"),
+        p."ImagesPathEn"
+    ) AS "ImagesPathEn"
+FROM "categoryEn" c
+LEFT JOIN "subCategoryEn" sc 
+       ON c."CategoryEnID" = sc."CategoryEnID"
+LEFT JOIN "sCategoryEn" scc 
+       ON scc."SubCategoryIDEn" = sc."SubCategoryIDEn"
+LEFT JOIN "productEn" p 
+       ON scc."sCategoryIdEn" = p."sCategoryIdEn"
+LEFT JOIN "productImagesEn" pi 
+       ON p."ProductEnID" = pi."ProductEnID"
+WHERE c."CategoryEnID" = sqlc.arg('CategoryEnID')
+GROUP BY
+    c."CategoryEnID",
+    c."CategoryNameEn",
+    sc."SubCategoryIDEn",
+    sc."subCategoryNameEn",
+    scc."sCategoryIdEn",
+    scc."sCategoryNameEn",
+    p."ProductEnID",
+    p."ProductNameEn",
+    p."PriceEn",
+    p."StockQuantity",
+    p."ImagesPathEn"
 ORDER BY
     scc."sCategoryIdEn",
     p."ProductEnID";

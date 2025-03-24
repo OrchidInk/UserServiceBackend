@@ -104,16 +104,28 @@ SELECT
     p."ProductNameMn",
     p."PriceMn",
     p."StockQuantity",
-    -- Here we alias the image path from the joined productImagesMn table.
-    COALESCE(pi."ImagePath", p."ImagesPathMn") AS "ImagesPathMn"
-FROM
-    "categoryMn" c
-    LEFT JOIN "subCategoryMn" sc ON c."CategoryMnID" = sc."CategoryMnID"
-    LEFT JOIN "sCategoryMn" scc ON scc."SubCategoryIDMn" = sc."SubCategoryIDMn"
-    LEFT JOIN "productMn" p ON p."sCategoryIdMn" = scc."sCategoryIdMn"
-    LEFT JOIN "productImagesMn" pi ON p."ProductMnID" = pi."ProductMnID"
-WHERE
-    c."CategoryMnID" = $1
+    COALESCE(
+        MIN(pi."ImagePath"),
+        p."ImagesPathMn"
+    ) AS "ImagesPathMn"
+FROM "categoryMn" c
+LEFT JOIN "subCategoryMn" sc ON c."CategoryMnID" = sc."CategoryMnID"
+LEFT JOIN "sCategoryMn" scc ON scc."SubCategoryIDMn" = sc."SubCategoryIDMn"
+LEFT JOIN "productMn" p ON p."sCategoryIdMn" = scc."sCategoryIdMn"
+LEFT JOIN "productImagesMn" pi ON p."ProductMnID" = pi."ProductMnID"
+WHERE c."CategoryMnID" = $1
+GROUP BY
+    c."CategoryMnID",
+    c."CategoryNameMn",
+    sc."SubCategoryIDMn",
+    sc."subCategoryNameMn",
+    scc."sCategoryIdMn",
+    scc."sCategoryNameMn",
+    p."ProductMnID",
+    p."ProductNameMn",
+    p."PriceMn",
+    p."StockQuantity",
+    p."ImagesPathMn"
 ORDER BY
     scc."sCategoryIdMn",
     p."ProductMnID"
@@ -180,13 +192,27 @@ SELECT
     p."ProductNameMn",
     p."PriceMn",
     p."StockQuantity",
-    -- Use COALESCE to take the image from productImagesMn if available; otherwise, use the value stored in productMn.
-    COALESCE(pi."ImagePath", p."ImagesPathMn") AS "ImagesPathMn"
+    COALESCE(
+        MIN(pi."ImagePath"),
+        p."ImagesPathMn"
+    ) AS "ImagesPathMn"
 FROM "categoryMn" c
 LEFT JOIN "subCategoryMn" sc ON c."CategoryMnID" = sc."CategoryMnID"
 LEFT JOIN "sCategoryMn" scc ON scc."SubCategoryIDMn" = sc."SubCategoryIDMn"
 LEFT JOIN "productMn" p ON scc."sCategoryIdMn" = p."sCategoryIdMn"
 LEFT JOIN "productImagesMn" pi ON p."ProductMnID" = pi."ProductMnID"
+GROUP BY 
+    c."CategoryMnID",
+    c."CategoryNameMn",
+    sc."SubCategoryIDMn",
+    sc."subCategoryNameMn",
+    scc."sCategoryIdMn",
+    scc."sCategoryNameMn",
+    p."ProductMnID",
+    p."ProductNameMn",
+    p."PriceMn",
+    p."StockQuantity",
+    p."ImagesPathMn"
 ORDER BY 
     c."CategoryMnID",
     scc."sCategoryIdMn",
@@ -327,6 +353,135 @@ func (q *Queries) GetListByAllCategoryMn(ctx context.Context) ([]CategoryMn, err
 		return nil, err
 	}
 	return items, nil
+}
+
+const getProductMnWithAllColorsAndSizesByIDMn = `-- name: GetProductMnWithAllColorsAndSizesByIDMn :one
+SELECT 
+    p."ProductMnID",
+    p."ProductNameMn",
+    p."sCategoryIdMn",
+    p."PriceMn",
+    p."StockQuantity",
+    p."ImagesPathMn",
+    p."DescriptionMn",
+    p."BrandMn",
+    p."ManufacturedCountryMn",
+    p."PenOutputMn",
+    p."FeaturesMn",
+    p."MaterialMn",
+    p."StapleSizeMn",
+    p."CapacityMn",
+    p."WeightMn",
+    p."ThicknessMn",
+    p."PackagingMn",
+    p."UsageMn",
+    p."InstructionsMn",
+    p."ProductCodeMn",
+    p."CostPriceMn",
+    p."RetailPriceMn",
+    p."WarehouseStockMn",
+    p."Created_At",
+    p."Updated_At",
+
+    COALESCE(
+        ARRAY_AGG(DISTINCT c."ColorId") FILTER (WHERE c."ColorId" IS NOT NULL),
+        '{}'
+    ) AS "ColorIds",
+    COALESCE(
+        ARRAY_AGG(DISTINCT c."Color") FILTER (WHERE c."Color" IS NOT NULL),
+        '{}'
+    ) AS "ColorNames",
+    COALESCE(
+        ARRAY_AGG(DISTINCT s."SizeId") FILTER (WHERE s."SizeId" IS NOT NULL),
+        '{}'
+    ) AS "SizeIds",
+    COALESCE(
+        ARRAY_AGG(DISTINCT s."Size") FILTER (WHERE s."Size" IS NOT NULL),
+        '{}'
+    ) AS "SizeNames",
+    COALESCE(
+        ARRAY_AGG(DISTINCT pi."ImagePath") FILTER (WHERE pi."ImagePath" IS NOT NULL),
+        '{}'
+    ) AS "ImagePaths"
+FROM "productMn" p
+LEFT JOIN "productMn_colors" pc ON p."ProductMnID" = pc."ProductMnID"
+LEFT JOIN "productMn_sizes" ps ON p."ProductMnID" = ps."ProductMnID"
+LEFT JOIN "Color" c ON pc."ColorId" = c."ColorId"
+LEFT JOIN "Size" s ON ps."SizeId" = s."SizeId"
+LEFT JOIN "productImagesMn" pi ON p."ProductMnID" = pi."ProductMnID"
+WHERE p."ProductMnID" = $1
+GROUP BY p."ProductMnID"
+`
+
+type GetProductMnWithAllColorsAndSizesByIDMnRow struct {
+	ProductMnID           int32
+	ProductNameMn         string
+	SCategoryIdMn         int32
+	PriceMn               string
+	StockQuantity         int32
+	ImagesPathMn          string
+	DescriptionMn         string
+	BrandMn               string
+	ManufacturedCountryMn string
+	PenOutputMn           string
+	FeaturesMn            string
+	MaterialMn            string
+	StapleSizeMn          string
+	CapacityMn            string
+	WeightMn              string
+	ThicknessMn           string
+	PackagingMn           string
+	UsageMn               string
+	InstructionsMn        string
+	ProductCodeMn         string
+	CostPriceMn           string
+	RetailPriceMn         string
+	WarehouseStockMn      int32
+	CreatedAt             sql.NullTime
+	UpdatedAt             sql.NullTime
+	ColorIds              interface{}
+	ColorNames            interface{}
+	SizeIds               interface{}
+	SizeNames             interface{}
+	ImagePaths            interface{}
+}
+
+func (q *Queries) GetProductMnWithAllColorsAndSizesByIDMn(ctx context.Context, productmnid int32) (GetProductMnWithAllColorsAndSizesByIDMnRow, error) {
+	row := q.db.QueryRowContext(ctx, getProductMnWithAllColorsAndSizesByIDMn, productmnid)
+	var i GetProductMnWithAllColorsAndSizesByIDMnRow
+	err := row.Scan(
+		&i.ProductMnID,
+		&i.ProductNameMn,
+		&i.SCategoryIdMn,
+		&i.PriceMn,
+		&i.StockQuantity,
+		&i.ImagesPathMn,
+		&i.DescriptionMn,
+		&i.BrandMn,
+		&i.ManufacturedCountryMn,
+		&i.PenOutputMn,
+		&i.FeaturesMn,
+		&i.MaterialMn,
+		&i.StapleSizeMn,
+		&i.CapacityMn,
+		&i.WeightMn,
+		&i.ThicknessMn,
+		&i.PackagingMn,
+		&i.UsageMn,
+		&i.InstructionsMn,
+		&i.ProductCodeMn,
+		&i.CostPriceMn,
+		&i.RetailPriceMn,
+		&i.WarehouseStockMn,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+		&i.ColorIds,
+		&i.ColorNames,
+		&i.SizeIds,
+		&i.SizeNames,
+		&i.ImagePaths,
+	)
+	return i, err
 }
 
 const updateCategoryMn = `-- name: UpdateCategoryMn :one
