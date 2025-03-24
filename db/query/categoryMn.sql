@@ -75,7 +75,7 @@ ORDER BY
 
 
 -- name: GetCategoriesWithSubCategoriesAndProductMn :many
-SELECT
+SELECT 
     c."CategoryMnID",
     c."CategoryNameMn",
     sc."SubCategoryIDMn",
@@ -86,16 +86,18 @@ SELECT
     p."ProductNameMn",
     p."PriceMn",
     p."StockQuantity",
-    p."ImagesPathMn"
-FROM
-    "categoryMn" c
-    LEFT JOIN "subCategoryMn" sc ON c."CategoryMnID" = sc."CategoryMnID"
-    LEFT JOIN "sCategoryMn" scc ON scc."SubCategoryIDMn" = sc."SubCategoryIDMn"
-    LEFT JOIN "productMn" p ON scc."sCategoryIdMn" = p."sCategoryIdMn"
-ORDER BY
+    -- Use COALESCE to take the image from productImagesMn if available; otherwise, use the value stored in productMn.
+    COALESCE(pi."ImagePath", p."ImagesPathMn") AS "ImagesPathMn"
+FROM "categoryMn" c
+LEFT JOIN "subCategoryMn" sc ON c."CategoryMnID" = sc."CategoryMnID"
+LEFT JOIN "sCategoryMn" scc ON scc."SubCategoryIDMn" = sc."SubCategoryIDMn"
+LEFT JOIN "productMn" p ON scc."sCategoryIdMn" = p."sCategoryIdMn"
+LEFT JOIN "productImagesMn" pi ON p."ProductMnID" = pi."ProductMnID"
+ORDER BY 
     c."CategoryMnID",
     scc."sCategoryIdMn",
     p."ProductMnID";
+
 
 -- name: FindSubCategoriesAndProductsByCategoryIDMn :many
 SELECT
@@ -109,12 +111,14 @@ SELECT
     p."ProductNameMn",
     p."PriceMn",
     p."StockQuantity",
-    p."ImagesPathMn"
+    -- Here we alias the image path from the joined productImagesMn table.
+    COALESCE(pi."ImagePath", p."ImagesPathMn") AS "ImagesPathMn"
 FROM
     "categoryMn" c
     LEFT JOIN "subCategoryMn" sc ON c."CategoryMnID" = sc."CategoryMnID"
     LEFT JOIN "sCategoryMn" scc ON scc."SubCategoryIDMn" = sc."SubCategoryIDMn"
     LEFT JOIN "productMn" p ON p."sCategoryIdMn" = scc."sCategoryIdMn"
+    LEFT JOIN "productImagesMn" pi ON p."ProductMnID" = pi."ProductMnID"
 WHERE
     c."CategoryMnID" = sqlc.arg('CategoryMnID')
 ORDER BY

@@ -408,7 +408,7 @@ func (hd *Handlers) GetCategoriesWithSubCategoriesAndProductsEn(ctx *fiber.Ctx) 
 						ProductNameEn: row.ProductNameEn.String,
 						PriceEn:       row.PriceEn.String,
 						StockQuantity: row.StockQuantity.Int32,
-						ImagesPathEn:  row.ImagesPathEn.String,
+						ImagesPathEn:  row.ImagesPathEn,
 					}
 					sCatPtr.Products = append(sCatPtr.Products, newProduct)
 				}
@@ -507,7 +507,7 @@ func (hd *Handlers) GetCategoriesWithSubCategoriesAndProductsMn(ctx *fiber.Ctx) 
 						ProductNameMn: row.ProductNameMn.String,
 						PriceMn:       row.PriceMn.String,
 						StockQuantity: row.StockQuantity.Int32,
-						ImagesPathMn:  row.ImagesPathMn.String,
+						ImagesPathMn:  row.ImagesPathMn,
 					}
 					sCatPtr.Products = append(sCatPtr.Products, newProduct)
 				}
@@ -527,7 +527,7 @@ func (hd *Handlers) GetCategoriesWithSubCategoriesAndProductsMn(ctx *fiber.Ctx) 
 func (hd *Handlers) FindSubCategoriesAndProductsByCategoryIDEn(ctx *fiber.Ctx) error {
 	queries, _, _ := hd.queries()
 
-	// Parse the Category ID from the request URL parameter.
+	// Parse the Category ID from the URL parameter.
 	categoryIDStr := ctx.Params("id")
 	categoryID, err := strconv.Atoi(categoryIDStr)
 	if err != nil {
@@ -539,7 +539,7 @@ func (hd *Handlers) FindSubCategoriesAndProductsByCategoryIDEn(ctx *fiber.Ctx) e
 	rows, err := queries.FindSubCategoriesAndProductsByCategoryIDEn(ctx.Context(), int32(categoryID))
 	if err != nil {
 		slog.Error("unable to find subcategories and products", slog.Any("err", err))
-		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"err": "Database error"})
+		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"err": err})
 	}
 
 	// Prepare the result map.
@@ -551,25 +551,26 @@ func (hd *Handlers) FindSubCategoriesAndProductsByCategoryIDEn(ctx *fiber.Ctx) e
 	subCategoryMap := make(map[int32]map[string]interface{})
 
 	for _, row := range rows {
-		// Process only if the row has a valid SubCategory.
+		// Process only if the row has a valid subcategory.
 		if row.SubCategoryIDEn.Valid {
 			subcatID := row.SubCategoryIDEn.Int32
 
-			// If this subcategory is not yet in the map, create a new entry.
+			// If this subcategory isn't already in our map, create a new entry.
 			if _, exists := subCategoryMap[subcatID]; !exists {
 				subCategoryMap[subcatID] = map[string]interface{}{
 					"SubCategoryID":   subcatID,
 					"SubCategoryName": row.SubCategoryNameEn.String,
 					"SCategories":     []map[string]interface{}{},
 				}
+				// Append the new subcategory to the result.
 				result["SubCategories"] = append(result["SubCategories"].([]map[string]interface{}), subCategoryMap[subcatID])
 			}
 
-			// Process the sCategory level if present.
+			// Process the sCategory (third level) if present.
 			if row.SCategoryIdEn.Valid {
 				sCatID := row.SCategoryIdEn.Int32
 
-				// Retrieve the current list of sCategories for this subcategory.
+				// Get the current list of sCategories under this subcategory.
 				sCategoriesSlice := subCategoryMap[subcatID]["SCategories"].([]map[string]interface{})
 				var sCategoryFound map[string]interface{}
 				for _, sCat := range sCategoriesSlice {
@@ -578,7 +579,7 @@ func (hd *Handlers) FindSubCategoriesAndProductsByCategoryIDEn(ctx *fiber.Ctx) e
 						break
 					}
 				}
-				// If not found, create a new sCategory entry.
+				// If no sCategory exists, create a new one.
 				if sCategoryFound == nil {
 					sCategoryFound = map[string]interface{}{
 						"SCategoryIdEn":   sCatID,
@@ -587,17 +588,16 @@ func (hd *Handlers) FindSubCategoriesAndProductsByCategoryIDEn(ctx *fiber.Ctx) e
 					}
 					subCategoryMap[subcatID]["SCategories"] = append(sCategoriesSlice, sCategoryFound)
 				}
-
-				// If a product is present, add it to the sCategory's products.
+				// Process the product if present.
 				if row.ProductEnID.Valid {
 					newProduct := map[string]interface{}{
-						"ProductID":     row.ProductEnID.Int32,
+						"ProductEnID":   row.ProductEnID.Int32,
 						"ProductName":   row.ProductNameEn.String,
 						"Price":         row.PriceEn.String,
 						"StockQuantity": row.StockQuantity.Int32,
-						"ImagesPath":    row.ImagesPathEn.String,
+						"ImagesPath":    row.ImagesPathEn,
 					}
-					// Append the product to the sCategory's "Products" slice.
+					// Append the product to the sCategory's Products array.
 					sCategoryFound["Products"] = append(sCategoryFound["Products"].([]map[string]interface{}), newProduct)
 				}
 			}
@@ -678,7 +678,7 @@ func (hd *Handlers) FindSubCategoriesAndProductsByCategoryIDMn(ctx *fiber.Ctx) e
 						"ProductName":   row.ProductNameMn.String,
 						"Price":         row.PriceMn.String,
 						"StockQuantity": row.StockQuantity.Int32,
-						"ImagesPath":    row.ImagesPathMn.String,
+						"ImagesPath":    row.ImagesPathMn,
 					}
 					// Append the product to the sCategory's Products array.
 					sCategoryFound["Products"] = append(sCategoryFound["Products"].([]map[string]interface{}), newProduct)
