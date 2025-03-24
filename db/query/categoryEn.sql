@@ -81,12 +81,13 @@ SELECT
     p."ProductNameEn",
     p."PriceEn",
     p."StockQuantity",
-    p."ImagesPathEn"
+    COALESCE(pi."ImagePath", p."ImagesPathEn") as "ImagesPathEn"
 FROM
     "categoryEn" c
     LEFT JOIN "subCategoryEn" sc ON c."CategoryEnID" = sc."CategoryEnID"
     LEFT JOIN "sCategoryEn" scc ON scc."SubCategoryIDEn" = sc."SubCategoryIDEn"
     LEFT JOIN "productEn" p ON scc."sCategoryIdEn" = p."sCategoryIdEn"
+    LEFT JOIN "productImagesEn" pi ON p."ProductEnID" = pi."ProductEnID"
 ORDER BY
     c."CategoryEnID",
     scc."sCategoryIdEn",
@@ -104,12 +105,13 @@ SELECT
     p."ProductNameEn",
     p."PriceEn",
     p."StockQuantity",
-    p."ImagesPathEn"
+    COALESCE(pi."ImagePath", p."ImagesPathEn") as "ImagesPathEn"
 FROM
     "categoryEn" c
     LEFT JOIN "subCategoryEn" sc ON c."CategoryEnID" = sc."CategoryEnID"
     LEFT JOIN "sCategoryEn" scc ON scc."SubCategoryIDEn" = sc."SubCategoryIDEn"
     LEFT JOIN "productEn" p ON scc."sCategoryIdEn" = p."sCategoryIdEn"
+    LEFT JOIN "productImagesEn" pi ON p."ProductEnID" = pi."ProductEnID"
 WHERE
     c."CategoryEnID" = sqlc.arg('CategoryEnID')
 ORDER BY
