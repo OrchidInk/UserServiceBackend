@@ -394,7 +394,6 @@ SELECT
         ARRAY_AGG(DISTINCT c."Color") FILTER (WHERE c."Color" IS NOT NULL),
         '{}'
     ) AS "ColorNames",
-
     COALESCE(
         ARRAY_AGG(DISTINCT s."SizeId") FILTER (WHERE s."SizeId" IS NOT NULL),
         '{}'
@@ -406,8 +405,7 @@ SELECT
     COALESCE(
         ARRAY_AGG(DISTINCT pi."ImagePath") FILTER (WHERE pi."ImagePath" IS NOT NULL),
         '{}'
-    ) AS "ImagesPath"
-
+    ) AS "ImagePaths"
 FROM "productMn" p
 LEFT JOIN "productMn_colors" pc ON p."ProductMnID" = pc."ProductMnID"
 LEFT JOIN "productMn_sizes" ps ON p."ProductMnID" = ps."ProductMnID"
@@ -447,7 +445,7 @@ type GetProductMnWithAllColorsAndSizesRow struct {
 	ColorNames            interface{}
 	SizeIds               interface{}
 	SizeNames             interface{}
-	ImagesPath            interface{}
+	ImagePaths            interface{}
 }
 
 func (q *Queries) GetProductMnWithAllColorsAndSizes(ctx context.Context) ([]GetProductMnWithAllColorsAndSizesRow, error) {
@@ -489,7 +487,7 @@ func (q *Queries) GetProductMnWithAllColorsAndSizes(ctx context.Context) ([]GetP
 			&i.ColorNames,
 			&i.SizeIds,
 			&i.SizeNames,
-			&i.ImagesPath,
+			&i.ImagePaths,
 		); err != nil {
 			return nil, err
 		}
@@ -540,7 +538,6 @@ SELECT
         ARRAY_AGG(DISTINCT c."Color") FILTER (WHERE c."Color" IS NOT NULL),
         '{}'
     ) AS "ColorNames",
-
     COALESCE(
         ARRAY_AGG(DISTINCT s."SizeId") FILTER (WHERE s."SizeId" IS NOT NULL),
         '{}'
@@ -553,7 +550,6 @@ SELECT
         ARRAY_AGG(DISTINCT pi."ImagePath") FILTER (WHERE pi."ImagePath" IS NOT NULL),
         '{}'
     ) AS "ImagePaths"
-
 FROM "productMn" p
 LEFT JOIN "productMn_colors" pc ON p."ProductMnID" = pc."ProductMnID"
 LEFT JOIN "productMn_sizes" ps ON p."ProductMnID" = ps."ProductMnID"

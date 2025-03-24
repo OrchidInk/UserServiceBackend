@@ -192,7 +192,6 @@ SELECT
         ARRAY_AGG(DISTINCT c."Color") FILTER (WHERE c."Color" IS NOT NULL),
         '{}'
     ) AS "ColorNames",
-
     COALESCE(
         ARRAY_AGG(DISTINCT s."SizeId") FILTER (WHERE s."SizeId" IS NOT NULL),
         '{}'
@@ -204,8 +203,7 @@ SELECT
     COALESCE(
         ARRAY_AGG(DISTINCT pi."ImagePath") FILTER (WHERE pi."ImagePath" IS NOT NULL),
         '{}'
-    ) AS "ImagesPath"
-
+    ) AS "ImagePaths"
 FROM "productMn" p
 LEFT JOIN "productMn_colors" pc ON p."ProductMnID" = pc."ProductMnID"
 LEFT JOIN "productMn_sizes" ps ON p."ProductMnID" = ps."ProductMnID"
@@ -250,7 +248,6 @@ SELECT
         ARRAY_AGG(DISTINCT c."Color") FILTER (WHERE c."Color" IS NOT NULL),
         '{}'
     ) AS "ColorNames",
-
     COALESCE(
         ARRAY_AGG(DISTINCT s."SizeId") FILTER (WHERE s."SizeId" IS NOT NULL),
         '{}'
@@ -263,7 +260,6 @@ SELECT
         ARRAY_AGG(DISTINCT pi."ImagePath") FILTER (WHERE pi."ImagePath" IS NOT NULL),
         '{}'
     ) AS "ImagePaths"
-
 FROM "productMn" p
 LEFT JOIN "productMn_colors" pc ON p."ProductMnID" = pc."ProductMnID"
 LEFT JOIN "productMn_sizes" ps ON p."ProductMnID" = ps."ProductMnID"

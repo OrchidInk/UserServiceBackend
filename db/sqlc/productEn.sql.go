@@ -387,22 +387,18 @@ SELECT
     p."WarehouseStockEn",
     p."Created_At",
     p."Updated_At",
-
     COALESCE(
         ARRAY_AGG(DISTINCT c."ColorId") FILTER (WHERE c."ColorId" IS NOT NULL),
         '{}'
     ) AS "ColorIds",
-
     COALESCE(
         ARRAY_AGG(DISTINCT c."Color") FILTER (WHERE c."Color" IS NOT NULL),
         '{}'
     ) AS "ColorNames",
-
     COALESCE(
         ARRAY_AGG(DISTINCT s."SizeId") FILTER (WHERE s."SizeId" IS NOT NULL),
         '{}'
     ) AS "SizeIds",
-
     COALESCE(
         ARRAY_AGG(DISTINCT s."Size") FILTER (WHERE s."Size" IS NOT NULL),
         '{}'
@@ -411,7 +407,6 @@ SELECT
         ARRAY_AGG(DISTINCT pi."ImagePath") FILTER (WHERE pi."ImagePath" IS NOT NULL),
         '{}'
     ) AS "ImagePaths"
-
 FROM "productEn" p
 LEFT JOIN "productEn_colors" pc 
        ON p."ProductEnID" = pc."ProductEnID"
@@ -421,7 +416,8 @@ LEFT JOIN "Color" c
        ON pc."ColorId" = c."ColorId"
 LEFT JOIN "Size" s 
        ON ps."SizeId" = s."SizeId"
-LEFT JOIN "productImagesEn" pi ON p."ProductEnID" = pi."ProductEnID"
+LEFT JOIN "productImagesEn" pi 
+       ON p."ProductEnID" = pi."ProductEnID"
 GROUP BY p."ProductEnID"
 `
 
@@ -596,11 +592,16 @@ SELECT
         '{}'
     ) AS "ImagePaths"
 FROM "productEn" p
-LEFT JOIN "productEn_colors" pc ON p."ProductEnID" = pc."ProductEnID"
-LEFT JOIN "productEn_sizes" ps ON p."ProductEnID" = ps."ProductEnID"
-LEFT JOIN "Color" c ON pc."ColorId" = c."ColorId"
-LEFT JOIN "Size" s ON ps."SizeId" = s."SizeId"
-LEFT JOIN "productImagesEn" pi ON p."ProductEnID" = pi."ProductEnID"
+LEFT JOIN "productEn_colors" pc 
+       ON p."ProductEnID" = pc."ProductEnID"
+LEFT JOIN "productEn_sizes" ps 
+       ON p."ProductEnID" = ps."ProductEnID"
+LEFT JOIN "Color" c 
+       ON pc."ColorId" = c."ColorId"
+LEFT JOIN "Size" s 
+       ON ps."SizeId" = s."SizeId"
+LEFT JOIN "productImagesEn" pi 
+       ON p."ProductEnID" = pi."ProductEnID"
 WHERE p."ProductEnID" = $1
 GROUP BY p."ProductEnID"
 `
