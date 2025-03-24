@@ -5,7 +5,7 @@ type CreateProductEnRequest struct {
 	SCategoryEnID         int32    `json:"sCategoryEnId" validate:"required"`
 	PriceEn               string   `json:"priceEn" validate:"required"`
 	StockQuantity         int32    `json:"stockQuantity" validate:"required"`
-	ImagesPathEn          []string `json:"imagesPathEn" validate:"required"`
+	ImagesPathEn          []string `json:"imagesPath" `
 	DescriptionEn         string   `json:"descriptionEn" validate:"required"`
 	BrandEn               string   `json:"brandEn"`
 	ManufacturedCountryEn string   `json:"manufacturedCountryEn"`
@@ -33,7 +33,7 @@ type CreateProductMnRequest struct {
 	SCategoryMnID         int32    `json:"sCategoryMnId" validate:"required"`
 	PriceMn               string   `json:"priceMn" validate:"required"`
 	StockQuantity         int32    `json:"stockQuantity" validate:"required"`
-	ImagesPathMn          []string `json:"imagesPathMn" validate:"required"`
+	ImagesPathMn          []string `json:"imagesPath" validate:"required"`
 	DescriptionMn         string   `json:"descriptionMn" validate:"required"`
 	BrandMn               string   `json:"brandMn"`
 	ManufacturedCountryMn string   `json:"manufacturedCountryMn"`
