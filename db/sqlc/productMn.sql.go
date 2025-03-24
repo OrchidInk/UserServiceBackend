@@ -559,7 +559,7 @@ LEFT JOIN "productMn_colors" pc ON p."ProductMnID" = pc."ProductMnID"
 LEFT JOIN "productMn_sizes" ps ON p."ProductMnID" = ps."ProductMnID"
 LEFT JOIN "Color" c ON pc."ColorId" = c."ColorId"
 LEFT JOIN "Size" s ON ps."SizeId" = s."SizeId"
-LEFT JOIN "productImagesEn" pi ON p."ProductMnID" = pi."ProductMnID"
+LEFT JOIN "productImagesMn" pi ON p."ProductMnID" = pi."ProductMnID"
 WHERE p."ProductMnID" = $1
 GROUP BY p."ProductMnID"
 `
