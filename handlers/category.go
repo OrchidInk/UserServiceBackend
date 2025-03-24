@@ -507,7 +507,7 @@ func (hd *Handlers) GetCategoriesWithSubCategoriesAndProductsMn(ctx *fiber.Ctx) 
 						ProductNameMn: row.ProductNameMn.String,
 						PriceMn:       row.PriceMn.String,
 						StockQuantity: row.StockQuantity.Int32,
-						ImagesPathMn:  row.ImagesPathMn.String,
+						ImagesPathMn:  row.ImagesPathMn,
 					}
 					sCatPtr.Products = append(sCatPtr.Products, newProduct)
 				}
@@ -678,7 +678,7 @@ func (hd *Handlers) FindSubCategoriesAndProductsByCategoryIDMn(ctx *fiber.Ctx) e
 						"ProductName":   row.ProductNameMn.String,
 						"Price":         row.PriceMn.String,
 						"StockQuantity": row.StockQuantity.Int32,
-						"ImagesPath":    row.ImagesPathMn.String,
+						"ImagesPath":    row.ImagesPathMn,
 					}
 					// Append the product to the sCategory's Products array.
 					sCategoryFound["Products"] = append(sCategoryFound["Products"].([]map[string]interface{}), newProduct)

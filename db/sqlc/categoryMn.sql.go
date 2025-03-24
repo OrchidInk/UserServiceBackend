@@ -104,12 +104,14 @@ SELECT
     p."ProductNameMn",
     p."PriceMn",
     p."StockQuantity",
-    p."ImagesPathMn"
+    -- Here we alias the image path from the joined productImagesMn table.
+    COALESCE(pi."ImagePath", p."ImagesPathMn") AS "ImagesPathMn"
 FROM
     "categoryMn" c
     LEFT JOIN "subCategoryMn" sc ON c."CategoryMnID" = sc."CategoryMnID"
     LEFT JOIN "sCategoryMn" scc ON scc."SubCategoryIDMn" = sc."SubCategoryIDMn"
     LEFT JOIN "productMn" p ON p."sCategoryIdMn" = scc."sCategoryIdMn"
+    LEFT JOIN "productImagesMn" pi ON p."ProductMnID" = pi."ProductMnID"
 WHERE
     c."CategoryMnID" = $1
 ORDER BY
@@ -128,7 +130,7 @@ type FindSubCategoriesAndProductsByCategoryIDMnRow struct {
 	ProductNameMn     sql.NullString
 	PriceMn           sql.NullString
 	StockQuantity     sql.NullInt32
-	ImagesPathMn      sql.NullString
+	ImagesPathMn      string
 }
 
 func (q *Queries) FindSubCategoriesAndProductsByCategoryIDMn(ctx context.Context, categorymnid int32) ([]FindSubCategoriesAndProductsByCategoryIDMnRow, error) {
@@ -167,7 +169,7 @@ func (q *Queries) FindSubCategoriesAndProductsByCategoryIDMn(ctx context.Context
 }
 
 const getCategoriesWithSubCategoriesAndProductMn = `-- name: GetCategoriesWithSubCategoriesAndProductMn :many
-SELECT
+SELECT 
     c."CategoryMnID",
     c."CategoryNameMn",
     sc."SubCategoryIDMn",
@@ -178,13 +180,14 @@ SELECT
     p."ProductNameMn",
     p."PriceMn",
     p."StockQuantity",
-    p."ImagesPathMn"
-FROM
-    "categoryMn" c
-    LEFT JOIN "subCategoryMn" sc ON c."CategoryMnID" = sc."CategoryMnID"
-    LEFT JOIN "sCategoryMn" scc ON scc."SubCategoryIDMn" = sc."SubCategoryIDMn"
-    LEFT JOIN "productMn" p ON scc."sCategoryIdMn" = p."sCategoryIdMn"
-ORDER BY
+    -- Use COALESCE to take the image from productImagesMn if available; otherwise, use the value stored in productMn.
+    COALESCE(pi."ImagePath", p."ImagesPathMn") AS "ImagesPathMn"
+FROM "categoryMn" c
+LEFT JOIN "subCategoryMn" sc ON c."CategoryMnID" = sc."CategoryMnID"
+LEFT JOIN "sCategoryMn" scc ON scc."SubCategoryIDMn" = sc."SubCategoryIDMn"
+LEFT JOIN "productMn" p ON scc."sCategoryIdMn" = p."sCategoryIdMn"
+LEFT JOIN "productImagesMn" pi ON p."ProductMnID" = pi."ProductMnID"
+ORDER BY 
     c."CategoryMnID",
     scc."sCategoryIdMn",
     p."ProductMnID"
@@ -201,7 +204,7 @@ type GetCategoriesWithSubCategoriesAndProductMnRow struct {
 	ProductNameMn     sql.NullString
 	PriceMn           sql.NullString
 	StockQuantity     sql.NullInt32
-	ImagesPathMn      sql.NullString
+	ImagesPathMn      string
 }
 
 func (q *Queries) GetCategoriesWithSubCategoriesAndProductMn(ctx context.Context) ([]GetCategoriesWithSubCategoriesAndProductMnRow, error) {
