@@ -16,6 +16,8 @@ type OrderItem struct {
 
 type CreateOrderRequest struct {
 	CustomerOrderID int32       `json:"customerOrderId"`
+	CompName        string      `json:"compName"`
+	UserName        string      `json:"userName"`
 	UserId          int32       `json:"userId"`
 	PhoneNumber     string      `json:"phoneNumber"`
 	OrderItems      []OrderItem `json:"orderItems"`

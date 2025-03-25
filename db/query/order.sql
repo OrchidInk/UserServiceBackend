@@ -1,12 +1,16 @@
 -- name: CreateOrder :one
 INSERT INTO "Orders" (
   "CustomerOrderId",
+  "CompName",
+  "UserName",
   "UserId",
   "PhoneNumber",
   "OrderItems",
   "CreatedAt"
 ) VALUES (
   sqlc.arg('CustomerOrderID'),
+  sqlc.arg('CompName'),
+  sqlc.arg('UserName'),
   sqlc.arg('UserId'),
   sqlc.arg('PhoneNumber'),
   sqlc.arg('OrderItems'),

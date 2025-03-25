@@ -36,6 +36,8 @@ func (hd *Handlers) CreateOrder(ctx *fiber.Ctx) error {
 	// Insert the main order row.
 	order, err := queries.CreateOrder(ctx.Context(), db.CreateOrderParams{
 		CustomerOrderID: sql.NullInt32{Int32: req.CustomerOrderID, Valid: req.CustomerOrderID != 0},
+		CompName:        req.CompName,
+		UserName:        req.UserName,
 		UserId:          req.UserId,
 		PhoneNumber:     req.PhoneNumber,
 		OrderItems:      orderItemsJSON,
