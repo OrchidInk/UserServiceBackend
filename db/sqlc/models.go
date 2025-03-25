@@ -70,6 +70,8 @@ type Delivery struct {
 type Order struct {
 	OrderID         int32
 	CustomerOrderId sql.NullInt32
+	CompName        string
+	UserName        string
 	UserId          int32
 	PhoneNumber     string
 	OrderItems      json.RawMessage

@@ -14,6 +14,8 @@ import (
 const createOrder = `-- name: CreateOrder :one
 INSERT INTO "Orders" (
   "CustomerOrderId",
+  "CompName",
+  "UserName",
   "UserId",
   "PhoneNumber",
   "OrderItems",
@@ -23,13 +25,17 @@ INSERT INTO "Orders" (
   $2,
   $3,
   $4,
-  $5
+  $5,
+  $6,
+  $7
 )
-RETURNING "OrderID", "CustomerOrderId", "UserId", "PhoneNumber", "OrderItems", "CreatedAt"
+RETURNING "OrderID", "CustomerOrderId", "CompName", "UserName", "UserId", "PhoneNumber", "OrderItems", "CreatedAt"
 `
 
 type CreateOrderParams struct {
 	CustomerOrderID sql.NullInt32
+	CompName        string
+	UserName        string
 	UserId          int32
 	PhoneNumber     string
 	OrderItems      json.RawMessage
@@ -39,6 +45,8 @@ type CreateOrderParams struct {
 func (q *Queries) CreateOrder(ctx context.Context, arg CreateOrderParams) (Order, error) {
 	row := q.db.QueryRowContext(ctx, createOrder,
 		arg.CustomerOrderID,
+		arg.CompName,
+		arg.UserName,
 		arg.UserId,
 		arg.PhoneNumber,
 		arg.OrderItems,
@@ -48,6 +56,8 @@ func (q *Queries) CreateOrder(ctx context.Context, arg CreateOrderParams) (Order
 	err := row.Scan(
 		&i.OrderID,
 		&i.CustomerOrderId,
+		&i.CompName,
+		&i.UserName,
 		&i.UserId,
 		&i.PhoneNumber,
 		&i.OrderItems,
@@ -113,7 +123,7 @@ func (q *Queries) CreateOrderItem(ctx context.Context, arg CreateOrderItemParams
 
 const getOrdersWithDetails = `-- name: GetOrdersWithDetails :many
 SELECT
-    "OrderID", "CustomerOrderId", "UserId", "PhoneNumber", "OrderItems", "CreatedAt"
+    "OrderID", "CustomerOrderId", "CompName", "UserName", "UserId", "PhoneNumber", "OrderItems", "CreatedAt"
 from
     "Orders"
 `
@@ -130,6 +140,8 @@ func (q *Queries) GetOrdersWithDetails(ctx context.Context) ([]Order, error) {
 		if err := rows.Scan(
 			&i.OrderID,
 			&i.CustomerOrderId,
+			&i.CompName,
+			&i.UserName,
 			&i.UserId,
 			&i.PhoneNumber,
 			&i.OrderItems,
