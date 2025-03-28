@@ -5,6 +5,7 @@ import (
 	"strconv"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/shopspring/decimal"
 	db "orchid.admin.service/db/sqlc"
 	"orchid.admin.service/models"
 )
@@ -17,9 +18,15 @@ func (hd *Handlers) CreateDelivery(ctx *fiber.Ctx) error {
 		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"err": err})
 	}
 
+	dAmount, err := decimal.NewFromString(request.DeliverAmount)
+	if err != nil {
+		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid retail price"})
+	}
+
 	createDelivery, err := queries.CreateDelivery(ctx.Context(), db.CreateDeliveryParams{
-		DeliverName: request.DeliverName,
-		OrderId:     request.OrderId,
+		DeliverName:    request.DeliverName,
+		OrderId:        request.OrderId,
+		DeliveryAmount: dAmount.String(),
 	})
 	if err != nil {
 		slog.Error("unable to request", slog.Any("err", err))
