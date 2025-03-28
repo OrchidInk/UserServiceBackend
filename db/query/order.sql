@@ -44,3 +44,9 @@ SELECT
     *
 from
     "Orders";
+
+-- name: OrderDelete :exec
+DELETE FROM 
+  "Orders"
+WHERE
+  "OrderID" = sqlc.arg('OrderID');

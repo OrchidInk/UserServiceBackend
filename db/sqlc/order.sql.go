@@ -159,3 +159,15 @@ func (q *Queries) GetOrdersWithDetails(ctx context.Context) ([]Order, error) {
 	}
 	return items, nil
 }
+
+const orderDelete = `-- name: OrderDelete :exec
+DELETE FROM 
+  "Orders"
+WHERE
+  "OrderID" = $1
+`
+
+func (q *Queries) OrderDelete(ctx context.Context, orderid int32) error {
+	_, err := q.db.ExecContext(ctx, orderDelete, orderid)
+	return err
+}

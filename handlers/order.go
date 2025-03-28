@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"encoding/json"
 	"log/slog"
+	"strconv"
 	"time"
 
 	"github.com/gofiber/fiber/v2"
@@ -61,4 +62,22 @@ func (hd *Handlers) GetOrdersWithDetails(ctx *fiber.Ctx) error {
 	}
 
 	return ctx.Status(fiber.StatusOK).JSON(list)
+}
+
+func (hd *Handlers) OrderDelete(ctx *fiber.Ctx) error {
+	queries, _, _ := hd.queries()
+
+	OrderIDStr := ctx.Params("id")
+	OrderId, err := strconv.Atoi(OrderIDStr)
+	if err != nil {
+		slog.Error("unable to parse id", slog.Any("err", err))
+		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"err": err})
+	}
+
+	err = queries.OrderDelete(ctx.Context(), int32(OrderId))
+	if err != nil {
+		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"err": err})
+	}
+
+	return ctx.Status(fiber.StatusOK).JSON(fiber.Map{"success": "true", "orderId": OrderId})
 }
