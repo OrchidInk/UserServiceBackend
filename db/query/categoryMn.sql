@@ -168,6 +168,7 @@ LEFT JOIN "Size" s ON ps."SizeId" = s."SizeId"
 LEFT JOIN "productImagesMn" pi ON p."ProductMnID" = pi."ProductMnID"
 WHERE p."ProductMnID" = sqlc.arg('ProductMnID')
 GROUP BY p."ProductMnID";
+
 -- name: GetCategoriesWithSubCategoriesAndProductMn :many
 SELECT 
     c."CategoryMnID",
