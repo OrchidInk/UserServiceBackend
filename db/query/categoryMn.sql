@@ -183,7 +183,8 @@ SELECT
     p."StockQuantity",
     COALESCE(
         MIN(pi."ImagePath"),
-        p."ImagesPathMn"
+        p."ImagesPathMn",
+        ''
     ) AS "ImagesPathMn"
 FROM "categoryMn" c
 LEFT JOIN "subCategoryMn" sc ON c."CategoryMnID" = sc."CategoryMnID"
@@ -206,4 +207,3 @@ ORDER BY
     c."CategoryMnID",
     scc."sCategoryIdMn",
     p."ProductMnID";
-

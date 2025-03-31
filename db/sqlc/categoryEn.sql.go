@@ -251,17 +251,14 @@ SELECT
     p."StockQuantity",
     COALESCE(
         MIN(pi."ImagePath"),
-        p."ImagesPathEn"
+        p."ImagesPathEn",
+        ''
     ) AS "ImagesPathEn"
 FROM "categoryEn" c
-LEFT JOIN "subCategoryEn" sc 
-       ON c."CategoryEnID" = sc."CategoryEnID"
-LEFT JOIN "sCategoryEn" scc 
-       ON scc."SubCategoryIDEn" = sc."SubCategoryIDEn"
-LEFT JOIN "productEn" p 
-       ON scc."sCategoryIdEn" = p."sCategoryIdEn"
-LEFT JOIN "productImagesEn" pi 
-       ON p."ProductEnID" = pi."ProductEnID"
+LEFT JOIN "subCategoryEn" sc ON c."CategoryEnID" = sc."CategoryEnID"
+LEFT JOIN "sCategoryEn" scc ON scc."SubCategoryIDEn" = sc."SubCategoryIDEn"
+LEFT JOIN "productEn" p ON scc."sCategoryIdEn" = p."sCategoryIdEn"
+LEFT JOIN "productImagesEn" pi ON p."ProductEnID" = pi."ProductEnID"
 GROUP BY
     c."CategoryEnID",
     c."CategoryNameEn",
