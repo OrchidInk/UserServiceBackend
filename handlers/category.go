@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"database/sql"
 	"log/slog"
 	"strconv"
 
@@ -408,10 +409,14 @@ func (hd *Handlers) GetCategoriesWithSubCategoriesAndProductsEn(ctx *fiber.Ctx) 
 						ProductNameEn: row.ProductNameEn.String,
 						PriceEn:       row.PriceEn.String,
 						StockQuantity: row.StockQuantity.Int32,
-						ImagesPathEn:  row.ImagesPathEn,
+						ImagesPathEn: sql.NullString{
+							String: row.ImagesPathEn,       // row.ImagesPathEn now holds a non-NULL string (could be empty).
+							Valid:  row.ImagesPathEn != "", // Mark as valid if it's not empty.
+						},
 					}
 					sCatPtr.Products = append(sCatPtr.Products, newProduct)
 				}
+
 			} else {
 				// Optionally, if no sCategory is provided but a product exists,
 				// you might want to add it directly under the subcategory.
@@ -507,10 +512,15 @@ func (hd *Handlers) GetCategoriesWithSubCategoriesAndProductsMn(ctx *fiber.Ctx) 
 						ProductNameMn: row.ProductNameMn.String,
 						PriceMn:       row.PriceMn.String,
 						StockQuantity: row.StockQuantity.Int32,
-						ImagesPathMn:  row.ImagesPathMn,
+						// Wrap the returned string into sql.NullString.
+						ImagesPathMn: sql.NullString{
+							String: row.ImagesPathMn,       // This value is guaranteed non-NULL (may be empty) due to COALESCE.
+							Valid:  row.ImagesPathMn != "", // Mark as valid if not empty.
+						},
 					}
 					sCatPtr.Products = append(sCatPtr.Products, newProduct)
 				}
+
 			}
 		}
 	}

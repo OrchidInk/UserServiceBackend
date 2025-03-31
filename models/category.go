@@ -1,5 +1,7 @@
 package models
 
+import "database/sql"
+
 type CategoryEn struct {
 	CategoryEnID   int32           `json:"categoryEnId"`
 	CategoryNameEn string          `json:"categoryNameEn"`
@@ -92,11 +94,11 @@ type SubCategoryWithProductsEn struct {
 	SCategories       []SCategoryEn `json:"sCategories"`
 }
 type ProductEn struct {
-	ProductEnID   int32  `json:"productEnId"`
-	ProductNameEn string `json:"productNameEn"`
-	PriceEn       string `json:"priceEn"`
-	StockQuantity int32  `json:"stockQuantity"`
-	ImagesPathEn  string `json:"imagesPathEn"`
+	ProductEnID   int32          `json:"productEnId"`
+	ProductNameEn string         `json:"productNameEn"`
+	PriceEn       string         `json:"priceEn"`
+	StockQuantity int32          `json:"stockQuantity"`
+	ImagesPathEn  sql.NullString `json:"imagesPathEn"`
 }
 
 type SubCategoryWithProductsMn struct {
@@ -112,11 +114,11 @@ type CategoryWithSubCategoriesAndProductsMn struct {
 }
 
 type ProductMn struct {
-	ProductMnID   int32  `json:"productMnID"`
-	ProductNameMn string `json:"productNameMn"`
-	PriceMn       string `json:"priceMn"`
-	StockQuantity int32  `json:"stockQuantity"`
-	ImagesPathMn  string `json:"imagesPathMn"`
+	ProductMnID   int32          `json:"productMnID"`
+	ProductNameMn string         `json:"productNameMn"`
+	PriceMn       string         `json:"priceMn"`
+	StockQuantity int32          `json:"stockQuantity"`
+	ImagesPathMn  sql.NullString `json:"imagesPathMn"`
 }
 
 type UpdateSubCatogoryWithCategoryEn struct {
