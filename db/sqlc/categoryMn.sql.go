@@ -104,10 +104,12 @@ SELECT
     p."ProductNameMn",
     p."PriceMn",
     p."StockQuantity",
-    COALESCE(
-        MIN(pi."ImagePath"),
-        p."ImagesPathMn"
-    ) AS "ImagesPathMn"
+COALESCE(
+    MIN(pi."ImagePath"),
+    p."ImagesPathMn",
+    ''
+) AS "ImagesPathMn"
+
 FROM "categoryMn" c
 LEFT JOIN "subCategoryMn" sc ON c."CategoryMnID" = sc."CategoryMnID"
 LEFT JOIN "sCategoryMn" scc ON scc."SubCategoryIDMn" = sc."SubCategoryIDMn"

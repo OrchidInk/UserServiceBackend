@@ -605,7 +605,7 @@ func (hd *Handlers) FindSubCategoriesAndProductsByCategoryIDEn(ctx *fiber.Ctx) e
 						"ProductName":   row.ProductNameEn.String,
 						"Price":         row.PriceEn.String,
 						"StockQuantity": row.StockQuantity.Int32,
-						"ImagesPath":    row.ImagesPathEn,
+						"ImagesPathEn":  row.ImagesPathEn,
 					}
 					// Append the product to the sCategory's Products array.
 					sCategoryFound["Products"] = append(sCategoryFound["Products"].([]map[string]interface{}), newProduct)

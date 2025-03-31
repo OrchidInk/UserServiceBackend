@@ -104,7 +104,8 @@ SELECT
     p."StockQuantity",
     COALESCE(
         MIN(pi."ImagePath"),
-        p."ImagesPathEn"
+        p."ImagesPathEn",
+        ''
     ) AS "ImagesPathEn"
 FROM "categoryEn" c
 LEFT JOIN "subCategoryEn" sc 
